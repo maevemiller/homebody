@@ -40,3 +40,7 @@ Built with Next.js, three.js, Blender, Claude and ElevenLabs. It's an early prot
 - Room and pattern photos in `public/taste/`: Unsplash (material textures there: Poly Haven), listed in `public/taste/CREDITS.md`.
 - Textures and skies: Poly Haven, CC0.
 - Typefaces: Indian Type Foundry, via Fontshare, under the ITF Free Font License.
+
+## Picking up the project
+
+Read `docs/HANDOFF.md` first, then `docs/BACKLOG.md` and `docs/SESSION-HISTORY.md`.

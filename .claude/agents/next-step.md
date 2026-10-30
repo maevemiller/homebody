@@ -45,3 +45,10 @@ Keep Maeve's standing preferences in mind:
 - The AI profile stays hidden from users.
 - Realistic visuals with game-like interaction.
 - The warm, quiet visual style in `app/globals.css`.
+
+## Keeping the handoff current
+At every checkpoint:
+1. update `docs/HANDOFF.md` ("Current state"), `docs/BACKLOG.md` and `docs/SESSION-HISTORY.md` (today's entry);
+2. commit to `homebody-build` and push.
+
+Keep unapproved social drafts (`docs/social/YYYY-MM-DD/`) out of commits unless Maeve says otherwise.
