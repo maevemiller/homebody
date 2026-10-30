@@ -902,3 +902,13 @@ room photos.
   - the Transaction flow.
 - Then the visual design pass.
 - Then Plug & Play.
+
+---
+
+## 2026-10-30 — Paused for usage; everything backed up
+
+Maeve asked to back everything up before any more work, because usage is running low. The Taste additions, Plug & Play v2
+and checkout agents were stopped mid-way. Work is committed and pushed to `homebody-build` (7cb5d68, then ebd199e, which
+adds `docs/HANDOFF.md`, `docs/BACKLOG.md` and `docs/SESSION-HISTORY.md`).
+
+**Decision:** STOP. **Waiting on:** Maeve, to resume when usage allows. Then start from `docs/BACKLOG.md` items 1–5.
