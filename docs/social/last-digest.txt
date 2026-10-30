@@ -1,0 +1,4 @@
+Last digest: 2026-10-29 (docs/social/2026-10-29/)
+Last log heading covered: "## 2026-10-29 — Maeve's review of demo round two" (through its "Progress, 2026-10-29" list)
+Last critique entry covered: "## 2026-10-29 — Plug & Play first cut, and the photoreal capture"
+Last checkpoint covered: 1330c44 (later work was uncommitted at digest time)

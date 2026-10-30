@@ -1,0 +1,288 @@
+/* The four path vignettes, drawn like an architect's plan in monochrome line art,
+   with the sorting colors for sorting. Each animation is written as a 7s timeline
+   (--loop); the drawing's finished state is its 85% frame (--end).
+
+   At rest a drawing shows that finished frame, still. Hover, focus or a tap plays it
+   once from the start, and the fractional iteration count stops it on the same frame
+   (Maeve, 2026-10-30: "if you hover over that feature, then it will animate. Otherwise
+   it won't."). Reduced motion never animates. */
+
+.vignette {
+  --loop: 6s;
+  --end: 0.85;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  container-type: inline-size;
+  color: var(--ink);
+  overflow: hidden;
+}
+.vignette svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.anim {
+  animation-duration: var(--loop);
+  animation-iteration-count: var(--end);
+  animation-timing-function: var(--ease-settle);
+  animation-fill-mode: both;
+}
+
+.wall { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: square; stroke-linejoin: miter; }
+.thin { fill: none; stroke: var(--ink); stroke-width: 0.9; }
+.faint { fill: none; stroke: var(--line-strong); stroke-width: 0.9; }
+.dim { fill: none; stroke: var(--ink-faint); stroke-width: 0.8; }
+.label { font-family: var(--font-sans); font-size: 8.5px; fill: var(--ink-soft); letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
+.labelBg { fill: var(--surface); }
+.piece { fill: var(--surface); stroke: var(--ink); stroke-width: 1; }
+.pieceSoft { fill: none; stroke: var(--line-strong); stroke-width: 0.9; stroke-dasharray: 2 2; }
+
+/* ---- 1. Capture: the plan draws itself, the room is measured, photos from each corner ---- */
+.drawWalls { stroke-dasharray: 1; animation-name: drawWalls; }
+@keyframes drawWalls {
+  0% { stroke-dashoffset: 1; opacity: 1; }
+  28% { stroke-dashoffset: 0; }
+  90% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+.after { animation-name: after; }
+@keyframes after {
+  0%, 24% { opacity: 0; }
+  34%, 90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.cone { fill: var(--clay); opacity: 0; animation-name: cone; transform-box: fill-box; }
+@keyframes cone {
+  0% { opacity: 0; }
+  3% { opacity: 0.22; }
+  12% { opacity: 0.06; }
+  100% { opacity: 0.06; }
+}
+.cam { fill: var(--clay); opacity: 0; animation-name: cam; }
+@keyframes cam {
+  0% { opacity: 0; }
+  2%, 100% { opacity: 1; }
+}
+.flash { fill: none; stroke: var(--clay); stroke-width: 1; opacity: 0; transform-box: fill-box; transform-origin: center; animation-name: flash; }
+@keyframes flash {
+  0% { opacity: 0.9; transform: scale(0.6); }
+  8% { opacity: 0; transform: scale(2.2); }
+  100% { opacity: 0; }
+}
+.scaleTag { animation-name: scaleTag; }
+@keyframes scaleTag {
+  0%, 74% { opacity: 0; transform: translateY(3px); }
+  80%, 92% { opacity: 1; transform: none; }
+  100% { opacity: 0; }
+}
+
+/* ---- 2. Sort: tap a piece, it takes its color; moving and leaving pieces fade from the room ---- */
+.keep, .move, .remove { transition: none; animation-timing-function: var(--ease-settle); }
+.keep { animation-name: keep; }
+@keyframes keep {
+  0%, 16% { fill: var(--surface); stroke: var(--ink); }
+  20%, 94% { fill: var(--sage-tint); stroke: var(--sage); }
+  100% { fill: var(--surface); stroke: var(--ink); }
+}
+.move { animation-name: move; }
+@keyframes move {
+  0%, 38% { fill: var(--surface); stroke: var(--ink); opacity: 1; stroke-dasharray: none; }
+  42%, 50% { fill: var(--amber-tint); stroke: var(--amber); opacity: 1; stroke-dasharray: none; }
+  56%, 94% { fill: var(--amber-tint); stroke: var(--amber); opacity: 0.35; stroke-dasharray: 3 2; }
+  100% { fill: var(--surface); stroke: var(--ink); opacity: 1; }
+}
+.moveLines { fill: none; animation-name: moveLines; }
+@keyframes moveLines {
+  0%, 38% { stroke: var(--ink); opacity: 1; }
+  42%, 50% { stroke: var(--amber); opacity: 1; }
+  56%, 94% { stroke: var(--amber); opacity: 0.35; }
+  100% { stroke: var(--ink); opacity: 1; }
+}
+.remove { animation-name: remove; }
+@keyframes remove {
+  0%, 60% { fill: var(--surface); stroke: var(--ink); opacity: 1; }
+  64%, 70% { fill: var(--rust-tint); stroke: var(--rust); opacity: 1; }
+  78%, 94% { fill: var(--rust-tint); stroke: var(--rust); opacity: 0.12; }
+  100% { fill: var(--surface); stroke: var(--ink); opacity: 1; }
+}
+.tap { fill: none; stroke: var(--ink); stroke-width: 1.2; opacity: 0; transform-box: fill-box; transform-origin: center; animation-name: tap; }
+@keyframes tap {
+  0% { opacity: 0; transform: scale(1.6); }
+  2% { opacity: 0.8; transform: scale(1); }
+  6% { opacity: 0; transform: scale(0.8); }
+  100% { opacity: 0; }
+}
+.tags {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4.5cqw;
+  display: flex;
+  justify-content: center;
+  gap: 1.6cqw;
+  font-size: 3.3cqw;
+  font-weight: 540;
+}
+.tag {
+  padding: 0.6cqw 2.2cqw;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-faint);
+  animation-name: tagOn;
+}
+.tagKeep { --on-bg: var(--sage-tint); --on-fg: var(--sage); --on-line: var(--sage-soft); animation-delay: calc(var(--loop) * 0.18); }
+.tagMove { --on-bg: var(--amber-tint); --on-fg: var(--amber); --on-line: var(--amber-soft); animation-delay: calc(var(--loop) * 0.40); }
+.tagRemove { --on-bg: var(--rust-tint); --on-fg: var(--rust); --on-line: var(--rust-soft); animation-delay: calc(var(--loop) * 0.62); }
+@keyframes tagOn {
+  0% { background: var(--surface); color: var(--ink-faint); border-color: var(--line); }
+  2%, 12% { background: var(--on-bg); color: var(--on-fg); border-color: var(--on-line); transform: scale(1.06); }
+  16%, 100% { background: var(--surface); color: var(--ink-faint); border-color: var(--line); transform: none; }
+}
+
+/* ---- 3. Taste: what you say becomes a written design decision ---- */
+.taste {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 2.4cqw;
+  padding: 5cqw 6cqw;
+  background-color: var(--surface);
+}
+.said {
+  justify-self: start;
+  max-width: 78%;
+  padding: 1.6cqw 3cqw;
+  border-radius: 3cqw 3cqw 3cqw 0.8cqw;
+  background: var(--surface-2);
+  font-size: 3.5cqw;
+  line-height: 1.35;
+  color: var(--ink);
+  animation-name: said;
+}
+@keyframes said {
+  0% { opacity: 0; transform: translateY(1.5cqw); }
+  6%, 92% { opacity: 1; transform: none; }
+  100% { opacity: 0; }
+}
+.notes { display: flex; flex-direction: column; gap: 0.6cqw; }
+.note {
+  font-family: var(--font-sans);
+  font-style: italic;
+  font-size: 4.3cqw;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--pen);
+  clip-path: inset(-20% 100% -20% 0);
+  animation-timing-function: steps(22, end);
+}
+.n1 { animation-name: write1; }
+.n2 { animation-name: write2; }
+.n3 { animation-name: write3; color: var(--pencil); }
+@keyframes write1 {
+  0%, 12% { clip-path: inset(-20% 100% -20% 0); }
+  28%, 92% { clip-path: inset(-20% -2% -20% 0); opacity: 1; }
+  100% { clip-path: inset(-20% -2% -20% 0); opacity: 0; }
+}
+@keyframes write2 {
+  0%, 30% { clip-path: inset(-20% 100% -20% 0); }
+  45%, 92% { clip-path: inset(-20% -2% -20% 0); opacity: 1; }
+  100% { clip-path: inset(-20% -2% -20% 0); opacity: 0; }
+}
+@keyframes write3 {
+  0%, 47% { clip-path: inset(-20% 100% -20% 0); }
+  60%, 92% { clip-path: inset(-20% -2% -20% 0); opacity: 1; }
+  100% { clip-path: inset(-20% -2% -20% 0); opacity: 0; }
+}
+.swatches { align-self: end; display: flex; gap: 1.8cqw; align-items: end; }
+.swatch {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6cqw;
+  animation-name: swatch;
+}
+.swatch span:first-child {
+  display: block;
+  width: 11cqw;
+  height: 8cqw;
+  border-radius: 1cqw;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08);
+}
+.swatch span:last-child { font-size: 2.9cqw; color: var(--ink-soft); line-height: 1; }
+.swatch:nth-child(1) { animation-delay: calc(var(--loop) * 0.00); }
+.swatch:nth-child(2) { animation-delay: calc(var(--loop) * 0.03); }
+.swatch:nth-child(3) { animation-delay: calc(var(--loop) * 0.06); }
+.swatch:nth-child(4) { animation-delay: calc(var(--loop) * 0.09); }
+@keyframes swatch {
+  0%, 62% { opacity: 0; transform: translateY(1.5cqw) rotate(-2deg); }
+  70%, 90% { opacity: 1; transform: none; }
+  97%, 100% { opacity: 0; }
+}
+
+/* ---- 4. Play: drag a new piece, it snaps to the wall, the cost updates ---- */
+.sofa { fill: var(--clay-tint); stroke: var(--clay); stroke-width: 1.2; }
+.drag { animation-name: drag; animation-timing-function: var(--ease-move); }
+@keyframes drag {
+  0%, 10% { transform: translate(34px, -56px) rotate(-8deg); opacity: 0; }
+  16% { transform: translate(34px, -56px) rotate(-8deg); opacity: 1; }
+  48% { transform: translate(2px, -3px) rotate(0deg); }
+  54%, 92% { transform: none; opacity: 1; }
+  100% { transform: none; opacity: 0; }
+}
+.cursor { fill: var(--ink); stroke: var(--surface); stroke-width: 1; animation-name: cursor; animation-timing-function: var(--ease-move); }
+@keyframes cursor {
+  0%, 10% { transform: translate(34px, -56px); opacity: 0; }
+  16% { transform: translate(34px, -56px); opacity: 1; }
+  48% { transform: translate(2px, -3px); }
+  54% { transform: none; opacity: 1; }
+  64%, 100% { transform: translate(10px, 10px); opacity: 0; }
+}
+.snap { stroke: var(--clay); stroke-width: 1; stroke-dasharray: 3 2.5; fill: none; animation-name: snap; }
+@keyframes snap {
+  0%, 50% { opacity: 0; }
+  54% { opacity: 1; }
+  70%, 100% { opacity: 0; }
+}
+.pill {
+  position: absolute;
+  top: 2.2cqw;
+  right: 3cqw;
+  display: flex;
+  align-items: baseline;
+  gap: 1.6cqw;
+  padding: 1.3cqw 2.8cqw;
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+  font-size: 3.3cqw;
+  color: var(--ink-soft);
+}
+.pill b { position: relative; display: inline-grid; color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.pill b > span { grid-area: 1 / 1; text-align: right; }
+.before { animation-name: before; }
+.later { animation-name: later; }
+@keyframes before {
+  0%, 52% { opacity: 1; transform: none; }
+  56%, 96% { opacity: 0; transform: translateY(-1cqw); }
+  100% { opacity: 1; }
+}
+@keyframes later {
+  0%, 52% { opacity: 0; transform: translateY(1cqw); }
+  56%, 94% { opacity: 1; transform: none; }
+  100% { opacity: 0; }
+}
+
+/* ---- At rest, and with reduced motion: the finished drawing, still ---- */
+.still .anim {
+  animation-play-state: paused;
+  animation-delay: calc(var(--loop) * var(--end) * -1) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .anim {
+    animation-play-state: paused;
+    animation-delay: calc(var(--loop) * var(--end) * -1) !important;
+  }
+}

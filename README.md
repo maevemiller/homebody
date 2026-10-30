@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Homebody
 
-## Getting Started
+Homebody is an AI interior designer. The aim is to give anyone the experience of hiring a thoughtful,
+polished interior designer. It has four pieces:
 
-First, run the development server:
+- **Space Capture:** your real room rebuilt to scale in 3D from phone photos (Claude reads the photos, Blender
+  builds the room), then sorting what stays, moves or goes.
+- **Taste Builder:** a designer-style interview, by voice or text, that produces a design brief.
+- **Plug & Play:** a game-like 3D editor for trying pieces in the captured room.
+- **Transaction:** buying room by room (planned, not built).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Built with Next.js, three.js, Blender, Claude and ElevenLabs. It's an early prototype. Product notes are in
+`docs/product-vision.md`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Install:** `npm install` (Node 20 or later).
+2. **Fonts:** `npm run fonts`. This downloads the typefaces from [Fontshare](https://www.fontshare.com) into
+   `app/fonts/`. Their license doesn't allow redistributing the files, so they aren't committed. See
+   `public/fonts/LICENSES.md`.
+3. **3D assets:** `npm run assets`. This downloads the CC0 textures and skies from [Poly Haven](https://polyhaven.com)
+   into `blender/assets/` (about 100 MB).
+4. **Keys:** create `.env.local`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```
+   ANTHROPIC_API_KEY=...        # photo reading and the live designer
+   ELEVENLABS_API_KEY=...       # optional: the designer's voice
+   ELEVENLABS_VOICE_ID=...      # optional: a specific voice
+   BLENDER_PATH=...             # optional: defaults to /Applications/Blender.app/Contents/MacOS/Blender
+   CAPTURE_BUDGET_USD=10        # optional: spending cap for photo reads
+   TASTE_DAILY_CALLS=150        # optional: daily cap on live designer calls
+   ```
 
-## Learn More
+   Without the Anthropic key, Taste Builder falls back to an offline script.
+5. **Blender:** install [Blender](https://www.blender.org) (developed on 5.2) for Space Capture's room builds.
+6. **Run:** `npm run dev`, then open http://localhost:3000. `/demo` seeds a sample room.
 
-To learn more about Next.js, take a look at the following resources:
+## Credits
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Room and pattern photos in `public/taste/`: Unsplash (material textures there: Poly Haven), listed in `public/taste/CREDITS.md`.
+- Textures and skies: Poly Haven, CC0.
+- Typefaces: Indian Type Foundry, via Fontshare, under the ITF Free Font License.

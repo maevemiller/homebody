@@ -1,0 +1,875 @@
+{
+ "note": "SAMPLE DATA for the Plug & Play first cut. These are made-up products with illustrative prices, not real listings. Transaction (real retailers, models and links) comes later.",
+ "products": [
+  {
+   "id": "hollis-sofa",
+   "name": "Hollis bouclé sofa",
+   "maker": "Sample studio",
+   "price": 2450,
+   "category": "sofa",
+   "w": 2.2,
+   "d": 0.95,
+   "h": 0.78,
+   "color": "#EFE4D4",
+   "accent": "#5E4130",
+   "material": "boucle",
+   "accentMaterial": "walnut",
+   "families": [
+    "warm_minimal",
+    "organic",
+    "midcentury"
+   ],
+   "palettes": [
+    "warm_neutrals",
+    "monochrome"
+   ],
+   "look": "curved-boucle"
+  },
+  {
+   "id": "arden-sofa",
+   "name": "Arden bouclé-look sofa",
+   "maker": "Sample basics",
+   "price": 899,
+   "category": "sofa",
+   "w": 2.1,
+   "d": 0.92,
+   "h": 0.76,
+   "color": "#E9DFCF",
+   "accent": "#8C6A4A",
+   "material": "boucle",
+   "accentMaterial": "white_oak",
+   "families": [
+    "warm_minimal",
+    "organic"
+   ],
+   "palettes": [
+    "warm_neutrals",
+    "monochrome"
+   ],
+   "look": "curved-boucle"
+  },
+  {
+   "id": "marlow-sofa",
+   "name": "Marlow washed-linen sofa",
+   "maker": "Sample studio",
+   "price": 1595,
+   "category": "sofa",
+   "w": 2.25,
+   "d": 0.98,
+   "h": 0.82,
+   "color": "#D9D2C5",
+   "accent": "#CDB48E",
+   "material": "linen",
+   "accentMaterial": "white_oak",
+   "families": [
+    "warm_minimal",
+    "coastal",
+    "french_country",
+    "japandi"
+   ],
+   "palettes": [
+    "warm_neutrals",
+    "cool_neutrals",
+    "coastal"
+   ],
+   "look": "washed-linen-sofa"
+  },
+  {
+   "id": "lark-sofa",
+   "name": "Lark linen-look sofa",
+   "maker": "Sample basics",
+   "price": 749,
+   "category": "sofa",
+   "w": 2.25,
+   "d": 0.98,
+   "h": 0.82,
+   "color": "#D4CDBF",
+   "accent": "#CDB48E",
+   "material": "linen",
+   "accentMaterial": "white_oak",
+   "families": [
+    "warm_minimal",
+    "coastal",
+    "french_country",
+    "japandi"
+   ],
+   "palettes": [
+    "warm_neutrals",
+    "cool_neutrals",
+    "coastal"
+   ],
+   "look": "washed-linen-sofa"
+  },
+  {
+   "id": "kepler-sofa",
+   "name": "Kepler leather sofa",
+   "maker": "Sample studio",
+   "price": 2890,
+   "category": "sofa",
+   "w": 2.0,
+   "d": 0.9,
+   "h": 0.8,
+   "color": "#8A5A3C",
+   "accent": "#2A2A2A",
+   "material": "leather",
+   "accentMaterial": "black_steel",
+   "families": [
+    "midcentury",
+    "industrial"
+   ],
+   "palettes": [
+    "earthy",
+    "midcentury",
+    "moody"
+   ],
+   "look": "leather-sofa"
+  },
+  {
+   "id": "kip-sofa",
+   "name": "Kip faux-leather sofa",
+   "maker": "Sample basics",
+   "price": 1190,
+   "category": "sofa",
+   "w": 2.0,
+   "d": 0.9,
+   "h": 0.8,
+   "color": "#8E5E40",
+   "accent": "#2A2A2A",
+   "material": "leather",
+   "accentMaterial": "black_steel",
+   "families": [
+    "midcentury",
+    "industrial"
+   ],
+   "palettes": [
+    "earthy",
+    "midcentury",
+    "moody"
+   ],
+   "look": "leather-sofa"
+  },
+  {
+   "id": "ojai-chair",
+   "name": "Ojai bouclé lounge chair",
+   "maker": "Sample studio",
+   "price": 1150,
+   "category": "chair",
+   "w": 0.82,
+   "d": 0.84,
+   "h": 0.74,
+   "color": "#EFE4D4",
+   "accent": "#CDB48E",
+   "material": "boucle",
+   "accentMaterial": "white_oak",
+   "families": [
+    "warm_minimal",
+    "organic",
+    "midcentury"
+   ],
+   "palettes": [
+    "warm_neutrals",
+    "monochrome"
+   ],
+   "look": "boucle-lounge"
+  },
+  {
+   "id": "oona-chair",
+   "name": "Oona bouclé-look lounge chair",
+   "maker": "Sample basics",
+   "price": 389,
+   "category": "chair",
+   "w": 0.82,
+   "d": 0.84,
+   "h": 0.74,
+   "color": "#ECE2D2",
+   "accent": "#CDB48E",
+   "material": "boucle",
+   "accentMaterial": "white_oak",
+   "families": [
+    "warm_minimal",
+    "organic",
+    "midcentury"
+   ],
+   "palettes": [
+    "warm_neutrals",
+    "monochrome"
+   ],
+   "look": "boucle-lounge"
+  },
+  {
+   "id": "rhodes-chair",
+   "name": "Rhodes leather armchair",
+   "maker": "Sample studio",
+   "price": 690,
+   "category": "chair",
+   "w": 0.78,
+   "d": 0.82,
+   "h": 0.8,
+   "color": "#8A5A3C",
+   "accent": "#5E4130",
+   "material": "leather",
+   "accentMaterial": "walnut",
+   "families": [
+    "midcentury",
+    "industrial",
+    "transitional"
+   ],
+   "palettes": [
+    "earthy",
+    "midcentury"
+   ],
+   "look": "leather-armchair"
+  },
+  {
+   "id": "rory-chair",
+   "name": "Rory faux-leather armchair",
+   "maker": "Sample basics",
+   "price": 299,
+   "category": "chair",
+   "w": 0.78,
+   "d": 0.82,
+   "h": 0.8,
+   "color": "#8C5C3E",
+   "accent": "#5E4130",
+   "material": "leather",
+   "accentMaterial": "walnut",
+   "families": [
+    "midcentury",
+    "industrial",
+    "transitional"
+   ],
+   "palettes": [
+    "earthy",
+    "midcentury"
+   ],
+   "look": "leather-armchair"
+  },
+  {
+   "id": "pell-chair",
+   "name": "Pell woven rattan chair",
+   "maker": "Sample basics",
+   "price": 340,
+   "category": "chair",
+   "w": 0.76,
+   "d": 0.78,
+   "h": 0.78,
+   "color": "#B08A5A",
+   "accent": "#8C6A4A",
+   "material": "jute",
+   "accentMaterial": "white_oak",
+   "families": [
+    "coastal",
+    "boho",
+    "organic"
+   ],
+   "palettes": [
+    "earthy",
+    "coastal",
+    "mediterranean"
+   ]
+  },
+  {
+   "id": "tessel-rug",
+   "name": "Tessel hand-knotted wool rug, 8 × 10",
+   "maker": "Sample studio",
+   "price": 1240,
+   "category": "rug",
+   "w": 3.05,
+   "d": 2.44,
+   "h": 0.012,
+   "color": "#DDD3C2",
+   "accent": "#B8A78C",
+   "material": "wool",
+   "accentMaterial": "wool",
+   "families": [
+    "warm_minimal",
+    "transitional",
+    "japandi"
+   ],
+   "palettes": [
+    "warm_neutrals",
+    "monochrome"
+   ],
+   "look": "neutral-wool-rug"
+  },
+  {
+   "id": "tilly-rug",
+   "name": "Tilly wool-blend rug, 8 × 10",
+   "maker": "Sample basics",
+   "price": 449,
+   "category": "rug",
+   "w": 3.05,
+   "d": 2.44,
+   "h": 0.012,
+   "color": "#DAD0BE",
+   "accent": "#B8A78C",
+   "material": "wool",
+   "accentMaterial": "wool",
+   "families": [
+    "warm_minimal",
+    "transitional",
+    "japandi"
+   ],
+   "palettes": [
+    "warm_neutrals",
+    "monochrome"
+   ],
+   "look": "neutral-wool-rug"
+  },
+  {
+   "id": "dune-rug",
+   "name": "Dune jute rug, 8 × 10",
+   "maker": "Sample basics",
+   "price": 420,
+   "category": "rug",
+   "w": 3.05,
+   "d": 2.44,
+   "h": 0.012,
+   "color": "#B9966A",
+   "accent": "#9C7B52",
+   "material": "jute",
+   "accentMaterial": "jute",
+   "families": [
+    "coastal",
+    "organic",
+    "boho"
+   ],
+   "palettes": [
+    "earthy",
+    "coastal",
+    "warm_neutrals"
+   ]
+  },
+  {
+   "id": "indigo-rug",
+   "name": "Indigo flatweave rug, 6 × 9",
+   "maker": "Sample studio",
+   "price": 380,
+   "category": "rug",
+   "w": 2.74,
+   "d": 1.83,
+   "h": 0.01,
+   "color": "#2E3F7A",
+   "accent": "#F3E9D6",
+   "material": "wool",
+   "accentMaterial": "wool",
+   "families": [
+    "indian",
+    "boho",
+    "eclectic"
+   ],
+   "palettes": [
+    "indian_festive",
+    "jewel"
+   ],
+   "look": "indigo-flatweave"
+  },
+  {
+   "id": "indie-rug",
+   "name": "Indigo cotton flatweave, 6 × 9",
+   "maker": "Sample basics",
+   "price": 149,
+   "category": "rug",
+   "w": 2.74,
+   "d": 1.83,
+   "h": 0.01,
+   "color": "#33437C",
+   "accent": "#F3E9D6",
+   "material": "wool",
+   "accentMaterial": "wool",
+   "families": [
+    "indian",
+    "boho",
+    "eclectic"
+   ],
+   "palettes": [
+    "indian_festive",
+    "jewel"
+   ],
+   "look": "indigo-flatweave"
+  },
+  {
+   "id": "arc-lamp",
+   "name": "Arc floor lamp, unlacquered brass",
+   "maker": "Sample studio",
+   "price": 560,
+   "category": "lamp",
+   "w": 0.4,
+   "d": 0.4,
+   "h": 1.8,
+   "color": "#B5964A",
+   "accent": "#F1E8D8",
+   "material": "brass",
+   "accentMaterial": "linen",
+   "families": [
+    "midcentury",
+    "art_deco",
+    "traditional"
+   ],
+   "palettes": [
+    "midcentury",
+    "jewel",
+    "warm_neutrals"
+   ],
+   "variant": "arc",
+   "look": "brass-arc"
+  },
+  {
+   "id": "arco-lamp",
+   "name": "Arc floor lamp, brass finish",
+   "maker": "Sample basics",
+   "price": 179,
+   "category": "lamp",
+   "w": 0.4,
+   "d": 0.4,
+   "h": 1.8,
+   "color": "#BC9C52",
+   "accent": "#F1E8D8",
+   "material": "brass",
+   "accentMaterial": "linen",
+   "families": [
+    "midcentury",
+    "art_deco",
+    "traditional"
+   ],
+   "palettes": [
+    "midcentury",
+    "jewel",
+    "warm_neutrals"
+   ],
+   "variant": "arc",
+   "look": "brass-arc"
+  },
+  {
+   "id": "paper-lamp",
+   "name": "Rice-paper floor lantern",
+   "maker": "Sample basics",
+   "price": 129,
+   "category": "lamp",
+   "w": 0.45,
+   "d": 0.45,
+   "h": 1.4,
+   "color": "#F4EFE4",
+   "accent": "#CDB48E",
+   "material": "paper",
+   "accentMaterial": "white_oak",
+   "families": [
+    "japandi",
+    "warm_minimal",
+    "wabi_sabi"
+   ],
+   "palettes": [
+    "monochrome",
+    "warm_neutrals"
+   ],
+   "variant": "lantern"
+  },
+  {
+   "id": "travertine-table",
+   "name": "Travertine plinth coffee table",
+   "maker": "Sample studio",
+   "price": 1480,
+   "category": "table",
+   "w": 1.2,
+   "d": 0.7,
+   "h": 0.36,
+   "color": "#D9C7A8",
+   "accent": "#CDBB9B",
+   "material": "limestone",
+   "accentMaterial": "limestone",
+   "families": [
+    "mediterranean",
+    "warm_minimal",
+    "organic"
+   ],
+   "palettes": [
+    "warm_neutrals",
+    "mediterranean"
+   ],
+   "variant": "plinth",
+   "look": "travertine-plinth"
+  },
+  {
+   "id": "plinth-table",
+   "name": "Travertine-look plinth table",
+   "maker": "Sample basics",
+   "price": 499,
+   "category": "table",
+   "w": 1.2,
+   "d": 0.7,
+   "h": 0.36,
+   "color": "#D6C5A6",
+   "accent": "#CDBB9B",
+   "material": "limestone",
+   "accentMaterial": "limestone",
+   "families": [
+    "mediterranean",
+    "warm_minimal",
+    "organic"
+   ],
+   "palettes": [
+    "warm_neutrals",
+    "mediterranean"
+   ],
+   "variant": "plinth",
+   "look": "travertine-plinth"
+  },
+  {
+   "id": "oval-table",
+   "name": "Oval oak coffee table",
+   "maker": "Sample studio",
+   "price": 640,
+   "category": "table",
+   "w": 1.25,
+   "d": 0.65,
+   "h": 0.38,
+   "color": "#CDB48E",
+   "accent": "#BFA47C",
+   "material": "white_oak",
+   "accentMaterial": "white_oak",
+   "families": [
+    "scandinavian",
+    "japandi",
+    "warm_minimal"
+   ],
+   "palettes": [
+    "warm_neutrals",
+    "cool_neutrals"
+   ],
+   "variant": "oval",
+   "look": "oval-oak"
+  },
+  {
+   "id": "ash-oval-table",
+   "name": "Oval ash-veneer coffee table",
+   "maker": "Sample basics",
+   "price": 229,
+   "category": "table",
+   "w": 1.25,
+   "d": 0.65,
+   "h": 0.38,
+   "color": "#D0B892",
+   "accent": "#BFA47C",
+   "material": "white_oak",
+   "accentMaterial": "white_oak",
+   "families": [
+    "scandinavian",
+    "japandi",
+    "warm_minimal"
+   ],
+   "palettes": [
+    "warm_neutrals",
+    "cool_neutrals"
+   ],
+   "variant": "oval",
+   "look": "oval-oak"
+  },
+  {
+   "id": "slab-table",
+   "name": "Walnut slab coffee table",
+   "maker": "Sample studio",
+   "price": 890,
+   "category": "table",
+   "w": 1.3,
+   "d": 0.6,
+   "h": 0.4,
+   "color": "#5E4130",
+   "accent": "#2A2A2A",
+   "material": "walnut",
+   "accentMaterial": "black_steel",
+   "families": [
+    "midcentury",
+    "industrial"
+   ],
+   "palettes": [
+    "midcentury",
+    "earthy",
+    "moody"
+   ],
+   "look": "walnut-slab"
+  },
+  {
+   "id": "veneer-slab-table",
+   "name": "Walnut-veneer coffee table",
+   "maker": "Sample basics",
+   "price": 329,
+   "category": "table",
+   "w": 1.3,
+   "d": 0.6,
+   "h": 0.4,
+   "color": "#63452F",
+   "accent": "#2A2A2A",
+   "material": "walnut",
+   "accentMaterial": "black_steel",
+   "families": [
+    "midcentury",
+    "industrial"
+   ],
+   "palettes": [
+    "midcentury",
+    "earthy",
+    "moody"
+   ],
+   "look": "walnut-slab"
+  },
+  {
+   "id": "oak-bookcase",
+   "name": "Open oak bookcase",
+   "maker": "Sample studio",
+   "price": 780,
+   "category": "shelf",
+   "w": 0.9,
+   "d": 0.35,
+   "h": 1.8,
+   "color": "#CDB48E",
+   "accent": "#CDB48E",
+   "material": "white_oak",
+   "accentMaterial": "white_oak",
+   "families": [
+    "scandinavian",
+    "japandi",
+    "transitional"
+   ],
+   "palettes": [
+    "warm_neutrals",
+    "cool_neutrals"
+   ],
+   "look": "open-oak-shelf"
+  },
+  {
+   "id": "veneer-bookcase",
+   "name": "Oak-veneer open bookcase",
+   "maker": "Sample basics",
+   "price": 249,
+   "category": "shelf",
+   "w": 0.9,
+   "d": 0.35,
+   "h": 1.8,
+   "color": "#D1B993",
+   "accent": "#CDB48E",
+   "material": "white_oak",
+   "accentMaterial": "white_oak",
+   "families": [
+    "scandinavian",
+    "japandi",
+    "transitional"
+   ],
+   "palettes": [
+    "warm_neutrals",
+    "cool_neutrals"
+   ],
+   "look": "open-oak-shelf"
+  },
+  {
+   "id": "steel-shelf",
+   "name": "Black steel shelving",
+   "maker": "Sample basics",
+   "price": 260,
+   "category": "shelf",
+   "w": 0.9,
+   "d": 0.38,
+   "h": 1.85,
+   "color": "#2A2A2A",
+   "accent": "#8C7B68",
+   "material": "black_steel",
+   "accentMaterial": "reclaimed",
+   "families": [
+    "industrial",
+    "minimal",
+    "farmhouse"
+   ],
+   "palettes": [
+    "high_contrast",
+    "cool_neutrals"
+   ]
+  },
+  {
+   "id": "ochre-print",
+   "name": "Ochre abstract, framed print",
+   "maker": "Sample editions",
+   "price": 220,
+   "category": "art",
+   "w": 0.9,
+   "d": 0.03,
+   "h": 0.65,
+   "color": "#C99A3E",
+   "accent": "#C0673F",
+   "material": "paper",
+   "accentMaterial": "walnut",
+   "families": [
+    "midcentury",
+    "organic",
+    "boho"
+   ],
+   "palettes": [
+    "earthy",
+    "midcentury"
+   ],
+   "art": [
+    "#F1E8D8",
+    "#C99A3E",
+    "#C0673F",
+    "#6F6F3C",
+    "#4A3A2C"
+   ],
+   "look": "ochre-abstract"
+  },
+  {
+   "id": "ochre-poster",
+   "name": "Ochre abstract, poster in oak frame",
+   "maker": "Sample basics",
+   "price": 39,
+   "category": "art",
+   "w": 0.9,
+   "d": 0.03,
+   "h": 0.65,
+   "color": "#C99A3E",
+   "accent": "#C0673F",
+   "material": "paper",
+   "accentMaterial": "walnut",
+   "families": [
+    "midcentury",
+    "organic",
+    "boho"
+   ],
+   "palettes": [
+    "earthy",
+    "midcentury"
+   ],
+   "art": [
+    "#F1E8D8",
+    "#C99A3E",
+    "#C0673F",
+    "#6F6F3C",
+    "#4A3A2C"
+   ],
+   "look": "ochre-abstract"
+  },
+  {
+   "id": "ink-drawing",
+   "name": "Ink line drawing, framed",
+   "maker": "Sample editions",
+   "price": 95,
+   "category": "art",
+   "w": 0.6,
+   "d": 0.03,
+   "h": 0.8,
+   "color": "#EFEAE2",
+   "accent": "#2F2A24",
+   "material": "paper",
+   "accentMaterial": "black_steel",
+   "families": [
+    "minimal",
+    "japandi",
+    "wabi_sabi"
+   ],
+   "palettes": [
+    "monochrome",
+    "high_contrast"
+   ],
+   "art": [
+    "#F6F2EA",
+    "#2F2A24",
+    "#958979",
+    "#2F2A24",
+    "#BFB4A5"
+   ],
+   "look": "ink-line"
+  },
+  {
+   "id": "ink-poster",
+   "name": "Ink line drawing, poster print",
+   "maker": "Sample basics",
+   "price": 25,
+   "category": "art",
+   "w": 0.6,
+   "d": 0.03,
+   "h": 0.8,
+   "color": "#EFEAE2",
+   "accent": "#2F2A24",
+   "material": "paper",
+   "accentMaterial": "black_steel",
+   "families": [
+    "minimal",
+    "japandi",
+    "wabi_sabi"
+   ],
+   "palettes": [
+    "monochrome",
+    "high_contrast"
+   ],
+   "art": [
+    "#F6F2EA",
+    "#2F2A24",
+    "#958979",
+    "#2F2A24",
+    "#BFB4A5"
+   ],
+   "look": "ink-line"
+  },
+  {
+   "id": "sea-study",
+   "name": "Sea study, large canvas",
+   "maker": "Sample editions",
+   "price": 480,
+   "category": "art",
+   "w": 1.0,
+   "d": 0.04,
+   "h": 0.75,
+   "color": "#8FB2C2",
+   "accent": "#E4DCCB",
+   "material": "linen",
+   "accentMaterial": "white_oak",
+   "families": [
+    "coastal",
+    "scandinavian",
+    "mediterranean"
+   ],
+   "palettes": [
+    "coastal",
+    "pastels",
+    "cool_neutrals"
+   ],
+   "art": [
+    "#F5F3EE",
+    "#C8D7DC",
+    "#8FB2C2",
+    "#3F6A84",
+    "#E4DCCB"
+   ],
+   "look": "sea-study"
+  },
+  {
+   "id": "sea-print",
+   "name": "Sea study, giclée print",
+   "maker": "Sample basics",
+   "price": 129,
+   "category": "art",
+   "w": 1.0,
+   "d": 0.04,
+   "h": 0.75,
+   "color": "#8FB2C2",
+   "accent": "#E4DCCB",
+   "material": "linen",
+   "accentMaterial": "white_oak",
+   "families": [
+    "coastal",
+    "scandinavian",
+    "mediterranean"
+   ],
+   "palettes": [
+    "coastal",
+    "pastels",
+    "cool_neutrals"
+   ],
+   "art": [
+    "#F5F3EE",
+    "#C8D7DC",
+    "#8FB2C2",
+    "#3F6A84",
+    "#E4DCCB"
+   ],
+   "look": "sea-study"
+  }
+ ]
+}

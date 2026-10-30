@@ -1,26 +1,631 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ==========================================================================
+   Homebody design system: monochrome minimal, editorial type (Maeve, 2026-10-30)
+   --------------------------------------------------------------------------
+   Type     An elegant serif for display (Gambetta, light to regular, large,
+            slightly tight; italic only for emphasis and the wordmark) over a
+            quiet sans (Switzer). Eyebrows are small letter-spaced capitals.
+            The fonts are loaded in app/fonts and arrive as --ff-display / --ff-sans.
+   Color    Pure white and true black grounds, a neutral grey scale, no brand
+            hue. The primary action is near-black (white in dark mode). The only
+            accent is the focus ring. Keep / Move / Remove keep quiet, desaturated
+            semantic colors. Token names are historical: "clay" is the primary
+            (ink-black), "sage" is Keep, "amber" is Move, "rust" is Remove.
+   Shape    Big soft cards, pill buttons, hairlines instead of boxes, blurred bars.
+   Motion   Calm and precise: short, eased-out, nothing bounces.
+   ========================================================================== */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  --ff-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f5f5f7;
+  --ink: #1d1d1f;
+  --ink-soft: #6e6e73;
+  --ink-faint: #86868b;
+  --line: #e8e8ed;
+  --line-strong: #d2d2d7;
+  /* the primary: near-black */
+  --clay: #1d1d1f;
+  --clay-strong: #000000;
+  --clay-press: #3a3a3c;
+  --on-clay: #ffffff;
+  --clay-soft: #d2d2d7;
+  --clay-tint: #f5f5f7;
+  /* sorting, desaturated */
+  --sage: #3e7a4a;
+  --sage-soft: #cfe1d2;
+  --sage-tint: #eef5ef;
+  --amber: #8c6a22;
+  --amber-soft: #ead9b4;
+  --amber-tint: #f9f3e6;
+  --rust: #b0473a;
+  --rust-soft: #edc9c3;
+  --rust-tint: #faeeec;
+  --segment: #ffffff;
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.06), 0 0 0 0.5px rgb(0 0 0 / 0.06);
+  --shadow-2: 0 2px 6px rgb(0 0 0 / 0.04), 0 18px 40px -18px rgb(0 0 0 / 0.18);
+  --focus: #0071e3;
+  --bar: rgb(255 255 255 / 0.72);
+
+  --dur-instant: 100ms;
+  --dur-quick: 180ms;
+  --dur-base: 280ms;
+  --dur-slow: 480ms;
+  --dur-scene: 760ms;
+  --ease-settle: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-move: cubic-bezier(0.42, 0, 0.58, 1);
+  --ease-press: cubic-bezier(0.3, 0, 0.5, 1);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg: #000000;
+    --surface: #1c1c1e;
+    --surface-2: #1c1c1e;
+    --ink: #f5f5f7;
+    --ink-soft: #a1a1a6;
+    --ink-faint: #6e6e73;
+    --line: #2c2c2e;
+    --line-strong: #3a3a3c;
+    --clay: #f5f5f7;
+    --clay-strong: #ffffff;
+    --clay-press: #d2d2d7;
+    --on-clay: #000000;
+    --clay-soft: #48484a;
+    --clay-tint: #2c2c2e;
+    --sage: #86c493;
+    --sage-soft: #2c4532;
+    --sage-tint: #15211a;
+    --amber: #dcb766;
+    --amber-soft: #4d3f22;
+    --amber-tint: #251f13;
+    --rust: #ec8f84;
+    --rust-soft: #5a2c27;
+    --rust-tint: #2a1614;
+    --segment: #636366;
+    --shadow-1: 0 0 0 0.5px rgb(255 255 255 / 0.08);
+    --shadow-2: 0 0 0 0.5px rgb(255 255 255 / 0.08), 0 24px 48px -24px rgb(0 0 0 / 0.8);
+    --focus: #2997ff;
+    --bar: rgb(0 0 0 / 0.7);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-clay: var(--clay);
+  --color-clay-strong: var(--clay-strong);
+  --color-on-clay: var(--on-clay);
+  --color-clay-soft: var(--clay-soft);
+  --color-clay-tint: var(--clay-tint);
+  --color-sage: var(--sage);
+  --color-sage-soft: var(--sage-soft);
+  --color-sage-tint: var(--sage-tint);
+  --color-amber: var(--amber);
+  --color-amber-soft: var(--amber-soft);
+  --color-amber-tint: var(--amber-tint);
+  --color-rust: var(--rust);
+  --color-rust-soft: var(--rust-soft);
+  --color-rust-tint: var(--rust-tint);
+  --color-segment: var(--segment);
+
+  /* inline, so a wrapper that re-points --ff-* re-types everything inside it */
+  --font-display: var(--ff-display, Georgia, serif);
+  --font-sans: var(--ff-sans, "Helvetica Neue", Arial, sans-serif);
+  --font-hand: var(--ff-sans, "Helvetica Neue", Arial, sans-serif);
+  --font-mono: var(--ff-mono);
+}
+
+/* The type scale. Text sizes step by ~1.125; display sizes are fluid. */
+@theme {
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.05rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.3rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.6rem;
+  /* a question or page title */
+  --text-title: clamp(1.875rem, 1.55rem + 1.3vw, 2.5rem);
+  --text-title--line-height: 1.1;
+  --text-title--letter-spacing: -0.015em;
+  /* the largest moments: a landing line */
+  --text-display: clamp(2.75rem, 2rem + 3.4vw, 4.75rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.025em;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.125rem;
+  --radius-2xl: 1.375rem;
+
+  --animate-rise: rise 480ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+
+@layer base {
+  /* in the base layer so utilities like border-ink can override it */
+  * {
+    border-color: var(--line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    font-feature-settings: "kern", "liga", "calt";
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 380;
+    letter-spacing: -0.012em;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--clay-soft);
+    color: var(--ink);
+  }
+
+  /* one focus ring everywhere: the accent, offset so it never sits on the edge */
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: -1px;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ---- Components ----------------------------------------------------------
+   In the components layer, so a utility on the element (w-full, px-4) wins. */
+@layer components {
+  /* Small label: section tags, product names. Never on buttons. */
+  /* Small letter-spaced capitals: section tags, labels. Never on buttons. */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 10.5px;
+    line-height: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* the wordmark: the serif's italic, its one regular appearance */
+  .wordmark {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    line-height: 1;
+  }
+
+  /* Buttons. One shape; the variant only re-points four colors.
+     States: hover (pointer devices only, so a tap never leaves the next screen's
+     button looking hovered), pressed, focus, disabled. */
+  .btn {
+    --btn-bg: var(--surface-2);
+    --btn-fg: var(--ink);
+    --btn-bg-hover: var(--line);
+    --btn-bg-press: var(--line-strong);
+    --btn-border: transparent;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--btn-border);
+    border-radius: 999px;
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    font-size: 14.5px;
+    line-height: 1.25;
+    font-weight: 500;
+    letter-spacing: 0.005em;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    transition:
+      background-color var(--dur-quick) var(--ease-settle),
+      border-color var(--dur-quick) var(--ease-settle),
+      color var(--dur-quick) var(--ease-settle),
+      box-shadow var(--dur-quick) var(--ease-settle),
+      transform var(--dur-instant) var(--ease-press);
+  }
+  @media (hover: hover) {
+    .btn:hover:not(:disabled, [aria-disabled="true"]) {
+      background: var(--btn-bg-hover);
+    }
+  }
+  .btn:active:not(:disabled, [aria-disabled="true"]) {
+    background: var(--btn-bg-press);
+    transform: scale(0.98);
+  }
+  .btn:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    background: var(--surface-2);
+    border-color: transparent;
+    color: var(--ink-faint);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    --btn-bg: var(--clay);
+    --btn-fg: var(--on-clay);
+    --btn-bg-hover: var(--clay-strong);
+    --btn-bg-press: var(--clay-press);
+  }
+  .btn-quiet {
+    --btn-bg: var(--surface-2);
+    --btn-bg-hover: var(--line);
+    --btn-bg-press: var(--line-strong);
+  }
+  /* for a second action that should still read as a button */
+  .btn-line {
+    --btn-bg: transparent;
+    --btn-bg-hover: var(--surface);
+    --btn-bg-press: var(--surface-2);
+    --btn-border: var(--line-strong);
+  }
+  .btn-sm {
+    min-height: 2.25rem;
+    padding: 0.4rem 1rem;
+    font-size: 14px;
+  }
+
+  /* Text links: an underline that's present but quiet, and firms up on hover */
+  .link {
+    color: inherit;
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.28em;
+    border-radius: 2px;
+    transition: color var(--dur-quick) var(--ease-settle), text-decoration-color var(--dur-quick) var(--ease-settle);
+  }
+  .link-quiet {
+    color: var(--ink-soft);
+  }
+  @media (hover: hover) {
+    .link:hover {
+      color: var(--ink);
+      text-decoration-color: currentColor;
+    }
+  }
+  .link:active {
+    color: var(--ink);
+  }
+  .link:disabled,
+  .link[aria-disabled="true"] {
+    color: var(--ink-faint);
+    text-decoration-color: transparent;
+    cursor: not-allowed;
+  }
+
+  /* Segmented control: a track with an inset selected tab. Mark the chosen one
+     with aria-pressed="true" (or aria-selected for tabs). */
+  .seg {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: 2px;
+    padding: 2px;
+    border-radius: 0.6875rem;
+    background: rgb(118 118 128 / 0.12);
+    font-size: 14px;
+  }
+  .seg > button {
+    min-height: 2.5rem;
+    padding: 0 0.75rem;
+    border-radius: 0.5625rem;
+    color: var(--ink-soft);
+    transition: background-color var(--dur-quick) var(--ease-settle), color var(--dur-quick) var(--ease-settle), box-shadow var(--dur-quick) var(--ease-settle);
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (hover: hover) {
+    .seg > button:hover:not([aria-pressed="true"], [aria-selected="true"], :disabled) {
+      color: var(--ink);
+    }
+  }
+  .seg > button:active:not(:disabled) {
+    color: var(--ink);
+  }
+  .seg > button[aria-pressed="true"],
+  .seg > button[aria-selected="true"] {
+    background: var(--segment);
+    color: var(--ink);
+    font-weight: 500;
+    box-shadow: 0 3px 8px rgb(0 0 0 / 0.12), 0 3px 1px rgb(0 0 0 / 0.04);
+  }
+  .seg > button:focus-visible {
+    outline-offset: 0;
+  }
+  .seg > button:disabled {
+    color: var(--ink-faint);
+    cursor: not-allowed;
+  }
+  .seg-sm > button {
+    min-height: 2.125rem;
+    font-size: 13px;
+  }
+
+  /* A quick reply or a "what is it about this one?" tag. aria-pressed="true" when chosen. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    min-height: 2.25rem;
+    padding: 0 0.875rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink);
+    font-size: 13.5px;
+    line-height: 1.2;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      border-color var(--dur-quick) var(--ease-settle),
+      background-color var(--dur-quick) var(--ease-settle),
+      color var(--dur-quick) var(--ease-settle),
+      transform var(--dur-instant) var(--ease-press);
+  }
+  @media (hover: hover) {
+    .chip:hover:not(:disabled, [aria-pressed="true"]) {
+      border-color: var(--ink-faint);
+      color: var(--ink);
+    }
+  }
+  .chip:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  .chip[aria-pressed="true"] {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .chip:disabled {
+    color: var(--ink-faint);
+    border-color: var(--line);
+    cursor: not-allowed;
+  }
+
+  /* One answer in a one-question-per-screen step */
+  .choice {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    min-height: 3.5rem;
+    padding: 0.9375rem 1.125rem 0.9375rem 1.25rem;
+    border: 1px solid transparent;
+    border-radius: 1.125rem;
+    background: var(--surface-2);
+    text-align: left;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      border-color var(--dur-quick) var(--ease-settle),
+      background-color var(--dur-quick) var(--ease-settle),
+      box-shadow var(--dur-quick) var(--ease-settle),
+      transform var(--dur-instant) var(--ease-press);
+  }
+  .choice-mark {
+    margin-left: auto;
+    flex: none;
+    color: var(--ink-faint);
+    transition: transform var(--dur-base) var(--ease-settle), color var(--dur-quick) var(--ease-settle);
+  }
+  @media (hover: hover) {
+    .choice:hover:not(:disabled) {
+      background: var(--line);
+    }
+    .choice:hover:not(:disabled) .choice-mark {
+      color: var(--ink);
+      transform: translateX(2px);
+    }
+  }
+  .choice:active:not(:disabled) {
+    transform: scale(0.99);
+  }
+  .choice[aria-pressed="true"] {
+    border-color: var(--ink);
+    background: var(--surface);
+  }
+  .choice:disabled {
+    color: var(--ink-faint);
+    cursor: not-allowed;
+  }
+
+  /* A text field */
+  .field {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 0.75rem;
+    background: var(--surface);
+    color: var(--ink);
+    transition: border-color var(--dur-quick) var(--ease-settle), box-shadow var(--dur-quick) var(--ease-settle);
+  }
+  .field::placeholder {
+    color: var(--ink-faint);
+  }
+  .field:focus-visible {
+    outline: none;
+    border-color: var(--focus);
+    box-shadow: 0 0 0 3.5px rgb(0 113 227 / 0.22);
+  }
+
+  .mono {
+    font-family: var(--font-mono);
+    font-feature-settings: "zero";
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ---- Motion -------------------------------------------------------------- */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+/* the agent's presence in a call: a slow swell while it speaks, quicker while it listens */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [class*="animate-[rise"], [class*="animate-[breathe"], .animate-rise { animation: none !important; }
+  .btn, .choice, .chip, .seg > button { transition: none; }
+}
+
+/* ---- Taste Builder: the designer's notebook (components/taste/*) ---- */
+:root {
+  --paper: #ffffff;
+  --paper-dot: #ececf0;
+  --pencil: #86868b;
+  --pen: #1d1d1f;
+  --tape: rgba(0, 0, 0, 0.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #1c1c1e;
+    --paper-dot: #2c2c2e;
+    --pencil: #8e8e93;
+    --pen: #f5f5f7;
+    --tape: rgba(255, 255, 255, 0.08);
+  }
+}
+/* The font stacks, declared again on .type-scope: a custom property resolves where it's
+   declared, so a wrapper carrying another pairing's classes plus .type-scope re-types
+   everything inside it, the notebook included (see /demo/type). */
+:root,
+.type-scope {
+  --font-display: var(--ff-display, Georgia, serif);
+  --font-sans: var(--ff-sans, "Helvetica Neue", Arial, sans-serif);
+  --font-hand: var(--ff-sans, "Helvetica Neue", Arial, sans-serif);
+}
+.type-scope {
+  font-family: var(--font-sans);
+}
+/* the notebook's marks are typographic now: an italic in the secondary grey */
+.hand {
+  font-family: var(--font-hand);
+  font-style: italic;
+  font-weight: 400;
+}
+/* a guess or an open question: a small "?" tag in the margin */
+.query {
+  display: inline-grid;
+  place-items: center;
+  height: 1.125rem;
+  min-width: 1.125rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  color: var(--ink-soft);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+}
+/* a translucent, blurred bar */
+.glass {
+  background: var(--bar);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+.paper {
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--paper-dot) 1px, transparent 1.2px);
+  background-size: 18px 18px;
+}
+/* strokes draw themselves: give a path pathLength="1" and the class */
+@keyframes draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+.draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw var(--dur, 0.7s) cubic-bezier(0.55, 0.1, 0.35, 1) var(--delay, 0s) forwards;
+}
+/* handwriting appears left to right, as if written */
+@keyframes write {
+  from { clip-path: inset(-20% 100% -20% 0); }
+  to { clip-path: inset(-20% -2% -20% 0); }
+}
+.write {
+  clip-path: inset(-20% 100% -20% 0);
+  animation: write var(--dur, 0.8s) steps(18, end) var(--delay, 0s) forwards;
+}
+@keyframes settle {
+  from { opacity: 0; transform: translateY(6px) rotate(var(--tilt, 0deg)) scale(0.98); }
+  to { opacity: 1; transform: rotate(var(--tilt, 0deg)); }
+}
+.settle {
+  opacity: 0;
+  animation: settle 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) var(--delay, 0s) forwards;
+}
+@keyframes grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .draw, .write, .settle { animation: none !important; stroke-dashoffset: 0; clip-path: none; opacity: 1; }
 }

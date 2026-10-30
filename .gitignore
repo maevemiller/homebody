@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# homebody scan pipeline
+/blender/assets/
+/data/
+
+# Fontshare typefaces (ITF Free Font License forbids redistribution): `npm run fonts`
+/app/fonts/*.woff2
