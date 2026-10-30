@@ -4,6 +4,7 @@ import { KEEP_GOING, missing, negated, newPace, target, type Facts, type Length,
 import { related, type State, type Turn } from "./session";
 import { openQuestions, ruleDecisions, sizeLine, spaceLines } from "./craft";
 import { blend, blendName, type SetId } from "./visual";
+import { shopsNamed, sourcingLine } from "./shopping";
 
 // The free fallback when the live designer can't be reached (no key, an error, or the
 // turn cap): the Phase 0 keyword interpreter from agent.ts, walking a fixed plan through
@@ -24,7 +25,7 @@ const PLAN: Record<SectionKey, Step[]> = {
   ],
   style: [{ set: "rooms", min: "the rooms set" }, { set: "palettes", min: "the palettes set" }, { set: "materials" }, { set: "patterns" }, { q: "avoid" }],
   // how personal first, then the practical close
-  extras: [{ q: "meaningful_detail" }, { q: "places" }, { q: "places_feel" }, { q: "anchor" }, { q: "budget", min: "a budget range" }, { q: "timeline", min: "a date that matters" }],
+  extras: [{ q: "meaningful_detail" }, { q: "places" }, { q: "places_feel" }, { q: "anchor" }, { q: "shop", min: "how they like to shop" }, { q: "brands" }, { q: "budget", min: "a budget range" }, { q: "timeline", min: "a date that matters" }],
 };
 const ORDER: SectionKey[] = ["you", "style", "extras"];
 const ABOUT = "Tell me a little about yourself, and how you see yourself using the space.";
@@ -142,6 +143,9 @@ export function offlineTurn(base: Omit<Known, "answers">, s: State, text: string
     const heard = interpret(text, k, focus && BY_ID.has(focus) ? { id: focus, prefill } : undefined);
     const all = heard.notes.reduce(noteDetail, s.notes);
     notes = all.slice(s.notes.length);
+    // shops she names while saying how she shops answer "any shops you love?" too
+    const shops = cur === "shop" && k.answers.brands === undefined ? shopsNamed(text) : [];
+    if (shops.length) heard.answers.push({ id: "brands", value: shops.join(", ") });
     const { answers, recorded } = recordAll(k, heard.answers);
     found = recorded.map((id) => ({ id, value: answers[id] }));
     // the piece she names beats a scan item that only shares a word with it: "my late dad's brown corduroy
@@ -216,7 +220,7 @@ export function offlineTurn(base: Omit<Known, "answers">, s: State, text: string
   const line = lineFor(q.id, k2);
   const kind = q.kind;
   // the practical questions are open: her figure, her date
-  const suggestions = q.id === "tradeoff" ? ["Done quickly", "Getting it just right", "The look", "The budget", "How it works", "Making it personal"] : q.id === "budget" ? [] : q.id === "timeline" ? ["No particular date"] : kind.type === "single" ? kind.choices.slice(0, 3).map((c) => c.label) : [];
+  const suggestions = q.id === "tradeoff" ? ["Done quickly", "Getting it just right", "The look", "The budget", "How it works", "Making it personal"] : q.id === "shop" ? ["Secondhand and vintage", "Mid-range shops", "Designer pieces"] : q.id === "budget" ? [] : q.id === "timeline" ? ["No particular date"] : kind.type === "single" ? kind.choices.slice(0, 3).map((c) => c.label) : [];
   return { ...empty, ...rest, answers, notes, say: join(opening, ack, turnLine, line), section: next.section, suggestions, cur: q.id };
 }
 
@@ -308,6 +312,7 @@ export function template(k: Known, s: State): NonNullable<Turn["concept"]> {
     ...practical.map((t) => (/^budget:/i.test(t) ? `Budget: ${t.replace(/^budget:\s*/i, "").replace(/^(\w)/, (m) => m.toLowerCase())}` : /^(before|by|until|in time)\b/i.test(t) ? `Ready ${t}` : `Date: ${t}`)),
     !money && a.budget && a.budget !== "unsure" ? `Budget: ${label("budget").toLowerCase()}` : "",
     !date && a.timeline ? `Timing: ${label("timeline").toLowerCase()}` : "",
+    sourcingLine(a),
     /\b(rent(ing|al)?|lease|landlord)\b/i.test(said) ? "Renting: nothing that needs the landlord's sign-off" : "",
     a.pets_on_furniture === "yes" && pet ? `${pet.charAt(0).toUpperCase()}${pet.slice(1)} is allowed on the sofa` : "",
   ].filter(Boolean);
@@ -318,12 +323,14 @@ export function template(k: Known, s: State): NonNullable<Turn["concept"]> {
   // answer lists whole photo captions, so it isn't copied here
   const never: string[] = [];
   // the personal detail she gave, in her words, becomes one decision
-  const detail = typeof a.meaningful_detail === "string" && a.meaningful_detail.trim() ? a.meaningful_detail.trim() : s.notes[0] ?? (typeof a.places === "string" && a.places.trim() ? a.places.trim() : undefined);
+  // "keep it simple" to the nod question is a no, not a detail
+  const declined = (v: unknown) => typeof v !== "string" || !v.trim() || /^\W*(keep it simple|simple|no|nope|nothing|none|not really|pass)\b/i.test(v);
+  const detail = !declined(a.meaningful_detail) ? (a.meaningful_detail as string).trim() : s.notes[0] ?? (typeof a.places === "string" && a.places.trim() ? a.places.trim() : undefined);
   const nod = detail?.replace(/^(my|our) /i, "your ").replace(/[.]$/, "");
   // one sentence: who, what it has to do, and who else is on the sofa
   const statement = `A ${room} where ${you} ${verbs.length ? list(verbs.slice(0, 3)) : "can settle in"}${pet ? `, with ${pet}${a.pets_on_furniture === "yes" ? " on the sofa" : ""}` : ""}.`;
   const pace = s.convo.pace ?? newPace();
-  const still = missing(pace, "extras", factsOf(s, a)).map((m) => (m.startsWith("a budget") ? "Budget range" : "A date it needs to be ready for"));
+  const still = missing(pace, "extras", factsOf(s, a)).map((m) => (m.startsWith("a budget") ? "Budget range" : m.startsWith("how they") ? "Where you like to shop" : "A date it needs to be ready for"));
   return {
     title: `Your ${room}`, statement, moods: [], program, constraints, direction,
     decisions: [...ruleDecisions(k, s.taste, said), ...(nod ? [{ decision: "One small nod (a framed print, a cushion or an object on a shelf), not a theme", because: nod }] : [])],

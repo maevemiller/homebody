@@ -98,6 +98,11 @@ export function facts(base: Omit<Known, "answers">, answers: Record<string, Answ
   if (budget && budget !== "unsure") out.push({ key: "budget", zone: "practical", text: `budget: ${label("budget", String(budget)).toLowerCase()}`, sure: sure("budget") });
   const tl = answers.timeline;
   if (tl) out.push({ key: "timeline", zone: "practical", text: `by: ${label("timeline", String(tl)).toLowerCase()}`, icon: "sun", sure: sure("timeline") });
+  const shop = answers.shop;
+  if (Array.isArray(shop) && shop.length) {
+    const names = typeof answers.brands === "string" && answers.brands.trim() ? `; ${answers.brands.trim().replace(/[.!]+$/, "")}` : "";
+    out.push({ key: "shop", zone: "practical", text: `shops: ${shop.map((c) => label("shop", c).toLowerCase()).join(", ")}${names}`, icon: "home", sure: sure("shop") });
+  }
   return out;
 }
 

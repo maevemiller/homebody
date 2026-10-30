@@ -20,9 +20,9 @@ export const LENGTH_IDS = Object.keys(LENGTHS) as Length[];
 
 // Their replies per section at each length, minimum included. Quick is the minimum and nothing more.
 const TARGET: Record<Length, Record<SectionKey, number>> = {
-  quick: { you: 2, style: 2, extras: 2 },
-  standard: { you: 3, style: 4, extras: 3 },
-  deep: { you: 5, style: 6, extras: 5 },
+  quick: { you: 2, style: 2, extras: 3 },
+  standard: { you: 3, style: 4, extras: 4 },
+  deep: { you: 5, style: 6, extras: 6 },
 };
 
 // What their priorities protect, as the designer reads them (open-ended words, mapped onto these)
@@ -75,6 +75,7 @@ export function missing(p: Pace, sec: SectionKey, f: Facts): string[] {
     if (!f.shown.includes("rooms")) out.push("the rooms set");
     if (!f.shown.includes("palettes")) out.push("the palettes set");
   } else {
+    if (f.answers.shop === undefined && !f.practical.some((t) => /^(shops?|sourcing)\b/i.test(t))) out.push("how they like to shop");
     if (f.answers.budget === undefined && !f.practical.some((t) => /[$£€]|\d|thousand|hundred|grand\b/i.test(t))) out.push("a budget range");
     const hurry = p.priorities?.protect.includes("speed") || f.answers.tradeoff === "speed";
     if (f.answers.timeline === undefined && !hurry && !f.practical.some((t) => DATE.test(t))) out.push("a date that matters");
