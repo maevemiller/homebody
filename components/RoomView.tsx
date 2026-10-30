@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import MorePhotos from "@/components/MorePhotos";
 import RoomSort from "@/components/RoomSort";
 import { waitLine } from "@/lib/scan/waitLine";
 import type { RoomSpec } from "@/lib/scan/spec";
@@ -100,6 +101,16 @@ export default function RoomView({ id, dev = false }: { id: string; dev?: boolea
         )}
       </div>
       {actionError && <p className="mt-3 text-sm text-rust">{actionError}</p>}
+
+      {status.stage === "needs-photos" && (
+        <div className="mt-8 rounded-2xl border bg-surface p-5 max-w-xl flex flex-col gap-4">
+          <div>
+            <p className="font-medium">A few more photos</p>
+            <p className="mt-1 text-sm text-ink-soft">We can&apos;t see enough of the room to build it well yet. Add these and we&apos;ll read everything again.</p>
+          </div>
+          <MorePhotos roomId={id} asks={status.asks ?? []} onRestart={() => setData((d) => d && { ...d, status: { ...d.status, stage: "reading", message: "Reading your photos" } })} />
+        </div>
+      )}
 
       {(busy || status.stage === "error") && (
         <div className="mt-8 rounded-2xl border bg-surface p-5">

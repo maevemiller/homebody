@@ -43,3 +43,17 @@ The social media manager appends new entries here. Each entry is something concr
 - **Licensed stand-ins before the real thing:** with no photos of her own room yet, the agents tested capture on
   CC BY photos and wrote a CREDITS.md at download time. Sample catalog data is labeled SAMPLE in the data file and in
   the UI.
+
+## 2026-10-30 (added by the social media manager)
+
+- **Change the structure when patches keep failing.** Read-back corrections failed two critic reviews while the code
+  tried to diff a regenerated brief against the old one. The fix that held was structural: give the model the brief
+  with an id on every line and accept only edit operations (replace, remove, answer an open question). Lines it
+  doesn't name can't drift.
+- **Make "closer to real" a number.** Each photo rebuild now renders from the photo's own camera and logs a color
+  difference (mean ΔE) and an edge-match score. It turns "looks better" into a target the agents can work toward.
+- **Name the feeling, not the fix.** "Think Apple" produced the system font; "tech bro startup" undid it within the
+  day. Short, blunt reactions steered the visual direction faster than specs did. The agents also saved the reaction
+  to memory, so later passes don't repeat it.
+- **Debug the claim before the tool.** "Blender didn't work" was really Chrome turning WebGL off after crashed 3D
+  tabs. The lasting fix wasn't a retry; it was a still-image fallback that says why on screen.

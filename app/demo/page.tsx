@@ -14,7 +14,14 @@ function clearAll() {
   } catch {}
 }
 
+// Step 1 with your own photos: the real read and build
 function startFresh() {
+  clearAll();
+  window.location.href = "/";
+}
+
+// The bundled sample room, for trying the flow without photos
+function startSample() {
   clearAll();
   window.location.href = "/?sample=1";
 }
@@ -52,14 +59,15 @@ export default function DemoPage() {
         <h2 className="text-[1.75rem]">The whole path</h2>
         <PathGrid />
         <p className="text-sm text-ink-soft leading-relaxed">
-          In this demo no photos are needed: step 1 builds a sample living room in 3D on this computer (about a minute).
-          Step 3 is a conversation with Lily, the voice; tap Talk, or choose to type. It already knows what you kept.
+          Step 1 builds your own room from your photos, or a short video walking the room. If they don&apos;t show
+          enough of it, it tells you exactly what to add. Step 3 is a conversation with Lily, the voice; tap Talk, or choose to type. It already knows what you kept.
         </p>
         <div className="grid sm:grid-cols-2 gap-3">
           <button className="btn btn-primary w-full" onClick={startFresh}>Start from the beginning</button>
           <button className="btn btn-quiet w-full" onClick={skipToTaste}>Skip to the conversation</button>
         </div>
-        <p className="text-xs text-ink-faint">Both buttons clear anything saved in this browser from earlier runs.</p>
+        <button className="link link-quiet self-start text-sm min-h-11" onClick={startSample}>Or try it with the sample room, no photos needed</button>
+        <p className="text-xs text-ink-faint">These clear anything saved in this browser from earlier runs.</p>
       </section>
 
       <section className="flex flex-col gap-3">
@@ -111,7 +119,7 @@ export default function DemoPage() {
           <li><span className="text-ink">Real:</span> the 3D room built in Blender at the size you type, sorting, Lily&apos;s voice, and the hidden profile.</li>
           <li><span className="text-ink">The conversation</span> is live: Claude plays the designer, following the intake research, and draws your page as you talk. Each conversation costs a few cents. If it&apos;s slow or unavailable, a simpler scripted version takes over so you&apos;re never stuck.</li>
           <li><span className="text-ink">Listening</span> uses Chrome&apos;s built-in speech recognition, so it can be a little slow to pick up.</li>
-          <li><span className="text-ink">Real photos:</span> reading your own room&apos;s photos with Claude works but costs a little per room, so this demo uses the sample.</li>
+          <li><span className="text-ink">Real photos:</span> step 1 reads your own photos with Claude, which costs a little per room (the reads are capped). The sample room is there for trying the flow for free.</li>
           <li><span className="text-ink">Plug &amp; Play</span> is a first cut: sample products drawn as simple shapes, sample prices. <span className="text-ink">Not built yet:</span> Transaction (buying).</li>
         </ul>
       </section>

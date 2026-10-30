@@ -1,0 +1,1966 @@
+{
+  "_meta": {
+    "description": "Homebody seed product sample: real Amazon-sold furniture from the CC BY 4.0 Amazon Berkeley Objects dataset, each with a to-scale glTF 3D model.",
+    "created": "2026-10-30",
+    "count": 33,
+    "license": "CC BY 4.0. Attribution required: \"Amazon.com\" for data, images and 3D models. See docs/reference/sourcing/README.md.",
+    "dataset": "https://amazon-berkeley-objects.s3.amazonaws.com/index.html",
+    "caveats": [
+      "No prices in the dataset; price_usd is null until a live lookup.",
+      "Snapshot is several years old; many ASINs may be discontinued.",
+      "Images: image_url is the CC BY archive copy (256px); image_url_cdn is Amazon CDN, not guaranteed stable.",
+      "All products are Amazon private labels (Rivet, Stone & Beam, Ravenna Home, AmazonBasics) plus a few third parties, so this is a mid-market slice only."
+    ],
+    "homebody_block": "Each item has a \"homebody\" block shaped like lib/play/products.json (meters, material ids from lib/taste/visual.ts). Tags are guesses to review."
+  },
+  "items": [
+    {
+      "id": "abo-B07QBMQ4YF",
+      "name": "Amazon Brand – Rivet Aiden Mid-Century Sectional with Tapered Wood Legs, 86\"W, Hunter Green",
+      "brand": "Rivet",
+      "category": "sofa",
+      "room": "living",
+      "abo_product_type": "SOFA",
+      "color": "Hunter Green",
+      "color_hex": "#4D514A",
+      "material": "Wood",
+      "fabric": "Fabric",
+      "finish": null,
+      "style_label": "Mid-Century modern",
+      "dims_in": {
+        "w": 85.8,
+        "d": 59.3,
+        "h": 34.5,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 33.07,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 86.22,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 25.98,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B07QBMQ4YF",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/27/270f14e1.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/61ht7u2x7BL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/F/B07QBMQ4YF.glb",
+      "model_faces": 59180,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "sofa",
+        "w": 2.179,
+        "d": 1.506,
+        "h": 0.876,
+        "material": "linen",
+        "accentMaterial": "walnut",
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B071W5VCTH",
+      "name": "Amazon Brand – Stone & Beam Kristin Round Arm Performance Fabric Loveseat Sofa Couch, 76\"W, Sand",
+      "brand": "Stone & Beam",
+      "category": "sofa",
+      "room": "living",
+      "abo_product_type": "SOFA",
+      "color": "Sand",
+      "color_hex": "#BEB2A2",
+      "material": "Solid Hardwood/Laminate Wood Frame/Polyester/Nylon Performance Fabric",
+      "fabric": null,
+      "finish": null,
+      "style_label": "Transitional",
+      "dims_in": {
+        "w": 69.8,
+        "d": 33.9,
+        "h": 36.7,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 37.5,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 37,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 76,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B071W5VCTH",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/93/93d7b9ec.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/81z+3WP27gL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/H/B071W5VCTH.glb",
+      "model_faces": 60196,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "dims_check": "3D model is ~70\" wide vs 76\" listed; trust listing width, rescale model.",
+      "homebody": {
+        "category": "sofa",
+        "w": 1.773,
+        "d": 0.861,
+        "h": 0.932,
+        "material": "linen",
+        "accentMaterial": null,
+        "families_guess": [
+          "farmhouse",
+          "transitional"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B07JCDQWM6",
+      "name": "Amazon Brand – Rivet Thomas Modern Leather Sofa Couch, 81.5\"W, Chestnut",
+      "brand": "Rivet",
+      "category": "sofa",
+      "room": "living",
+      "abo_product_type": "SOFA",
+      "color": "Chestnut",
+      "color_hex": "#4F362B",
+      "material": "Leather",
+      "fabric": "Polyster",
+      "finish": null,
+      "style_label": "Modern",
+      "dims_in": {
+        "w": 82.2,
+        "d": 43.4,
+        "h": 27.7,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 26.8,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 81.5,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 40.9,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B07JCDQWM6",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/c4/c4c46850.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/71e51Rb1h4L.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/6/B07JCDQWM6.glb",
+      "model_faces": 35031,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "sofa",
+        "w": 2.088,
+        "d": 1.102,
+        "h": 0.704,
+        "material": "leather",
+        "accentMaterial": "walnut",
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B082QCQ6Z8",
+      "name": "Amazon Brand – Rivet Bigelow Modern Sofa with Square Legs, 89.4\"W, Navy",
+      "brand": "Rivet",
+      "category": "sofa",
+      "room": "living",
+      "abo_product_type": "SOFA",
+      "color": "Navy",
+      "color_hex": null,
+      "material": null,
+      "fabric": null,
+      "finish": null,
+      "style_label": "Sofa",
+      "dims_in": {
+        "w": 89.4,
+        "d": 37.5,
+        "h": 30.8,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 30.71,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 89.37,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 37.4,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B082QCQ6Z8",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/8e/8e4470a1.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/71LCFALgaqL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/8/B082QCQ6Z8.glb",
+      "model_faces": 60880,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "sofa",
+        "w": 2.271,
+        "d": 0.953,
+        "h": 0.782,
+        "material": "linen",
+        "accentMaterial": "black_steel",
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B071J7Q3JM",
+      "name": "Amazon Brand – Stone & Beam Bradbury Chesterfield Modern Tufted Leather Loveseat Sofa Couch, 78.7\"W, Cognac",
+      "brand": "Stone & Beam",
+      "category": "sofa",
+      "room": "living",
+      "abo_product_type": "SOFA",
+      "color": "Cognac",
+      "color_hex": "#9D6D49",
+      "material": "wood /100% leather",
+      "fabric": null,
+      "finish": null,
+      "style_label": null,
+      "dims_in": {
+        "w": 77.9,
+        "d": 41.0,
+        "h": 34.5,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 30.31,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 78.74,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 38.98,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B071J7Q3JM",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/d9/d96e999a.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/81MCozI7d7L.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/M/B071J7Q3JM.glb",
+      "model_faces": 24446,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "sofa",
+        "w": 1.979,
+        "d": 1.041,
+        "h": 0.876,
+        "material": "leather",
+        "accentMaterial": null,
+        "families_guess": [
+          "farmhouse",
+          "transitional"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B075X3SHT1",
+      "name": "Amazon Brand – Rivet Jamie Upholstered Mid-Century Modern Low Arm Accent Chair, 31\"W, Burnt Orange",
+      "brand": "Rivet",
+      "category": "accent_chair",
+      "room": "living",
+      "abo_product_type": "CHAIR",
+      "color": "Burnt Orange",
+      "color_hex": "#964727",
+      "material": "70% Polyester, 30% Acrylic",
+      "fabric": null,
+      "finish": null,
+      "style_label": "Transitional",
+      "dims_in": {
+        "w": 31.6,
+        "d": 30.9,
+        "h": 35.9,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 35,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 32.3,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 31.1,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B075X3SHT1",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/08/0850b79e.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/A16ZONSLp9L.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/1/B075X3SHT1.glb",
+      "model_faces": 22364,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "chair",
+        "w": 0.803,
+        "d": 0.785,
+        "h": 0.912,
+        "material": "linen",
+        "accentMaterial": "walnut",
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B075X4WBQR",
+      "name": "Amazon Brand – Rivet Garfield Mid-Century Modern Top-Grain Leather Recliner Chair, 31\"W, Aged Black",
+      "brand": "Rivet",
+      "category": "accent_chair",
+      "room": "living",
+      "abo_product_type": "CHAIR",
+      "color": "Tobacco",
+      "color_hex": "#714733",
+      "material": "Leather",
+      "fabric": null,
+      "finish": null,
+      "style_label": "Mid-Century Modern",
+      "dims_in": {
+        "w": 32.7,
+        "d": 36.3,
+        "h": 36.3,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 34,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 34.25,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 31,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B075X4WBQR",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/1b/1b6797e0.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/91ctG7N0z4L.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/R/B075X4WBQR.glb",
+      "model_faces": 20024,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "chair",
+        "w": 0.831,
+        "d": 0.922,
+        "h": 0.922,
+        "material": "leather",
+        "accentMaterial": "walnut",
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B0857JM2NC",
+      "name": "Amazon Brand – Stone & Beam Mid-Century Beech and Rattan Dining Chair with Arms, 21.9\"W, Natural",
+      "brand": "Stone & Beam",
+      "category": "dining_chair",
+      "room": "dining",
+      "abo_product_type": "CHAIR",
+      "color": "Natural",
+      "color_hex": null,
+      "material": "Beech",
+      "fabric": null,
+      "finish": null,
+      "style_label": "Firm",
+      "dims_in": {
+        "w": 21.9,
+        "d": 19.5,
+        "h": 30.0,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 30,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 21.9,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 19.5,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B0857JM2NC",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/e0/e0f84ad9.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/71bsxnNPoLL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/C/B0857JM2NC.glb",
+      "model_faces": 180768,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "chair",
+        "w": 0.556,
+        "d": 0.495,
+        "h": 0.762,
+        "material": "white_oak",
+        "accentMaterial": "jute",
+        "families_guess": [
+          "farmhouse",
+          "transitional"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B084T7TZDG",
+      "name": "Stone & Beam Classic Wishbone Dining Chair, 22.4\"W, Black / Black",
+      "brand": "Stone & Beam",
+      "category": "dining_chair",
+      "room": "dining",
+      "abo_product_type": "CHAIR",
+      "color": "Black/Black",
+      "color_hex": null,
+      "material": "Beech",
+      "fabric": null,
+      "finish": null,
+      "style_label": "22.4\"Wx22.8\"Dx28.75\"H",
+      "dims_in": {
+        "w": 22.4,
+        "d": 22.8,
+        "h": 28.8,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 28.75,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 22.8,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 22.4,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B084T7TZDG",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/e4/e46dac26.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/61+e4-43uEL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/G/B084T7TZDG.glb",
+      "model_faces": 78532,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "chair",
+        "w": 0.569,
+        "d": 0.579,
+        "h": 0.732,
+        "material": "black_steel",
+        "accentMaterial": null,
+        "families_guess": [
+          "farmhouse",
+          "transitional"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B071J7Q9WM",
+      "name": "Amazon Brand – Rivet Audrey Modern Ottoman, 39\"W, Grey Storm",
+      "brand": "Rivet",
+      "category": "ottoman",
+      "room": "living",
+      "abo_product_type": "OTTOMAN",
+      "color": "Grey Storm",
+      "color_hex": "#747473",
+      "material": "Wood /synthetic",
+      "fabric": "Fabric",
+      "finish": null,
+      "style_label": null,
+      "dims_in": {
+        "w": 40.0,
+        "d": 40.3,
+        "h": 16.6,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 17.7,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 39.4,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 39.4,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B071J7Q9WM",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/57/574cfa9f.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/A1IID5eZUhL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/M/B071J7Q9WM.glb",
+      "model_faces": 10636,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "ottoman",
+        "w": 1.016,
+        "d": 1.024,
+        "h": 0.422,
+        "material": "linen",
+        "accentMaterial": null,
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B082QDC64H",
+      "name": "Amazon Brand – Rivet Revere Round Leather Iron-Framed Ottoman, 30.3\"W, Cognac",
+      "brand": "Rivet",
+      "category": "ottoman",
+      "room": "living",
+      "abo_product_type": "OTTOMAN",
+      "color": "Cognac",
+      "color_hex": null,
+      "material": null,
+      "fabric": null,
+      "finish": null,
+      "style_label": "Ottoman",
+      "dims_in": {
+        "w": 30.3,
+        "d": 30.4,
+        "h": 18.1,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 18.1,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 30.3,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 30.3,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B082QDC64H",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/7d/7d390381.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/71BJJODqbVL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/H/B082QDC64H.glb",
+      "model_faces": 14404,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "ottoman",
+        "w": 0.77,
+        "d": 0.772,
+        "h": 0.46,
+        "material": "leather",
+        "accentMaterial": "black_steel",
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B075YV7SKC",
+      "name": "Amazon Brand – Rivet Mid-Century Round Wood Dining Table, 42\"W, Chestnut",
+      "brand": "Rivet",
+      "category": "dining_table",
+      "room": "dining",
+      "abo_product_type": "TABLE",
+      "color": "Chestnut",
+      "color_hex": "#63564C",
+      "material": "wood",
+      "fabric": null,
+      "finish": null,
+      "style_label": null,
+      "dims_in": {
+        "w": 41.5,
+        "d": 41.4,
+        "h": 31.0,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 30,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 42,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 42,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B075YV7SKC",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/30/304f4661.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/71JGjYvSKDL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/C/B075YV7SKC.glb",
+      "model_faces": 50400,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "table",
+        "w": 1.054,
+        "d": 1.052,
+        "h": 0.787,
+        "material": "walnut",
+        "accentMaterial": null,
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B07B86VTX4",
+      "name": "Amazon Brand – Rivet Federal Mid-Century Modern Medium Wood Dining Table, 60-82\"L, Brown",
+      "brand": "Rivet",
+      "category": "dining_table",
+      "room": "dining",
+      "abo_product_type": "TABLE",
+      "color": "Brown",
+      "color_hex": "#543A2C",
+      "material": "Walnut",
+      "fabric": null,
+      "finish": null,
+      "style_label": "0",
+      "dims_in": {
+        "w": 60.0,
+        "d": 39.0,
+        "h": 30.0,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 30,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 39,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 82,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B07B86VTX4",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/37/37192b81.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/81-bopS4jHL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/4/B07B86VTX4.glb",
+      "model_faces": 8092,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "table",
+        "w": 1.524,
+        "d": 0.991,
+        "h": 0.762,
+        "material": "walnut",
+        "accentMaterial": null,
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B07L8DT2XT",
+      "name": "Phoenix Home Rustic Industrial Solid Wood and Steel Open Shelf Coffee Table, Brown",
+      "brand": "Phoenix Home",
+      "category": "coffee_table",
+      "room": "living",
+      "abo_product_type": "TABLE",
+      "color": "Brown",
+      "color_hex": "#814224",
+      "material": "Pine",
+      "fabric": null,
+      "finish": null,
+      "style_label": "Industrial",
+      "dims_in": {
+        "w": 42.0,
+        "d": 24.0,
+        "h": 18.0,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 18.0,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 48.0,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 24.0,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B07L8DT2XT",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/97/97acb18a.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/6183bCUUwoL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/T/B07L8DT2XT.glb",
+      "model_faces": 12272,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "table",
+        "w": 1.067,
+        "d": 0.61,
+        "h": 0.457,
+        "material": "reclaimed",
+        "accentMaterial": "black_steel",
+        "families_guess": [
+          "industrial"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B07NYSHH9W",
+      "name": "Ravenna Home Classic Plank-Top End Table, 18\"W, Espresso Wood",
+      "brand": "Ravenna Home",
+      "category": "side_table",
+      "room": "living",
+      "abo_product_type": "TABLE",
+      "color": "Espresso",
+      "color_hex": null,
+      "material": null,
+      "fabric": null,
+      "finish": null,
+      "style_label": null,
+      "dims_in": {
+        "w": 23.7,
+        "d": 18.1,
+        "h": 23.8,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 24,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 24,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 18,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B07NYSHH9W",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/3b/3b50125a.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/71mXgpol50L.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/W/B07NYSHH9W.glb",
+      "model_faces": 7080,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "table",
+        "w": 0.602,
+        "d": 0.46,
+        "h": 0.605,
+        "material": "walnut",
+        "accentMaterial": null,
+        "families_guess": [
+          "transitional",
+          "traditional"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B075X38PZ7",
+      "name": "Amazon Brand – Stone & Beam Newport Nightstand End Table, 22\"W, Toffee Oak",
+      "brand": "Stone & Beam",
+      "category": "nightstand",
+      "room": "bedroom",
+      "abo_product_type": "TABLE",
+      "color": "Brown",
+      "color_hex": "#553B2A",
+      "material": "Metal; Wood",
+      "fabric": null,
+      "finish": null,
+      "style_label": "Nightstand",
+      "dims_in": {
+        "w": 23.1,
+        "d": 18.2,
+        "h": 23.5,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 24,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 16,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 22,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B075X38PZ7",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/d6/d6954826.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/91v0n0dyV9L.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/7/B075X38PZ7.glb",
+      "model_faces": 16934,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "table",
+        "w": 0.587,
+        "d": 0.462,
+        "h": 0.597,
+        "material": "white_oak",
+        "accentMaterial": "brass",
+        "families_guess": [
+          "farmhouse",
+          "transitional"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B07DB9638P",
+      "name": "Amazon Brand – Ravenna Home Anne Marie Half-Moon Curved Leg Storage Console Entryway Table, 48\"W, Dark Espresso",
+      "brand": "Ravenna Home",
+      "category": "console_table",
+      "room": "entry",
+      "abo_product_type": "TABLE",
+      "color": "Dark Espresso",
+      "color_hex": "#401D19",
+      "material": "Pine",
+      "fabric": null,
+      "finish": null,
+      "style_label": "Console Table",
+      "dims_in": {
+        "w": 48.0,
+        "d": 15.9,
+        "h": 30.7,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 30.7,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 15.5,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 48,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B07DB9638P",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/b0/b0159539.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/710qFEjZnGL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/P/B07DB9638P.glb",
+      "model_faces": 4468,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "table",
+        "w": 1.219,
+        "d": 0.404,
+        "h": 0.78,
+        "material": "walnut",
+        "accentMaterial": null,
+        "families_guess": [
+          "transitional",
+          "traditional"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B07B7DL32P",
+      "name": "Amazon Brand – Rivet Anne Mid-Century Modern Wood Office Computer Desk, 62\"W, Walnut",
+      "brand": "Rivet",
+      "category": "desk",
+      "room": "office",
+      "abo_product_type": "DESK",
+      "color": "Walnut",
+      "color_hex": "#63483A",
+      "material": "Wood",
+      "fabric": null,
+      "finish": null,
+      "style_label": "Desk",
+      "dims_in": {
+        "w": 62.0,
+        "d": 28.5,
+        "h": 30.0,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 30,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 28,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 62,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B07B7DL32P",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/14/1478021a.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/81DV+dV0+5L.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/P/B07B7DL32P.glb",
+      "model_faces": 8082,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "desk",
+        "w": 1.575,
+        "d": 0.724,
+        "h": 0.762,
+        "material": "walnut",
+        "accentMaterial": null,
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B07B79WSKT",
+      "name": "Amazon Brand – Rivet Federal Mid-Century Modern Wood Dining Buffet Sideboard, Cabinet Credenza, Storage, Brown",
+      "brand": "Rivet",
+      "category": "sideboard",
+      "room": "dining",
+      "abo_product_type": "CABINET",
+      "color": "Brown",
+      "color_hex": "#603C2C",
+      "material": null,
+      "fabric": null,
+      "finish": null,
+      "style_label": "Mid-Century Modern",
+      "dims_in": {
+        "w": 62.0,
+        "d": 19.9,
+        "h": 37.0,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 36,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 19,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 62,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B07B79WSKT",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/79/795a58b9.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/91UhhzzqkpL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/T/B07B79WSKT.glb",
+      "model_faces": 55178,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "storage",
+        "w": 1.575,
+        "d": 0.505,
+        "h": 0.94,
+        "material": "walnut",
+        "accentMaterial": null,
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B07PSZHDNK",
+      "name": "AmazonBasics Classic 5-Tier Open Bookcase with Solid Rubber Wood - Walnut",
+      "brand": "AmazonBasics",
+      "category": "bookcase",
+      "room": "living",
+      "abo_product_type": "SHELF",
+      "color": "Walnut",
+      "color_hex": "#523128",
+      "material": "wood",
+      "fabric": null,
+      "finish": "walnut",
+      "style_label": "Classic 5-Tier",
+      "dims_in": {
+        "w": 26.0,
+        "d": 15.0,
+        "h": 74.5,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 74.48,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 15.03,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 25.98,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B07PSZHDNK",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/0f/0f617b4a.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/71KuRVTm3GL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/K/B07PSZHDNK.glb",
+      "model_faces": 79892,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "shelf",
+        "w": 0.66,
+        "d": 0.381,
+        "h": 1.892,
+        "material": "walnut",
+        "accentMaterial": null,
+        "families_guess": [
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B075YZPG5Y",
+      "name": "Amazon Brand – Rivet Eastport Industrial 7-Drawer Wood Dresser, 49.2\"W, Oak Finish",
+      "brand": "Rivet",
+      "category": "dresser",
+      "room": "bedroom",
+      "abo_product_type": "DRESSER",
+      "color": "Brown",
+      "color_hex": "#A5764C",
+      "material": "Wood",
+      "fabric": null,
+      "finish": "oak",
+      "style_label": "Dresser",
+      "dims_in": {
+        "w": 49.6,
+        "d": 18.9,
+        "h": 32.5,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 32.8,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 17.7,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 49.2,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B075YZPG5Y",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/aa/aaed79e7.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/91DwuRcrAVL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/Y/B075YZPG5Y.glb",
+      "model_faces": 21840,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "storage",
+        "w": 1.26,
+        "d": 0.48,
+        "h": 0.826,
+        "material": "reclaimed",
+        "accentMaterial": "black_steel",
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B07B4W81YX",
+      "name": "Amazon Brand – Rivet Brecken Modern Wood Queen Bed Frame Platform with Headboard, 64\"W, Brown",
+      "brand": "Rivet",
+      "category": "bed",
+      "room": "bedroom",
+      "abo_product_type": "BED",
+      "color": "Brown",
+      "color_hex": null,
+      "material": "Wood",
+      "fabric": null,
+      "finish": null,
+      "style_label": "Queen Bed",
+      "dims_in": {
+        "w": 63.9,
+        "d": 88.0,
+        "h": 60.5,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 60,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 88,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 64,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B07B4W81YX",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/3b/3bb0409e.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/91QxUSWXwcL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/X/B07B4W81YX.glb",
+      "model_faces": 17776,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "bed",
+        "w": 1.623,
+        "d": 2.235,
+        "h": 1.537,
+        "material": "walnut",
+        "accentMaterial": null,
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B07B4ZGB6K",
+      "name": "Amazon Brand – Stone & Beam Bridgewater Curved Queen Headboard, 66\"W, Cream Herringbone",
+      "brand": "Stone & Beam",
+      "category": "headboard",
+      "room": "bedroom",
+      "abo_product_type": "HEADBOARD",
+      "color": "Cream Herringbone Performance Beige",
+      "color_hex": null,
+      "material": "Polyster/linen blend fabric, polyurethane foam, plywood frame",
+      "fabric": "Romero Performance Beige",
+      "finish": null,
+      "style_label": "headboards",
+      "dims_in": {
+        "w": 68.5,
+        "d": 86.4,
+        "h": 57.0,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 56,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 66,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 4,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B07B4ZGB6K",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/3c/3c15d06e.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/81kpn07w0mL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/K/B07B4ZGB6K.glb",
+      "model_faces": 42164,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "dims_check": "3D model appears to include a bed for display (86\" deep); headboard itself is ~66\"W x 4\"D x 56\"H per listing.",
+      "homebody": {
+        "category": "bed",
+        "w": 1.74,
+        "d": 2.195,
+        "h": 1.448,
+        "material": "linen",
+        "accentMaterial": null,
+        "families_guess": [
+          "farmhouse",
+          "transitional"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B0825DC7JP",
+      "name": "Amazon Brand – Rivet Mid-Century Modern Single-Light Marble Pendant with Exposed Bulb and Satin Brass Accents, LED Bulb Included, 66\"H, White",
+      "brand": "Rivet",
+      "category": "pendant_light",
+      "room": "dining",
+      "abo_product_type": "LIGHT_FIXTURE",
+      "color": "White",
+      "color_hex": null,
+      "material": "Metal",
+      "fabric": null,
+      "finish": "Satin",
+      "style_label": null,
+      "dims_in": {
+        "w": 5.1,
+        "d": 5.1,
+        "h": 65.7,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 66,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 5,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 5,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B0825DC7JP",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/af/af5534dc.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/41SZWsouOxL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/P/B0825DC7JP.glb",
+      "model_faces": 8946,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "lamp",
+        "w": 0.13,
+        "d": 0.13,
+        "h": 1.669,
+        "material": "limestone",
+        "accentMaterial": "brass",
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B07374SBFN",
+      "name": "Amazon Brand – Stone & Beam Glass Column Brass Floor Lamp, With Bulb, Linen Shade, 13.0\" x 13.0\" x 59.0\", Brushed Brass",
+      "brand": "Stone & Beam",
+      "category": "floor_lamp",
+      "room": "living",
+      "abo_product_type": "LAMP",
+      "color": "Brushed Brass",
+      "color_hex": null,
+      "material": "Glass+Metal+Fabric",
+      "fabric": null,
+      "finish": "Brushed",
+      "style_label": "Floor Lamp",
+      "dims_in": {
+        "w": 16.5,
+        "d": 16.5,
+        "h": 58.1,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 59,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 17,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 17,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B07374SBFN",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/65/651b3059.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/718WtA2A3iL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/N/B07374SBFN.glb",
+      "model_faces": 4796,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "lamp",
+        "w": 0.419,
+        "d": 0.419,
+        "h": 1.476,
+        "material": "brass",
+        "accentMaterial": "linen",
+        "families_guess": [
+          "farmhouse",
+          "transitional"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B07HK85S41",
+      "name": "Amazon Brand – Rivet Mid Century Modern Standing Floor Lamp with White Shade and LED Light Bulb - 58.25 Inches, Matte Black and Antique Brass",
+      "brand": "Rivet",
+      "category": "floor_lamp",
+      "room": "living",
+      "abo_product_type": "LAMP",
+      "color": "Matte Black and Antique Brass",
+      "color_hex": null,
+      "material": "Linen",
+      "fabric": null,
+      "finish": "antique",
+      "style_label": "Floor Lamp",
+      "dims_in": {
+        "w": 15.0,
+        "d": 15.0,
+        "h": 58.2,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 17.75,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 17.38,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 17.5,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B07HK85S41",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/ea/ea913ec5.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/41zu5+hs8XL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/1/B07HK85S41.glb",
+      "model_faces": 21028,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "lamp",
+        "w": 0.381,
+        "d": 0.381,
+        "h": 1.478,
+        "material": "black_steel",
+        "accentMaterial": "paper",
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B0825DNRYN",
+      "name": "Amazon Brand – Rivet Scandinavian Gray-Wood Table Lamp with Gray Shade, LED Bulb Included, 17\"H, Grey",
+      "brand": "Rivet",
+      "category": "table_lamp",
+      "room": "bedroom",
+      "abo_product_type": "LAMP",
+      "color": "Grey",
+      "color_hex": null,
+      "material": "Wood",
+      "fabric": null,
+      "finish": null,
+      "style_label": null,
+      "dims_in": {
+        "w": 9.0,
+        "d": 9.0,
+        "h": 16.9,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 17,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 9,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 9,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B0825DNRYN",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/41/416e3a6b.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/61jxYPnELlL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/N/B0825DNRYN.glb",
+      "model_faces": 7796,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "lamp",
+        "w": 0.229,
+        "d": 0.229,
+        "h": 0.429,
+        "material": "white_oak",
+        "accentMaterial": "linen",
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B082DPT2QM",
+      "name": "Amazon Brand – Rivet Modern Faux-Stone Table Lamp, LED Bulb Included, 16\"H, Sandy Gray",
+      "brand": "Rivet",
+      "category": "table_lamp",
+      "room": "living",
+      "abo_product_type": "LAMP",
+      "color": "Sandy Gray",
+      "color_hex": null,
+      "material": null,
+      "fabric": null,
+      "finish": null,
+      "style_label": "Modern",
+      "dims_in": {
+        "w": 21.5,
+        "d": 15.8,
+        "h": 18.0,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 16,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 12,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 12,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B082DPT2QM",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/b8/b844394a.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/71RXtNc8mcL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/M/B082DPT2QM.glb",
+      "model_faces": 63834,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "dims_check": "3D model bounding box (21.5\" wide) exceeds listed 12\" shade; check model before placing.",
+      "homebody": {
+        "category": "lamp",
+        "w": 0.546,
+        "d": 0.401,
+        "h": 0.457,
+        "material": "plaster",
+        "accentMaterial": null,
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B071J4VX9C",
+      "name": "Amazon Brand – Rivet Textured Zen Hand-Woven Jute Area Rug, 7'6'' x 9'6'', Natural",
+      "brand": "Rivet",
+      "category": "rug",
+      "room": "living",
+      "abo_product_type": "RUG",
+      "color": "Natural",
+      "color_hex": null,
+      "material": "jute",
+      "fabric": null,
+      "finish": null,
+      "style_label": null,
+      "dims_in": {
+        "w": 114.1,
+        "d": 89.7,
+        "h": 1.4,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 0.5,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 114.0,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 90.0,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B071J4VX9C",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/4a/4aa01812.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/91-d-7ExwkL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/C/B071J4VX9C.glb",
+      "model_faces": 5000,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "rug",
+        "w": 2.898,
+        "d": 2.278,
+        "h": 0.036,
+        "material": "jute",
+        "accentMaterial": null,
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B0725Z9MX3",
+      "name": "Stone & Beam Contemporary Speckle Wool Area Rug, 5' x 7' 6\", Chestnut",
+      "brand": "Stone & Beam",
+      "category": "rug",
+      "room": "living",
+      "abo_product_type": "RUG",
+      "color": "Chestnut",
+      "color_hex": null,
+      "material": "wool",
+      "fabric": null,
+      "finish": null,
+      "style_label": null,
+      "dims_in": {
+        "w": 89.9,
+        "d": 60.9,
+        "h": 0.5,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 0.5,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 90.0,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 60.0,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B0725Z9MX3",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/cb/cbc47d7c.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/A11tNiF6IgL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/3/B0725Z9MX3.glb",
+      "model_faces": 500,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "rug",
+        "w": 2.283,
+        "d": 1.547,
+        "h": 0.013,
+        "material": "wool",
+        "accentMaterial": null,
+        "families_guess": [
+          "farmhouse",
+          "transitional"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B07QGG3PVY",
+      "name": "Amazon Brand – Rivet Modern Handtufted Cotton and Wool Area Rug, 8' x 10', Distressed Blue and Ivory",
+      "brand": "Rivet",
+      "category": "rug",
+      "room": "living",
+      "abo_product_type": "RUG",
+      "color": "Blue/Ivory",
+      "color_hex": null,
+      "material": "wool",
+      "fabric": null,
+      "finish": null,
+      "style_label": "Modern",
+      "dims_in": {
+        "w": 118.8,
+        "d": 95.1,
+        "h": 0.5,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 0.3,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 96.0,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 120.0,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B07QGG3PVY",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/8d/8d6bf2d4.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/A13DrS-u3yL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/Y/B07QGG3PVY.glb",
+      "model_faces": 1968,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "rug",
+        "w": 3.018,
+        "d": 2.416,
+        "h": 0.013,
+        "material": "wool",
+        "accentMaterial": null,
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B084HV148L",
+      "name": "Amazon Brand - Rivet Modern Round Cutout Hanging Mirror, 22.25\" Diameter, Gold",
+      "brand": "Rivet",
+      "category": "mirror",
+      "room": "entry",
+      "abo_product_type": "HOME_MIRROR",
+      "color": "Brass",
+      "color_hex": null,
+      "material": "brass",
+      "fabric": null,
+      "finish": "Painted",
+      "style_label": "Round",
+      "dims_in": {
+        "w": 22.2,
+        "d": 1.3,
+        "h": 22.2,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 22.25,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 22.25,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 1.25,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B084HV148L",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/29/2907e98b.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/71KhbOffg+L.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/L/B084HV148L.glb",
+      "model_faces": 15572,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "mirror",
+        "w": 0.564,
+        "d": 0.033,
+        "h": 0.564,
+        "material": "brass",
+        "accentMaterial": null,
+        "families_guess": [
+          "midcentury",
+          "minimal"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    },
+    {
+      "id": "abo-B07QC8CC1V",
+      "name": "Amazon Brand – Stone & Beam Mid-Century Two-Toned Planter, 10.53\"H, Indigo Blue",
+      "brand": "Stone & Beam",
+      "category": "planter",
+      "room": "living",
+      "abo_product_type": "PLANTER",
+      "color": "Indigo",
+      "color_hex": null,
+      "material": "Stone",
+      "fabric": null,
+      "finish": null,
+      "style_label": null,
+      "dims_in": {
+        "w": 10.5,
+        "d": 10.5,
+        "h": 10.6,
+        "basis": "measured from the ABO 3D model bounding box (glTF Y-up: x=width, y=height, z=depth); cross-check with listing_dims"
+      },
+      "listing_dims": {
+        "height": {
+          "value": 10.53,
+          "unit": "inches"
+        },
+        "length": {
+          "value": 10.43,
+          "unit": "inches"
+        },
+        "width": {
+          "value": 10.43,
+          "unit": "inches"
+        }
+      },
+      "price_usd": null,
+      "price_note": "Not in the licensed dataset. Fetch live price via Amazon Creators API (needs Associates account) before showing.",
+      "product_url": "https://www.amazon.com/dp/B07QC8CC1V",
+      "image_url": "https://amazon-berkeley-objects.s3.amazonaws.com/images/small/24/24e5db48.jpg",
+      "image_url_cdn": "https://m.media-amazon.com/images/I/814wQJvdcjL.jpg",
+      "model_glb_url": "https://amazon-berkeley-objects.s3.amazonaws.com/3dmodels/original/V/B07QC8CC1V.glb",
+      "model_faces": 9760,
+      "model_year": null,
+      "source": "Amazon Berkeley Objects (ABO) dataset, amazon.com listing snapshot (c. 2017-2020)",
+      "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "attribution": "Data, images and 3D model: Amazon.com. Dataset: Guillaumin, Dideriksen, Deng, Arora (Amazon.com), Collins, Malik (UC Berkeley). Changes: fields selected and renamed by Homebody; dims_in derived from the 3D model.",
+      "availability": "unverified: listing may be discontinued; check live before showing as buyable",
+      "homebody": {
+        "category": "decor",
+        "w": 0.267,
+        "d": 0.267,
+        "h": 0.269,
+        "material": "terrazzo",
+        "accentMaterial": null,
+        "families_guess": [
+          "farmhouse",
+          "transitional"
+        ],
+        "note": "Homebody-authored tags (guesses from name, brand and photo text), shaped like lib/play/products.json. Units: meters."
+      }
+    }
+  ]
+}

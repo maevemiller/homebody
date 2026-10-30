@@ -2,7 +2,8 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import MorePhotos from "@/components/MorePhotos";
 import RoomSort, { useBins } from "@/components/RoomSort";
 import { PathStage } from "@/components/path/PathOverview";
 import { waitLine } from "@/lib/scan/waitLine";
@@ -40,6 +41,8 @@ interface Saved {
   roomId?: string;
   // detected items the owner said aren't actually in the room
   absent?: string[];
+  // back on the sort screen from the review ("Change something"): done sorting returns to the review
+  revise?: boolean;
 }
 
 // Items Claude was less sure of, and that were left on Keep, get a quick "is this really here?" before the review
@@ -152,6 +155,11 @@ export default function CaptureFlow() {
   // On the sort screen, Back undoes the last assignment instead of leaving
   const sortUndo = useRef<(() => void) | null>(null);
   const [undoSteps, setUndoSteps] = useState(0);
+  // Sorting needs a choice for every piece: Continue jumps to the first one left
+  const sortJump = useRef<(() => string | null) | null>(null);
+  const [sortLeft, setSortLeft] = useState<number | null>(null);
+  const [nudge, setNudge] = useState("");
+  const onSortProgress = useCallback((sorted: number, total: number) => setSortLeft(total - sorted), []);
   // ?sample=1 builds the bundled sample room instead of reading photos: free, no API key
   const [sample] = useState(() => new URLSearchParams(window.location.search).has("sample"));
   const a = s.answers;
@@ -163,7 +171,7 @@ export default function CaptureFlow() {
   }, [s]);
 
   // Follow the build once photos are uploaded; stop polling when it's finished
-  const finished = room?.status.stage === "done" || room?.status.stage === "error";
+  const finished = room?.status.stage === "done" || room?.status.stage === "error" || room?.status.stage === "needs-photos";
   useEffect(() => {
     if (!s.roomId) return;
     let alive = true;
@@ -207,11 +215,23 @@ export default function CaptureFlow() {
   };
   // Once photos are uploaded there's no going back past the build; on the sort
   // screen Back steps back through sorting choices instead
-  const canBack = s.cur === "sort" ? undoSteps > 0 : s.history.length > 0 && s.cur !== "build";
+  // (when revising from the review, Back with nothing to undo returns to the review)
+  const canBack = s.cur === "sort" ? undoSteps > 0 || !!s.revise : s.history.length > 0 && s.cur !== "build";
   const back = () => {
     if (s.cur === "sort" && undoSteps > 0) return sortUndo.current?.();
     setError("");
-    setS((p) => ({ ...p, cur: p.history[p.history.length - 1], history: p.history.slice(0, -1) }));
+    setNudge("");
+    setS((p) => ({ ...p, revise: false, cur: p.history[p.history.length - 1], history: p.history.slice(0, -1) }));
+  };
+  const doneSorting = () => {
+    if (sortLeft) {
+      const name = sortJump.current?.();
+      setNudge(name ? `Choose for the ${inline(name)} first. ${sortLeft} left to sort.` : "");
+      return;
+    }
+    setNudge("");
+    if (s.revise) return setS((p) => ({ ...p, revise: false, history: [...p.history, p.cur], cur: "review" }));
+    next();
   };
   const restart = () => {
     setS(START);
@@ -227,9 +247,10 @@ export default function CaptureFlow() {
     setSending(true);
     setError("");
     const form = new FormData();
-    // Measurements only builds a box room from the typed size; photos go to Claude
+    // Measurements only builds a box room from the typed size; photos go to Claude.
+    // The sample is only for ?sample=1 with nothing uploaded: real photos always build the real room.
     if (measurementsOnly(answers)) form.set("mode", "measurements");
-    else if (sample) form.set("sample", "1");
+    else if (sample && !files.length) form.set("sample", "1");
     files.forEach((f) => form.append("photos", f));
     form.set("measurement", measurement);
     // the build is fitted to these exactly
@@ -343,7 +364,7 @@ export default function CaptureFlow() {
         {s.cur === "tips" && (
           <Question title={`Let's photograph your ${named(a) || "room"}`}>
             <ol className="flex flex-col gap-3 text-sm">
-              {["Turn the lights on and open the curtains.", "Take a photo from each corner, facing into the room.", "Add 2–3 panoramas from the middle and the doorway.", "Get the windows and doors in at least one shot each."].map((t, i) => (
+              {["Turn the lights on and open the curtains.", "Take a photo from each corner, facing into the room.", "Get each wall, the windows and doors, and some open floor.", "Or take a short video walking slowly around the room. It helps most."].map((t, i) => (
                 <li key={t} className="grid grid-cols-[1.75rem_1fr] gap-3 items-baseline border-t pt-3 first:border-t-0 first:pt-0">
                   <span className="text-xs num font-semibold text-clay">0{i + 1}</span>
                   <span className="text-base">{t}</span>
@@ -357,12 +378,12 @@ export default function CaptureFlow() {
         )}
 
         {s.cur === "upload" && (
-          <Question title={a.access === "no" && a.have.includes("floorplan") ? "Add your floor plan and photos" : "Add your photos"} sub="Phone photos are fine, HEIC included. Up to 24.">
+          <Question title={a.access === "no" && a.have.includes("floorplan") ? "Add your floor plan and photos" : "Add your photos"} sub="Phone photos are fine, HEIC included, or a short walkthrough video. Up to 24 photos.">
             <label className="flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-line-strong bg-surface p-10 text-center cursor-pointer transition-colors hover:bg-surface-2 hover:border-ink-faint has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-clay has-[:focus-visible]:outline-offset-2">
               <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden className="text-clay mb-1"><rect x="3.5" y="7" width="21" height="15" rx="3" stroke="currentColor" strokeWidth="1.4" /><circle cx="14" cy="14.5" r="4" stroke="currentColor" strokeWidth="1.4" /><path d="M10 7l1.6-2.5h4.8L18 7" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" /></svg>
-              <span className="font-medium">{files.length ? `${files.length} added` : "Choose photos"}</span>
+              <span className="font-medium">{files.length ? `${files.length} added` : "Choose photos or a video"}</span>
               <span className="text-xs text-ink-soft">Tap to add more</span>
-              <input type="file" accept="image/*,.heic,.heif" multiple className="sr-only" onChange={(e) => setFiles([...files, ...Array.from(e.target.files ?? [])].slice(0, 24))} />
+              <input type="file" accept="image/*,video/*,.heic,.heif,.mov,.mp4" multiple className="sr-only" onChange={(e) => setFiles([...files, ...Array.from(e.target.files ?? [])].slice(0, 26))} />
             </label>
             {files.length > 0 && (
               <ul className="grid grid-cols-2 gap-2 text-xs">
@@ -374,7 +395,7 @@ export default function CaptureFlow() {
                 ))}
               </ul>
             )}
-            {sample && <p className="text-sm text-ink-soft">Sample mode: no photos needed. We&apos;ll build the sample living room.</p>}
+            {sample && !files.length && <p className="text-sm text-ink-soft">Sample mode: continue without photos to build the sample living room. Photos you add build your own room instead.</p>}
             <div className="flex-1" />
             <button className="btn btn-primary w-full" disabled={!files.length && !sample} onClick={() => next()}>Continue</button>
           </Question>
@@ -408,7 +429,17 @@ export default function CaptureFlow() {
           );
         })()}
 
-        {s.cur === "build" && (
+        {s.cur === "build" && s.roomId && room?.status.stage === "needs-photos" && (
+          <Question title="A few more photos" sub="We can't see enough of the room to build it well yet. Add these and we'll read everything again.">
+            <MorePhotos
+              roomId={s.roomId}
+              asks={room.status.asks ?? []}
+              onRestart={() => setRoom((d) => d && { ...d, status: { ...d.status, stage: "reading", message: "Reading your photos", asks: undefined } })}
+            />
+          </Question>
+        )}
+
+        {s.cur === "build" && room?.status.stage !== "needs-photos" && (
           <Question title="Building your room">
             <FloorPlan
               points={room?.spec?.footprint ?? (a.length && a.width ? [{ x: 0, y: 0 }, { x: a.length, y: 0 }, { x: a.length, y: a.width }, { x: 0, y: a.width }] : null)}
@@ -451,9 +482,10 @@ export default function CaptureFlow() {
         )}
 
         {s.cur === "sort" && s.roomId && glbUrl && (
-          <Question title="What's staying?" sub="Tap what's leaving or moving. The rest stays.">
-            <RoomSort roomId={s.roomId} items={allItems} absent={absent} glbUrl={glbUrl} stacked undoRef={sortUndo} onUndoChange={setUndoSteps} />
-            <button className="btn btn-primary w-full" onClick={() => next()}>Done sorting</button>
+          <Question title="What's staying?" sub="Choose for each piece: keep it here, move it, or remove it.">
+            <RoomSort roomId={s.roomId} items={allItems} absent={absent} glbUrl={glbUrl} stacked undoRef={sortUndo} onUndoChange={setUndoSteps} requireAll jumpRef={sortJump} onProgress={onSortProgress} />
+            {nudge && sortLeft ? <p className="text-sm text-ink" role="status">{nudge}</p> : null}
+            <button className="btn btn-primary w-full" onClick={doneSorting}>{s.revise ? "Back to your room" : "Done sorting"}</button>
           </Question>
         )}
 
@@ -488,7 +520,13 @@ export default function CaptureFlow() {
 
         {s.cur === "brought" && <BroughtStep answers={a} set={set} onDone={() => next()} />}
 
-        {s.cur === "review" && s.roomId && <ReviewStep roomId={s.roomId} room={room} glbUrl={glbUrl} answers={a} absent={absent} onDone={() => go("handoff")} />}
+        {s.cur === "review" && s.roomId && (
+          <ReviewStep
+            roomId={s.roomId} room={room} glbUrl={glbUrl} answers={a} absent={absent}
+            onDone={() => go("handoff")}
+            onChange={() => setS((p) => ({ ...p, revise: true, history: [...p.history, p.cur], cur: "sort" }))}
+          />
+        )}
 
         {s.cur === "handoff" && (
           <Question title="Now let's get to know you" sub="Next is a short conversation about how you live and what you love.">
@@ -687,7 +725,7 @@ function BroughtStep({ answers, set, onDone }: { answers: Answers; set: (p: Part
 // Lowercase a piece's name inside a sentence, unless it starts with an acronym like "TV"
 const inline = (name: string) => (/^[A-Z]{2}/.test(name) ? name : name.charAt(0).toLowerCase() + name.slice(1));
 
-function ReviewStep({ roomId, room, glbUrl, answers, absent, onDone }: { roomId: string; room: RoomData | null; glbUrl: string | null; answers: Answers; absent: string[]; onDone: () => void }) {
+function ReviewStep({ roomId, room, glbUrl, answers, absent, onDone, onChange }: { roomId: string; room: RoomData | null; glbUrl: string | null; answers: Answers; absent: string[]; onDone: () => void; onChange: () => void }) {
   const [bins] = useBins(roomId);
   const [mode, setMode] = useState<"kept" | "empty">("kept");
   const spec = room?.spec;
@@ -719,20 +757,22 @@ function ReviewStep({ roomId, room, glbUrl, answers, absent, onDone }: { roomId:
       </div>
       {glbUrl && (
         <div className="h-[38vh] min-h-[280px] bg-surface-2 rounded-2xl overflow-hidden">
-          <GlbViewer url={glbUrl} bins={bins} selected={new Set()} mode={mode} onPick={() => {}} hidden={new Set(absent)} />
+          <GlbViewer url={glbUrl} bins={bins} selected={new Set()} mode={mode} onPick={() => {}} hidden={new Set(absent)} tint={false} />
         </div>
       )}
       {facts && <p className="font-display text-[1.5rem] leading-tight num">{facts}</p>}
-      {/* each part stays whole, and its dot stays with it, so no line starts with " · " */}
       {pieces.length > 0 && (
         <p className="text-ink-soft leading-relaxed">
-          {pieces.map((s, i) => (
-            <span key={i} className="whitespace-nowrap">{s}{i < pieces.length - 1 ? " ·" : ""} </span>
-          ))}
+          {/* a no-break space ties each dot to the part before it; lines can still break after the dot */}
+          {pieces.join("\u00a0· ")}
         </p>
       )}
       <div className="flex-1" />
-      <button className="btn btn-primary w-full" onClick={onDone}>Looks right</button>
+      {/* a way back to sorting, choices kept, beside the way on */}
+      <div className="grid grid-cols-[auto_1fr] gap-2">
+        <button className="btn btn-quiet" onClick={onChange}>Change something</button>
+        <button className="btn btn-primary" onClick={onDone}>Looks right</button>
+      </div>
     </Question>
   );
 }

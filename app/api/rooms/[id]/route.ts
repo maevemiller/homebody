@@ -1,7 +1,8 @@
 import { after } from "next/server";
-import { processRoom, rebuildRoom, refineRoomModel, rescaleRoom } from "@/lib/scan/pipeline";
+import { buildAnyway, processRoom, rebuildRoom, refineRoomModel, rescaleRoom } from "@/lib/scan/pipeline";
 import { parseLength } from "@/lib/scan/scale";
 import { getBuild, getSpec, getStatus, isRoomId, updateStatus } from "@/lib/scan/store";
+import { checkUploads, savedUploads, saveUploads, uploadFiles } from "@/lib/scan/uploads";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -19,10 +20,26 @@ export async function POST(request: Request, { params }: Ctx) {
   const { id } = await params;
   const status = isRoomId(id) ? await getStatus(id) : null;
   if (!status) return Response.json({ error: "Not found" }, { status: 404 });
-  if (status.stage !== "done" && status.stage !== "error") {
+  if (status.stage !== "done" && status.stage !== "error" && status.stage !== "needs-photos") {
     return Response.json({ error: "This room is still being built." }, { status: 409 });
   }
+  // More photos for a room that needed them: save them after the others and read the whole set again
+  if (request.headers.get("content-type")?.startsWith("multipart/form-data")) {
+    const files = uploadFiles(await request.formData());
+    if (!files.length) return Response.json({ error: "Add at least one photo or video." }, { status: 400 });
+    const problem = checkUploads(files, await savedUploads(id));
+    if (problem) return Response.json({ error: problem }, { status: 400 });
+    await saveUploads(id, files);
+    await updateStatus(id, { stage: "uploaded", message: "Photos received", asks: undefined, anyway: false });
+    after(() => processRoom(id));
+    return Response.json({ ok: true });
+  }
   const body = (await request.json().catch(() => ({}))) as { action?: string; quality?: string; doorHeight?: string };
+  // Build with the photos they have, gaps and all
+  if (body.action === "build-anyway") {
+    after(() => buildAnyway(id));
+    return Response.json({ ok: true });
+  }
   if (body.action === "confirm-scale") {
     await updateStatus(id, { scaleChecked: true });
     return Response.json({ ok: true });

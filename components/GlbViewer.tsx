@@ -19,6 +19,8 @@ interface Props {
   onPick: (id: string) => void;
   // items the owner said aren't actually in the room
   hidden?: Set<string>;
+  // false shows pieces in their own colors, without the keep / move / remove tint (the review)
+  tint?: boolean;
 }
 
 interface Tinted {
@@ -30,7 +32,7 @@ interface Tinted {
 // The room model from Blender. Walls facing the camera hide themselves so the
 // room reads like a dollhouse from any angle; items are tagged by Blender with
 // userData.homebody_item so they can be selected, tinted by bin, or hidden.
-export default function GlbViewer({ url, bins, selected, mode, onPick, hidden }: Props) {
+export default function GlbViewer({ url, bins, selected, mode, onPick, hidden, tint = true }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const items = useRef(new Map<string, { root: THREE.Object3D; mats: Tinted[]; wall?: number }>());
   const hiddenWalls = useRef(new Set<number>());
@@ -44,11 +46,11 @@ export default function GlbViewer({ url, bins, selected, mode, onPick, hidden }:
       return false;
     }
   });
-  const latest = useRef({ bins, selected, mode, onPick, hidden });
+  const latest = useRef({ bins, selected, mode, onPick, hidden, tint });
 
   // Re-tint and show/hide items to match the current sorting and view mode
   function applyLook() {
-    const { bins: b, selected: sel, mode: m, hidden: gone } = latest.current;
+    const { bins: b, selected: sel, mode: m, hidden: gone, tint: tinted } = latest.current;
     for (const [id, { root, mats, wall }] of items.current) {
       const bin = b[id];
       // art and shelves hung on a cut-away wall go with it
@@ -58,7 +60,7 @@ export default function GlbViewer({ url, bins, selected, mode, onPick, hidden }:
         if (sel.has(id)) {
           t.mat.emissive.set("#ffffff");
           t.mat.emissiveIntensity = 0.35;
-        } else if (bin) {
+        } else if (bin && tinted) {
           t.mat.emissive.set(BIN_COLORS[bin]);
           // yellow barely shows on light fabrics without a stronger push
           t.mat.emissiveIntensity = bin === "move" ? 0.85 : 0.5;
@@ -221,7 +223,7 @@ export default function GlbViewer({ url, bins, selected, mode, onPick, hidden }:
   }, [url, hasGl]);
 
   useEffect(() => {
-    latest.current = { bins, selected, mode, onPick, hidden };
+    latest.current = { bins, selected, mode, onPick, hidden, tint };
     applyLook();
   });
 

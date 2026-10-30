@@ -1,13 +1,11 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { after } from "next/server";
 import { boxRoomSpec, parseMeasurements } from "@/lib/scan/boxRoom";
 import { processRoom, rebuildRoom } from "@/lib/scan/pipeline";
 import { fitToSides, sidesFromForm } from "@/lib/scan/scale";
-import { createRoom, listRooms, newRoomId, roomDir, saveSpec } from "@/lib/scan/store";
-
-const MAX_PHOTOS = 24;
-const IMAGE_EXT = /\.(jpe?g|png|heic|heif|webp)$/i;
+import { createRoom, listRooms, newRoomId, saveSpec } from "@/lib/scan/store";
+import { checkUploads, saveUploads, uploadFiles } from "@/lib/scan/uploads";
 
 export async function GET() {
   return Response.json({ rooms: await listRooms() });
@@ -15,12 +13,13 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const form = await request.formData();
-  if (form.get("sample") === "1") return sampleRoom(form);
+  const files = uploadFiles(form);
+  // The sample is only for an explicit ?sample=1 with nothing uploaded: real photos always build the real room
+  if (form.get("sample") === "1" && files.length === 0) return sampleRoom(form);
   if (form.get("mode") === "measurements") return measuredRoom(form);
   if (!process.env.ANTHROPIC_API_KEY) {
     return Response.json({ error: "Add ANTHROPIC_API_KEY to .env.local and restart the dev server." }, { status: 500 });
   }
-  const files = form.getAll("photos").filter((f): f is File => f instanceof File && f.size > 0);
   const measurement = String(form.get("measurement") ?? "").slice(0, 500);
   if (files.length === 0 && !measurement.trim()) {
     return Response.json({ error: "Add at least one photo, or the room's measurements." }, { status: 400 });
@@ -29,9 +28,8 @@ export async function POST(request: Request) {
   try {
     intake = JSON.parse(String(form.get("intake") ?? "null")) ?? undefined;
   } catch {}
-  if (files.length > MAX_PHOTOS) return Response.json({ error: `Use ${MAX_PHOTOS} photos or fewer.` }, { status: 400 });
-  const bad = files.find((f) => !IMAGE_EXT.test(f.name) && !f.type.startsWith("image/"));
-  if (bad) return Response.json({ error: `"${bad.name}" isn't a photo. Use JPEG, PNG or HEIC.` }, { status: 400 });
+  const problem = checkUploads(files);
+  if (problem) return Response.json({ error: problem }, { status: 400 });
 
   const id = newRoomId();
   const quality = form.get("quality") === "full" ? "full" : "quick";
@@ -46,12 +44,7 @@ export async function POST(request: Request) {
     intake,
     sides: sidesFromForm(form),
   });
-  const rawDir = path.join(roomDir(id), "photos", "raw");
-  await mkdir(rawDir, { recursive: true });
-  await Promise.all(files.map(async (f, i) => {
-    const ext = (IMAGE_EXT.exec(f.name)?.[1] ?? f.type.split("/")[1] ?? "jpg").toLowerCase();
-    await writeFile(path.join(rawDir, `${String(i + 1).padStart(2, "0")}.${ext}`), Buffer.from(await f.arrayBuffer()));
-  }));
+  await saveUploads(id, files);
 
   after(() => processRoom(id));
   return Response.json({ id });

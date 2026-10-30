@@ -1,4 +1,5 @@
-Last digest: 2026-10-29 (docs/social/2026-10-29/)
-Last log heading covered: "## 2026-10-29 — Maeve's review of demo round two" (through its "Progress, 2026-10-29" list)
-Last critique entry covered: "## 2026-10-29 — Plug & Play first cut, and the photoreal capture"
-Last checkpoint covered: 1330c44 (later work was uncommitted at digest time)
+Last digest: 2026-10-30 (docs/social/2026-10-30/)
+Last log heading covered: "## 2026-10-30 — Demo round three ready for Maeve (checkpoint 1a979e6)"
+Last critique entry covered: "## 2026-10-30 — Plug & Play, second pass: last round's five fixes, after the visual pass"
+Last checkpoint covered: e76c91c (Phase 3 visual: monochrome minimal + Gambetta/Switzer, hover-only path drawings, WebGL still fallback)
+Note: the 2026-10-29 digest was still awaiting sign-off when this one was written.

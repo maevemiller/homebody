@@ -47,7 +47,7 @@ export default function RoomsPage() {
             <li key={r.id}>
               <Link href={`/rooms/${r.id}`} className="group flex items-center justify-between gap-4 min-h-16 py-4 transition-colors hover:bg-surface -mx-3 px-3 rounded-xl">
                 <span className="font-display text-[1.375rem] leading-tight">{r.name ?? "Untitled room"}</span>
-                <span className="flex items-center gap-3 text-xs text-ink-soft num whitespace-nowrap">{r.stage === "done" ? new Date(r.createdAt).toLocaleDateString() : r.stage === "error" ? "Couldn't build" : "Building…"}
+                <span className="flex items-center gap-3 text-xs text-ink-soft num whitespace-nowrap">{r.stage === "done" ? new Date(r.createdAt).toLocaleDateString() : r.stage === "error" ? "Couldn't build" : r.stage === "needs-photos" ? "Needs more photos" : "Building…"}
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden className="text-ink-faint transition-transform group-hover:translate-x-0.5 group-hover:text-ink"><path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
               </Link>

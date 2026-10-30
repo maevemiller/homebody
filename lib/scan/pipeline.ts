@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import { access, copyFile, mkdir, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { readRoom, refineRoom, rendersFor } from "./analyze";
+import { afterRead, beforeRead } from "./coverage";
 import { preparePhotos } from "./images";
 import { fitToSides, scaleSpec } from "./scale";
 import { Quality, getBuild, getSpec, getStatus, roomDir, saveSpec, updateStatus } from "./store";
@@ -135,14 +136,39 @@ export function processRoom(id: string) {
   return guarded(id, async () => {
     const status = await getStatus(id);
     if (!status) throw new Error("Room not found");
-    await updateStatus(id, { stage: "reading", message: "Preparing your photos", error: undefined });
+    await updateStatus(id, { stage: "reading", message: "Preparing your photos", error: undefined, asks: undefined });
     const photos = await preparePhotos(path.join(roomDir(id), "photos"));
-    await updateStatus(id, { photos, message: `Claude is reading ${photos.length} images of your room` });
+    await updateStatus(id, { photos });
+    // Too few views to see the room: ask for more before paying for a read
+    const early = status.anyway ? [] : beforeRead(photos);
+    if (early.length) return needsPhotos(id, early);
+    await updateStatus(id, { message: `Claude is reading ${photos.length} images of your room` });
     // Claude's read sets the layout; the owner's typed sides set the size
     const spec = fitToSides(await readRoom(photoRefs(id, photos), status.measurement, status.notes), status.sides);
     await saveSpec(id, spec);
+    // The read says what it couldn't see: stop and ask rather than build a guess
+    const gaps = status.anyway ? [] : afterRead(spec, photos);
+    if (gaps.length) return needsPhotos(id, gaps);
     await measurePhotos(id, photos);
     await updateStatus(id, { stage: "building", message: STAGE_MESSAGES.shell });
+    await runBlender(id, status.quality);
+    await updateStatus(id, { stage: "done", message: "Your room is ready" });
+  });
+}
+
+async function needsPhotos(id: string, asks: string[]) {
+  await updateStatus(id, { stage: "needs-photos", message: "We need a few more photos", asks });
+}
+
+/** The owner chose to build with the photos they have: build from the read if there is one, otherwise read them now. */
+export async function buildAnyway(id: string) {
+  await updateStatus(id, { anyway: true, asks: undefined });
+  if (!(await getSpec(id))) return processRoom(id);
+  return guarded(id, async () => {
+    const status = await getStatus(id);
+    if (!status) throw new Error("Room not found");
+    await measurePhotos(id, status.photos);
+    await updateStatus(id, { stage: "building", message: STAGE_MESSAGES.shell, error: undefined });
     await runBlender(id, status.quality);
     await updateStatus(id, { stage: "done", message: "Your room is ready" });
   });
