@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import Dossier, { type Entry } from "./Dossier";
 import ReadBack from "./ReadBack";
 import VisualSet from "./VisualSet";
+import { renderStyleShots } from "./styleshots";
 import { useMic } from "./useMic";
 import { TEST_PERSONAS } from "@/lib/taste/agent";
 import { deFluff } from "@/lib/taste/craft";
@@ -74,6 +75,8 @@ export default function TasteStudio() {
   useEffect(() => {
     let alive = true;
     loadKnown().then((k) => alive && setBase(k));
+    // her room restyled for the rooms set, drawn in the background long before that set comes up
+    void renderStyleShots();
     return () => {
       alive = false;
     };
