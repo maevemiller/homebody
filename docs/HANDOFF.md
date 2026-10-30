@@ -46,6 +46,10 @@ npx next dev -p 3100
 ```
 
 - **Blender:** 5.2.3 at `/Applications/Blender.app`. Override with `BLENDER_PATH`.
+- **Cursor cloud agents** (Linux VM): Blender 5.2.3 for Linux goes in `/opt/blender`, linked as
+  `/usr/local/bin/blender`; start the server with `BLENDER_PATH=/usr/local/bin/blender npx next dev -p 3100`. API
+  keys come from Cursor Dashboard → Cloud Agents → Secrets as environment variables, not `.env.local`. Work goes on a
+  `cursor/…` branch with a pull request into `homebody-build`.
 - **`.env.local`** (never commit, never print):
   - `ANTHROPIC_API_KEY`
   - `ELEVENLABS_API_KEY`
@@ -101,7 +105,7 @@ npx next dev -p 3100
 | Piece | State |
 |---|---|
 | Space Capture | Critic YES before the latest fixes. Since then: real-room-only builds, photo coverage checks asking for more photos, sort gating, "Change something" on the review, video upload. Not re-reviewed. |
-| Taste Builder | Live designer works; corrections are line edits. In progress (agent paused mid-way): style views of her own room instead of stock photos (presets plus offscreen three.js), a "what kind of shopper are you" sourcing question, and a handoff into Play. Last critic verdict NO before the latest fixes. |
+| Taste Builder | Live designer works; corrections are line edits. Style views of her own room are built (`components/taste/styleshots.ts`; not yet critic-reviewed). Still to do: a "what kind of shopper are you" sourcing question, and a handoff into Play. Last critic verdict NO before the latest fixes. |
 | Plug & Play | First cut works. v2 not started (agent paused at the start): auto-furnished proposal from the brief, per-piece feedback with parameter chips plus text or voice, ripple toggle, swipe deck, real products, walkthrough, link to checkout. |
 | Transaction | `/checkout/[id]` was started by an agent, which was paused; check what exists before continuing. |
 | Real capture | Three CC BY test rooms rebuilt, with matched-view scores. Needs Maeve's own photos. |

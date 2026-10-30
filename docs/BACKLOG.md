@@ -5,9 +5,10 @@ Highest priority first. Keep this current at the end of every session. Details f
 
 ## Now (in progress when paused, 2026-10-30)
 
-1. **Taste Builder: style views of her own room** for "which would you live in". She's shown her captured room restyled
-   in 6–9 directions instead of stock photos (style presets plus offscreen three.js thumbnails, with stock photos as
-   the fallback). Partly built; check `lib/taste` and `components/taste` for the presets in progress.
+1. **Taste Builder: style views of her own room:** built (2026-10-30, cloud session). `components/taste/styleshots.ts`
+   renders her captured room in all 9 presets (`lib/taste/styleviews.ts`) when `/taste` opens, and the rooms set shows
+   them, with stock photos under "Show me more" and as the fallback. Left: check it in a real browser mid-interview
+   (it was only checked on a test page in headless Chrome), and get a design-critic review.
 2. **Taste Builder: "what kind of shopper are you" question.** Thrift, vintage, mid-market or designer; brands;
    channels; new versus secondhand; where to splurge. Structured `shopping` preferences, plus a "Sourcing" line in the
    brief.
