@@ -1,4 +1,5 @@
 import library from "./images.json";
+import { isStyleView, STYLE_PRESETS, STYLE_SHOTS } from "./styleviews";
 
 // The Taste Builder's visual vocabulary (docs/reference/interior-design/): the
 // style families, the palettes as hex swatches, materials and patterns as
@@ -59,7 +60,13 @@ export interface RoomImage {
 
 export const ROOMS: RoomImage[] = library.images as RoomImage[];
 export const ROOM = new Map(ROOMS.map((r) => [r.id, r]));
-export const roomSrc = (id: string) => `/taste/rooms/${id}.jpg`;
+// her own room restyled (lib/taste/styleviews.ts) counts as a room, so picks score the same way
+for (const p of STYLE_PRESETS) ROOM.set(p.id, p);
+// a restyled view of her room shows its render from this browser, or a stock photo of the same family
+export const roomSrc = (id: string) => {
+  if (isStyleView(id)) return STYLE_SHOTS.get(id) ?? `/taste/rooms/${STYLE_PRESETS.find((p) => p.id === id)?.fallback ?? "scandi-throw"}.jpg`;
+  return `/taste/rooms/${id}.jpg`;
+};
 
 // ---- Palettes (palettes-materials-patterns.md §2), rendered 60-30-10 --------------
 
