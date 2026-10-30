@@ -58,6 +58,15 @@ export default function TasteStudio() {
   // default they didn't touch (the critic, 2026-10-29: a visibly chosen Standard was being overridden)
   const [pick, setPick] = useState<Length>(() => saved.convo.pace?.length ?? "standard");
   const mic = useMic();
+  // the captured room the brief goes into next
+  const [roomId] = useState<string | null>(() => {
+    try {
+      const id = JSON.parse(localStorage.getItem("homebody-capture") ?? "{}").roomId;
+      return typeof id === "string" ? id : null;
+    } catch {
+      return null;
+    }
+  });
   const latest = useRef(saved);
   const modeRef = useRef(mode);
   const hush = useRef<() => void>(() => {});
@@ -405,9 +414,17 @@ export default function TasteStudio() {
         </div>
 
         {c.confirmed ? (
-          <div className="mt-3 flex gap-3">
-            <Link href="/rooms" className="btn btn-primary flex-1">See your rooms</Link>
-          </div>
+          roomId ? (
+            <div className="mt-3 flex flex-col gap-2 animate-rise">
+              <p className="text-sm text-ink-soft">Next, I&apos;ll put this brief into your room: a first pass at the furniture, for you to move and change.</p>
+              <Link href={`/play/${roomId}?from=brief`} className="btn btn-primary w-full">See it in your room</Link>
+            </div>
+          ) : (
+            <div className="mt-3 flex flex-col gap-2 animate-rise">
+              <p className="text-sm text-ink-soft">To see this brief in your room, I&apos;ll need the room itself: a few photos are enough.</p>
+              <Link href="/" className="btn btn-primary w-full">Capture your room</Link>
+            </div>
+          )
         ) : (
           <Composer
             mode={mode === "talk" && !mic.broken ? "talk" : "type"}

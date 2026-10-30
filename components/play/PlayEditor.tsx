@@ -19,6 +19,7 @@ import type { SceneApi, View } from "./PlayScene";
 import { Icon, type IconName } from "./icons";
 import { renderThumbs, thumbOf } from "./thumbs";
 import { bestSpot } from "@/lib/play/placement";
+import { budgetCap, propose } from "@/lib/play/propose";
 
 const PlayScene = dynamic(() => import("./PlayScene"), { ssr: false });
 
@@ -60,7 +61,7 @@ function readJson<T>(key: string, fallback: T): T {
 }
 
 /** Plug & Play: move their pieces, place what's waiting, and try sample pieces with a running cost. */
-export default function PlayEditor({ id }: { id: string }) {
+export default function PlayEditor({ id, fromBrief = false }: { id: string; fromBrief?: boolean }) {
   const [data, setData] = useState<Loaded | null>(null);
   const [failed, setFailed] = useState(false);
   const [hist, setHist] = useState<History | null>(null);
@@ -267,8 +268,8 @@ export default function PlayEditor({ id }: { id: string }) {
   };
 
   // a clear stretch of a wall in view: not behind the TV, over a door, or on another hung piece
-  const wallSpot = (p: Piece, shape: Shape, elev: number) => {
-    const hung = (layout?.pieces ?? []).filter((o) => o.placed && o.key !== p.key && o.wall !== undefined && shapes[o.key]);
+  const wallSpot = (p: Piece, shape: Shape, elev: number, pieces = layout?.pieces ?? [], shapesNow = shapes) => {
+    const hung = pieces.filter((o) => o.placed && o.key !== p.key && o.wall !== undefined && shapesNow[o.key]);
     const shown = walls.filter((w) => wallOk(w.i) && w.len > shape.w + 0.2);
     const tries: { at: ReturnType<typeof place>; score: number }[] = [];
     for (const w of shown.length ? shown : walls) {
@@ -280,7 +281,7 @@ export default function PlayEditor({ id }: { id: string }) {
           op.wall === w.i && t + shape.w / 2 > op.offset - 0.05 && t - shape.w / 2 < op.offset + op.width + 0.05 && elev < op.sill + op.height && elev + shape.h > op.sill);
         const clash = blocked || hung.some((o) => {
           if (o.wall !== w.i) return false;
-          const os = shapes[o.key];
+          const os = shapesNow[o.key];
           const gap = Math.abs(along(o.x, o.y) - t) - (os.w + shape.w) / 2;
           const vert = Math.min(o.elev + os.h, elev + shape.h) - Math.max(o.elev, elev);
           return gap < 0.1 && vert > -0.05;
@@ -353,6 +354,52 @@ export default function PlayEditor({ id }: { id: string }) {
     commit({ ...layout, pieces: [...layout.pieces, { ...piece, x: to.x, y: to.y, rot: to.rot, wall: to.wall, elev: to.elev }] });
     setSelected(piece.key);
     if (isPhone()) setSheetOpen(false);
+  };
+
+  // Arriving from the brief: the room starts furnished with a proposal, once per room. Each piece is placed
+  // as a designer would (placement.ts) around what's already there; anything with nowhere good is left out.
+  const furnished = useRef(false);
+  const [intro, setIntro] = useState<{ keys: string[]; step: number } | null>(null);
+  const furnish = (data: Loaded, layout: Layout) => {
+    furnished.current = true;
+    const flag = `homebody-proposed-${id}`;
+    if (localStorage.getItem(flag) || layout.pieces.some((p) => p.source === "catalog")) return;
+    const saved = readSaved();
+    const practical = (saved.convo?.dossier ?? []).filter((d) => d.zone === "practical" && !d.crossed).map((d) => d.text);
+    const have = layout.pieces.map((p) => shapes[p.key] && kindOf(shapes[p.key].category)).filter((k): k is NonNullable<typeof k> => !!k);
+    const products = propose(have, { taste: data.taste, answers: saved.answers, cap: budgetCap(practical) });
+    let pieces = layout.pieces;
+    let shapesNow = shapes;
+    const keys: string[] = [];
+    for (const product of products) {
+      const piece = newPiece(product);
+      const shape = shapeOf(piece, items);
+      const withIt = { ...shapesNow, [piece.key]: shape };
+      const elev = shape.mount === "wall" ? Math.max(0.9, 1.5 - shape.h / 2) : 0;
+      const at = shape.mount === "wall"
+        ? wallSpot(piece, shape, elev, pieces, shapesNow)
+        : bestSpot(piece, shape, { spec: data.spec, footprint, pieces: [...pieces, piece], shapes: withIt, zones });
+      if (!at) continue;
+      pieces = [...pieces, { ...piece, x: at.x, y: at.y, rot: at.rot, wall: "wall" in at ? (at.wall as number | undefined) : undefined, elev }];
+      shapesNow = withIt;
+      keys.push(piece.key);
+    }
+    localStorage.setItem(flag, "1");
+    if (!keys.length) return;
+    commit({ ...layout, pieces });
+    setIntro({ keys, step: 0 });
+  };
+  useEffect(() => {
+    if (!fromBrief || furnished.current || !data || !layout) return;
+    // a beat after the room appears, so the new pieces visibly settle into it
+    const t = window.setTimeout(() => furnish(data, layout), 900);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fromBrief, data, layout]);
+  const clearProposal = () => {
+    if (!layout || !intro) return;
+    commit({ ...layout, pieces: layout.pieces.filter((p) => !intro.keys.includes(p.key)) });
+    setIntro(null);
   };
 
   const swapTo = (product: Product | null) => {
@@ -696,6 +743,35 @@ export default function PlayEditor({ id }: { id: string }) {
               Tap a piece to pick it up · drag to look around
             </p>
           )}
+          {intro && !sel && (() => {
+            const pieces = layout.pieces.filter((p) => intro.keys.includes(p.key) && shapes[p.key]?.product);
+            const total = pieces.reduce((n, p) => n + (shapes[p.key].product?.price ?? 0), 0);
+            const steps = [
+              { eyebrow: "From your brief", title: "A first pass at your room", body: `${pieces.length} new piece${pieces.length === 1 ? "" : "s"} chosen for your brief, ${money(total)} at sample prices. Nothing is final.` },
+              { eyebrow: "Move anything", title: "Drag a piece to move it", body: "Drag the room to look around, or see it from above. Walkways and doorways stay clear." },
+              { eyebrow: "Change anything", title: "Tap a piece, then Swap", body: "The same look for less, or something closer to what you have. The total up top keeps count." },
+            ];
+            const s = steps[intro.step];
+            const last = intro.step === steps.length - 1;
+            return (
+              <div role="dialog" aria-label="How this works" key={intro.step} className="absolute inset-x-3 bottom-3 mx-auto max-w-sm rounded-2xl border bg-surface/95 backdrop-blur p-4 shadow-[var(--shadow-2)] animate-[rise_0.25s_ease-out]">
+                <div className="flex items-baseline justify-between gap-3">
+                  <p className="eyebrow text-ink-faint">{s.eyebrow}</p>
+                  <span className="text-xs text-ink-faint tabular-nums">{intro.step + 1} of {steps.length}</span>
+                </div>
+                <p className="mt-1 text-[1.15rem] leading-snug">{s.title}</p>
+                <p className="mt-1 text-sm text-ink-soft leading-relaxed">{s.body}</p>
+                <div className="mt-3 flex items-center gap-2">
+                  {intro.step === 0 ? (
+                    <button onClick={clearProposal} className="link link-quiet text-sm min-h-10 mr-auto">Start from my room as it is</button>
+                  ) : (
+                    <button onClick={() => setIntro(null)} className="link link-quiet text-sm min-h-10 mr-auto">Skip</button>
+                  )}
+                  <button onClick={() => setIntro(last ? null : { ...intro, step: intro.step + 1 })} className="btn btn-primary min-h-10 px-5">{last ? "Start" : "Next"}</button>
+                </div>
+              </div>
+            );
+          })()}
           {toast && (
             <div role="status" className="absolute top-[60px] inset-x-3 mx-auto w-fit max-w-full flex items-center gap-1 rounded-full bg-surface/95 backdrop-blur border shadow-[var(--shadow-2)] pl-4 pr-1 py-1 text-sm animate-[rise_0.25s_ease-out]">
               <span className="whitespace-nowrap py-1.5 pr-2">{toast.text}</span>
