@@ -38,7 +38,9 @@ interface History {
   future: Layout[];
 }
 
-type Tab = "tray" | "catalog";
+type Tab = "pass" | "tray" | "catalog";
+// a proposed piece and why it is there, kept per room so the reasons outlive the visit
+interface Proposed { key: string; product: string; reason: string; hunt?: string }
 
 // one line, and at most one thing to do about it
 interface Toast {
@@ -79,6 +81,7 @@ export default function PlayEditor({ id, fromBrief = false }: { id: string; from
   // built-in items as the room model marks them; the name rule in lib/play/layout covers older rooms
   const [builtIn, setBuiltIn] = useState<Map<string, number | undefined>>(new Map());
   const api = useRef<SceneApi | null>(null);
+  const [proposal, setProposal] = useState<Proposed[]>([]);
 
   // Load the room, this browser's sorting and saved layout, and the taste profile
   useEffect(() => {
@@ -109,8 +112,10 @@ export default function PlayEditor({ id, fromBrief = false }: { id: string; from
         });
         const now = saved ? reconcile(saved, fresh, inputs) : fresh;
         setHist({ past: [], now, future: [] });
-        // open on what's waiting to be placed, if anything is; after that the tab is theirs to change
-        setTab(now.pieces.some((p) => !p.placed && p.source !== "catalog") ? "tray" : "catalog");
+        const proposed = readJson<Proposed[]>(`homebody-proposal-${id}`, []).filter((x) => now.pieces.some((p) => p.key === x.key));
+        setProposal(proposed);
+        // open on the first pass if there is one, then what's waiting to be placed; after that the tab is theirs
+        setTab(proposed.length ? "pass" : now.pieces.some((p) => !p.placed && p.source !== "catalog") ? "tray" : "catalog");
         fetch(`/api/play/look/${id}`)
           .then((r) => (r.ok ? r.json() : null))
           .then((look: { walls?: string } | null) => alive && setData((d) => d && { ...d, wallTint: look?.walls ?? spec.walls.color }))
@@ -367,11 +372,13 @@ export default function PlayEditor({ id, fromBrief = false }: { id: string; from
     const saved = readSaved();
     const practical = (saved.convo?.dossier ?? []).filter((d) => d.zone === "practical" && !d.crossed).map((d) => d.text);
     const have = layout.pieces.map((p) => shapes[p.key] && kindOf(shapes[p.key].category)).filter((k): k is NonNullable<typeof k> => !!k);
-    const products = propose(have, { taste: data.taste, answers: saved.answers, cap: budgetCap(practical) });
+    const said = (saved.convo?.transcript ?? []).filter((l) => l.who === "you" && !l.event).map((l) => l.text).join(" \n ");
+    const picks = propose(have, { taste: data.taste, answers: saved.answers, cap: budgetCap(practical), said });
     let pieces = layout.pieces;
     let shapesNow = shapes;
     const keys: string[] = [];
-    for (const product of products) {
+    const rows: Proposed[] = [];
+    for (const { product, reason, hunt } of picks) {
       const piece = newPiece(product);
       const shape = shapeOf(piece, items);
       const withIt = { ...shapesNow, [piece.key]: shape };
@@ -383,10 +390,14 @@ export default function PlayEditor({ id, fromBrief = false }: { id: string; from
       pieces = [...pieces, { ...piece, x: at.x, y: at.y, rot: at.rot, wall: "wall" in at ? (at.wall as number | undefined) : undefined, elev }];
       shapesNow = withIt;
       keys.push(piece.key);
+      rows.push({ key: piece.key, product: product.id, reason, hunt });
     }
     localStorage.setItem(flag, "1");
     if (!keys.length) return;
     commit({ ...layout, pieces });
+    localStorage.setItem(`homebody-proposal-${id}`, JSON.stringify(rows));
+    setProposal(rows);
+    setTab("pass");
     setIntro({ keys, step: 0 });
   };
   useEffect(() => {
@@ -397,8 +408,12 @@ export default function PlayEditor({ id, fromBrief = false }: { id: string; from
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromBrief, data, layout]);
   const clearProposal = () => {
-    if (!layout || !intro) return;
-    commit({ ...layout, pieces: layout.pieces.filter((p) => !intro.keys.includes(p.key)) });
+    if (!layout) return;
+    const keys = new Set(proposal.map((x) => x.key));
+    commit({ ...layout, pieces: layout.pieces.filter((p) => !keys.has(p.key)) });
+    localStorage.removeItem(`homebody-proposal-${id}`);
+    setProposal([]);
+    setTab(null);
     setIntro(null);
   };
 
@@ -519,6 +534,8 @@ export default function PlayEditor({ id, fromBrief = false }: { id: string; from
   }, []);
 
   const catalog = useMemo(() => sortCatalog(data?.taste), [data]);
+  // the label only helps when it picks some pieces out, not when nearly everything fits
+  const fitSeparates = catalog.filter((c) => c.fit !== null && c.fit >= GOOD_FIT).length <= catalog.length / 2;
 
   if (failed) {
     return (
@@ -538,7 +555,13 @@ export default function PlayEditor({ id, fromBrief = false }: { id: string; from
   const selShape = sel ? shapes[sel.key] : undefined;
   const selKind = selShape ? kindOf(selShape.category) : undefined;
   const swapOpen = swapping && !!sel && !!selKind;
-  const activeTab: Tab = tray.length ? tab ?? "catalog" : "catalog";
+  // the first pass as it stands: proposed pieces still in the room, with the reason while it's still our pick
+  const pass = proposal.flatMap((x) => {
+    const p = layout.pieces.find((q) => q.key === x.key);
+    return p ? [{ ...x, piece: p, ours: p.product === x.product }] : [];
+  });
+  const tabs = ([pass.length ? "pass" : null, tray.length ? "tray" : null, "catalog"] as const).filter((t): t is Tab => !!t);
+  const activeTab: Tab = tab && tabs.includes(tab) ? tab : tabs[0];
   const own = (p: Piece): Own | undefined => {
     const it = p.item ? items.get(p.item) : undefined;
     return it ? { color: it.primary_color, material: it.primary_material, w: it.width } : undefined;
@@ -575,15 +598,50 @@ export default function PlayEditor({ id, fromBrief = false }: { id: string; from
     />
   ) : (
     <>
-      {tray.length > 0 && <div className="px-3 lg:px-4 pt-1 lg:pt-3 shrink-0">
-        <div className="grid grid-cols-2 gap-1 rounded-xl bg-surface-2 p-1 text-sm">
-          {([["tray", `To find a spot for${tray.length ? ` · ${tray.length}` : ""}`], ["catalog", "Catalog"]] as const).map(([t, l]) => (
+      {tabs.length > 1 && <div className="px-3 lg:px-4 pt-1 lg:pt-3 shrink-0">
+        <div className={`grid gap-1 rounded-xl bg-surface-2 p-1 text-sm ${tabs.length > 2 ? "grid-cols-3" : "grid-cols-2"}`}>
+          {tabs.map((t) => [t, t === "pass" ? "First pass" : t === "tray" ? `${tabs.length > 2 ? "To place" : "To find a spot for"} · ${tray.length}` : "Catalog"] as const).map(([t, l]) => (
             <button key={t} onClick={() => { setTab(t); setSheetOpen(true); }} aria-pressed={activeTab === t} className={`h-9 rounded-lg px-2 truncate ${activeTab === t ? "bg-segment font-medium shadow-sm" : "text-ink-soft"}`}>{l}</button>
           ))}
         </div>
       </div>}
       <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-3 lg:px-4 py-3">
-        {activeTab === "tray" ? (
+        {activeTab === "pass" ? (
+          <>
+            <p className="text-xs text-ink-faint leading-relaxed mb-3">What your brief asks of this room, placed around what you have. Tap one to find it.</p>
+            <ul className="flex flex-col gap-2">
+              {pass.map(({ key, reason, hunt, piece, ours }) => {
+                const s = shapes[key];
+                if (!s) return null;
+                return (
+                  <li key={key}>
+                    <button
+                      onClick={() => { setSelected(key); if (isPhone()) setSheetOpen(false); }}
+                      aria-pressed={selected === key}
+                      className={`w-full text-left flex gap-3 rounded-xl border p-2.5 transition-colors ${selected === key ? "border-ink" : "hover:border-ink-faint"}`}
+                    >
+                      {s.product ? <ProductThumb product={s.product} /> : <Thumb color={s.color} kind={kindOf(s.category) ?? "box"} />}
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-baseline justify-between gap-2">
+                          <span className="text-sm font-medium truncate">{nb(s.name)}</span>
+                          {s.product && <span className="text-sm tabular-nums text-ink-soft">{money(s.product.price)}</span>}
+                        </span>
+                        <span className="block text-xs text-ink-soft leading-relaxed mt-0.5">
+                          {ours ? reason : piece.product ? "Your swap." : "Your own piece."}
+                        </span>
+                        {ours && hunt && <span className="block text-xs text-ink leading-relaxed mt-1">{hunt}. This one stands in for it.</span>}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+            <div className="mt-4 flex flex-col gap-2">
+              <button onClick={() => setTab("catalog")} className="btn btn-line min-h-10">Add something else</button>
+              <button onClick={clearProposal} className="text-xs text-ink-soft underline underline-offset-2 min-h-8">Start from my room as it is</button>
+            </div>
+          </>
+        ) : activeTab === "tray" ? (
           tray.length ? (
             <ul className="flex flex-col gap-2">
               {tray.map((p) => {
@@ -611,7 +669,7 @@ export default function PlayEditor({ id, fromBrief = false }: { id: string; from
         ) : (
           <>
             <p className="text-xs text-ink-faint leading-relaxed mb-3">
-              <span className="eyebrow text-amber text-[10px] mr-1">Sample</span>
+              <span className="eyebrow text-ink-soft text-[10px] mr-1">Sample</span>
               Made-up products and prices, for trying things out.{data.taste ? " Sorted by what fits your taste." : ""}
             </p>
             <ul className="flex flex-col gap-2">
@@ -627,8 +685,8 @@ export default function PlayEditor({ id, fromBrief = false }: { id: string; from
                       sub={`${KIND_ONE[product.category]} · ${cm(product.w)}\u00a0×\u00a0${cm(product.d)} cm`}
                       price={money(product.price)}
                       badges={[
-                        twin && twin.price < product.price ? { text: `Lookalike ${money(twin.price)}`, tone: "amber" as const } : null,
-                        fit !== null && fit >= GOOD_FIT ? { text: "Fits your taste", tone: "clay" as const } : null,
+                        twin && twin.price < product.price ? { text: `Lookalike ${money(twin.price)}`, tone: "quiet" as const } : null,
+                        fitSeparates && fit !== null && fit >= GOOD_FIT ? { text: "Fits your taste", tone: "clay" as const } : null,
                       ]}
                       action="Add"
                     />
@@ -657,7 +715,7 @@ export default function PlayEditor({ id, fromBrief = false }: { id: string; from
               <button onClick={() => placeFromTray(p.key)} className="w-[76px] flex flex-col items-center gap-1 text-[11px]" aria-label={`Place ${s.name}`}>
                 <span className="relative">
                   {s.product ? <ProductThumb product={s.product} size="lg" /> : <Thumb color={s.color} kind={kindOf(s.category) ?? "box"} size="lg" />}
-                  <span className="absolute -top-1 -right-1 rounded-full bg-amber-tint text-amber text-[9px] font-semibold px-1.5 py-0.5">Place</span>
+                  <span className="absolute -top-1 -right-1 rounded-full bg-ink text-bg text-[9px] font-semibold px-1.5 py-0.5">Place</span>
                 </span>
                 <span className="w-full truncate text-ink">{s.name}</span>
               </button>
@@ -747,9 +805,8 @@ export default function PlayEditor({ id, fromBrief = false }: { id: string; from
             const pieces = layout.pieces.filter((p) => intro.keys.includes(p.key) && shapes[p.key]?.product);
             const total = pieces.reduce((n, p) => n + (shapes[p.key].product?.price ?? 0), 0);
             const steps = [
-              { eyebrow: "From your brief", title: "A first pass at your room", body: `${pieces.length} new piece${pieces.length === 1 ? "" : "s"} chosen for your brief, ${money(total)} at sample prices. Nothing is final.` },
-              { eyebrow: "Move anything", title: "Drag a piece to move it", body: "Drag the room to look around, or see it from above. Walkways and doorways stay clear." },
-              { eyebrow: "Change anything", title: "Tap a piece, then Swap", body: "The same look for less, or something closer to what you have. The total up top keeps count." },
+              { eyebrow: "From your brief", title: "A first pass at your room", body: `${pieces.length} new piece${pieces.length === 1 ? "" : "s"}, ${money(total)} at sample prices. Why each one is here is in First pass. Nothing is final.` },
+              { eyebrow: "Change anything", title: "Drag to move, tap to Swap", body: "Drag a piece to move it; a red ring means it's bumping into something. Tap one, then Swap, for the same look for less. The total up top keeps count." },
             ];
             const s = steps[intro.step];
             const last = intro.step === steps.length - 1;
@@ -950,7 +1007,7 @@ function PanelHead({ eyebrow, title, onClose }: { eyebrow: string; title: string
 }
 
 const REASON: Record<Alternative["reason"], (delta: number | null) => Badge> = {
-  less: (d) => ({ text: d !== null ? `Same look, ${money(-d)} less` : "Same look for less", tone: "amber" }),
+  less: (d) => ({ text: d !== null ? `Same look, ${money(-d)} less` : "Same look for less", tone: "quiet" }),
   more: () => ({ text: "Same look, studio-made", tone: "quiet" }),
   closest: () => ({ text: "Closest to yours", tone: "clay" }),
   other: () => null,

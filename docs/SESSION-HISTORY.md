@@ -118,3 +118,11 @@ For the full step log see `docs/autoloop/log.md`; for critic reviews see `docs/a
   on load; the rooms set waits up to 6 seconds for it, shows her room nine ways with what each puts in the room (never
   the style's name), and keeps stock photos under "Show me more".
 - **Workflow change:** cloud agents work on a `cursor/…` branch and open a pull request into `homebody-build`.
+- **Also built:** backlog items 2 and 3 (the shopper question with a "Sourcing" brief line; "See it in your room" from
+  the confirmed brief), and the first slice of Plug & Play v2: the room furnishes itself from the brief
+  (`lib/play/propose.ts`), each piece with its reason in a "First pass" tab, plus a 2-step walkthrough. Picks obey the
+  brief: no bouclé, linen or velvet seating with a pet, nothing she marked never, lookalikes when over her figure, and
+  "Find secondhand" notes for thrift shoppers. Reasons are honest about pets (faux leather: "claws will mark it").
+- **Design critic** (verdict POLISH) asked for the reasons panel, brief-obeying picks, a truthful walkthrough and
+  monochrome chips in Play, all done; the style-preset spread is still open. Checked in a real browser via a
+  computer-use agent on the sample room with a cat in the brief.
