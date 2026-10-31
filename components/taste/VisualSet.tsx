@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Explore, { type ExploreResult } from "./Explore";
+import { styleShotsPending, styleShotsReady } from "./styleshots";
+import { isStyleView, STYLE_PRESETS, STYLE_SHOTS } from "@/lib/taste/styleviews";
 import { MaterialFace, PaletteStrip, PatternFace } from "./Swatches";
 import {
   MATERIAL, MATERIALS, PALETTE, PALETTES, PATTERN, PATTERNS, ROOM, roomGrid, roomSrc,
@@ -30,7 +32,25 @@ export default function VisualSet({ set, taste, said = "", onDone, onClose, onFi
   // the last pick, whose "what is it about this one?" chips show
   const [focus, setFocus] = useState<string | null>(null);
   const [more, setMore] = useState(false);
-  const [rooms] = useState(() => roomGrid(taste, said));
+  // her own room restyled when it's rendered (components/taste/styleshots), else stock photos
+  const [rooms, setRooms] = useState(() => roomGrid(taste, said, set === "rooms" && STYLE_SHOTS.size === STYLE_PRESETS.length));
+  const own = rooms.grid.some(isStyleView);
+  const [waiting, setWaiting] = useState(() => set === "rooms" && !own && styleShotsPending());
+  useEffect(() => {
+    if (!waiting) return;
+    let alive = true;
+    // a short wait for her room beats stock photos; past that, the photos it is
+    const giveUp = setTimeout(() => alive && setWaiting(false), 6000);
+    styleShotsReady().then((ok) => {
+      if (!alive) return;
+      if (ok) setRooms(roomGrid(taste, said, true));
+      setWaiting(false);
+    });
+    return () => {
+      alive = false;
+      clearTimeout(giveUp);
+    };
+  }, [waiting, taste, said]);
 
   const items: string[] =
     set === "rooms" ? [...rooms.grid, ...(more ? rooms.more : [])]
@@ -86,8 +106,10 @@ export default function VisualSet({ set, taste, said = "", onDone, onClose, onFi
         <p className="eyebrow text-clay">Your taste · {info.title}</p>
         <h2 key={step} className="text-title animate-rise">{step === "like" ? info.like : info.never}</h2>
         {step === "never" && <p className="-mt-2 text-sm text-ink-soft">Hard nos are as useful to me as loves.</p>}
+        {step === "like" && set === "rooms" && own && <p className="-mt-2 text-sm text-ink-soft">Your room, finished {STYLE_PRESETS.length} ways. Your furniture stays where it is; only the colors and materials change.</p>}
+        {waiting && <p className="text-sm text-ink-soft animate-pulse">Dressing your room in a few styles…</p>}
 
-        <ul className={`grid gap-2.5 sm:gap-3 ${set === "palettes" ? "grid-cols-1 sm:grid-cols-2" : set === "rooms" ? "grid-cols-2 sm:grid-cols-3" : "grid-cols-3 sm:grid-cols-4"}`}>
+        {!waiting && <ul className={`grid gap-2.5 sm:gap-3 ${set === "palettes" ? "grid-cols-1 sm:grid-cols-2" : set === "rooms" ? "grid-cols-2 sm:grid-cols-3" : "grid-cols-3 sm:grid-cols-4"}`}>
           {shown.map((id, i) => {
             const on = step === "like" ? liked.includes(id) : never.includes(id);
             return (
@@ -112,8 +134,8 @@ export default function VisualSet({ set, taste, said = "", onDone, onClose, onFi
               </li>
             );
           })}
-        </ul>
-        {hasMore && !more && step === "like" && (
+        </ul>}
+        {hasMore && !more && !waiting && step === "like" && (
           <button className="self-center link link-quiet text-sm min-h-11" onClick={() => setMore(true)}>Show me more</button>
         )}
         {/* the ways out, under the pictures rather than above the question */}
@@ -161,6 +183,16 @@ export default function VisualSet({ set, taste, said = "", onDone, onClose, onFi
 }
 
 function Card({ set, id }: { set: SetId; id: string }) {
+  if (set === "rooms" && isStyleView(id) && STYLE_SHOTS.has(id)) {
+    const p = STYLE_PRESETS.find((x) => x.id === id)!;
+    return (
+      <span className="block bg-surface">
+        <Image src={STYLE_SHOTS.get(id)!} alt="" width={640} height={480} unoptimized className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+        {/* what it puts in the room, never the style's name: she picks the room, not a label */}
+        <span className="block min-h-[2.5em] px-2.5 py-2 text-xs leading-[1.25] text-ink-soft">{p.label.split(": ")[1]}</span>
+      </span>
+    );
+  }
   if (set === "rooms")
     return <Image src={roomSrc(id)} alt="" width={640} height={480} sizes="(min-width: 640px) 30vw, 48vw" className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />;
   if (set === "palettes") {

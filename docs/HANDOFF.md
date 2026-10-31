@@ -46,6 +46,10 @@ npx next dev -p 3100
 ```
 
 - **Blender:** 5.2.3 at `/Applications/Blender.app`. Override with `BLENDER_PATH`.
+- **Cursor cloud agents** (Linux VM): Blender 5.2.3 for Linux goes in `/opt/blender`, linked as
+  `/usr/local/bin/blender`; start the server with `BLENDER_PATH=/usr/local/bin/blender npx next dev -p 3100`. API
+  keys come from Cursor Dashboard → Cloud Agents → Secrets as environment variables, not `.env.local`. Work goes on a
+  `cursor/…` branch with a pull request into `homebody-build`.
 - **`.env.local`** (never commit, never print):
   - `ANTHROPIC_API_KEY`
   - `ELEVENLABS_API_KEY`
@@ -101,8 +105,8 @@ npx next dev -p 3100
 | Piece | State |
 |---|---|
 | Space Capture | Critic YES before the latest fixes. Since then: real-room-only builds, photo coverage checks asking for more photos, sort gating, "Change something" on the review, video upload. Not re-reviewed. |
-| Taste Builder | Live designer works; corrections are line edits. In progress (agent paused mid-way): style views of her own room instead of stock photos (presets plus offscreen three.js), a "what kind of shopper are you" sourcing question, and a handoff into Play. Last critic verdict NO before the latest fixes. |
-| Plug & Play | First cut works. v2 not started (agent paused at the start): auto-furnished proposal from the brief, per-piece feedback with parameter chips plus text or voice, ripple toggle, swipe deck, real products, walkthrough, link to checkout. |
+| Taste Builder | Live designer works; corrections are line edits. Style views of her own room are built (`components/taste/styleshots.ts`). A shopper question (`shop`, `brands`; `lib/taste/shopping.ts`) feeds a "Sourcing" line and sourcing decisions into the brief. The confirmed brief ends with "See it in your room", which opens `/play/<id>?from=brief`. Critic verdict POLISH (2026-10-30); its preset-spread notes are still open. |
+| Plug & Play | v2 first slice: arriving from the brief, the room furnishes itself (`lib/play/propose.ts`: what the room lacks, best taste fit at her budget and way of shopping, no bouclé, linen or velvet seating with a pet, nothing she marked never; secondhand shoppers get "Find secondhand" notes). A "First pass" tab lists each piece with its reason (saved in `homebody-proposal-<id>`); the catalog sits behind "Add something else"; a 2-step walkthrough. Still to do: per-piece feedback with parameter chips plus text or voice, ripple toggle, swipe deck, real products, link to checkout. |
 | Transaction | `/checkout/[id]` was started by an agent, which was paused; check what exists before continuing. |
 | Real capture | Three CC BY test rooms rebuilt, with matched-view scores. Needs Maeve's own photos. |
 | Social | Day 4 (10-29) and Day 5 (10-30) digests drafted; awaiting her sign-off. The Day 4 draft is visible in the public repo; Day 5 is held out. |

@@ -1541,3 +1541,77 @@ the demo room, the very first Add still drives a sofa through a lamp. That colli
 round, and it is the first thing Maeve would do.
 
 PLUG & PLAY READY TO PRESENT: NO
+
+---
+
+## 2026-10-30 — Round three: style views of her own room, the shopping question, and brief → Plug & Play (branch cursor/taste-own-room-style-views-7a8c)
+
+**Reviewed.**
+- The diff against `origin/homebody-build`: `styleshots.ts`, `VisualSet.tsx`, `shopping.ts`, `questions.ts`, `offline.ts`,
+  `craft.ts`, `dossier.ts`, `pace.ts`, `designer-prompt.ts`, `propose.ts`, `PlayEditor.tsx`, `TasteStudio.tsx`.
+- The screenshots: `styleviews-sample-room.png` and `play-from-brief{,-step3,-added}.png`.
+- There is no API key, so the live designer is judged from its prompt only. I didn't run the app myself.
+
+**Working, keep it.**
+- *The own-room views are the right idea, and the cards are honest.* There's no style name on a card. The caption under
+  the heading ("Your furniture stays where it is; only the colors and materials change") tells the truth about what she
+  is seeing. Pieces she sorted to Remove are hidden from the renders. Rendering starts in the background when the studio
+  opens, and after 6 s it falls back to stock photos. Nothing breaks without WebGL or without a room.
+- *The shopping question is asked like a designer would ask it.*
+  - The wording is "Where do you like to look?", not "what's your budget tier".
+  - The prompt says "never assume thrift means a small budget", which is exactly right.
+  - The brief turns the answer into decisions with reasons: "Case goods, lighting and art secondhand or vintage; the sofa
+    and anything upholstered new or reupholstered" is a real trade rule. The made-to-order anchor carries its 8–16 week
+    lead time, and is dropped when she's in a hurry.
+- *The handoff line on the confirmed brief.* "Next, I'll put this brief into your room: a first pass at the furniture,
+  for you to move and change." It's one sentence and one button, and there's an honest "Capture your room" path when no
+  room exists.
+- *The first-pass placement is clean in the sample room.* The sofa faces the TV wall, the oval table is centered in front
+  of it, and nothing collides. Last round, the first Add drove a sofa through a lamp, so this is a real step.
+
+**What a designer would catch.**
+1. *The first pass is presented without a single reason, and she can't tell which pieces are new.*
+   - Card 1 says "3 new pieces chosen for your brief, $1,577 at sample prices". The room shows nothing that marks the
+     three new pieces apart from hers.
+   - The right panel is still the catalog, with an Add on every row. Maeve said "not a catalog to add from".
+   - A designer presenting a scheme walks the client through each piece and why (README takeaway 10; `dossier.md`
+     presenting back). "Tilly wool-blend rug, 8 × 10: the sofa and chair both sit with their front legs on it, with 18"
+     of floor at the walls" is the job. A total is not.
+2. *The proposal reads her taste and her wallet, but not her brief.*
+   - `propose()` uses `fitScore`, budget and shopping channels only. It never reads pets, the brief's decisions, or kept
+     pieces.
+   - So a cat owner whose brief says "tight-weave, no bouclé or loop pile" can be handed the "Arden bouclé-look sofa",
+     which is exactly the piece in the screenshot.
+   - Likewise, a secondhand shopper's brief says "case goods secondhand", and the room hands her a new ash-veneer coffee
+     table.
+   - On her first screen in Play, the room contradicts the brief she has just confirmed.
+3. *A third of the nine views don't split taste.*
+   - At phone size, Scandinavian, Japandi and Warm minimal are the same white-and-beige room.
+   - Bohemian reads as a salmon wash, not terracotta. Traditional reads as powder blue and pink, not navy and ruby;
+     AgX tone mapping plus exposure 1.15 desaturates them.
+   - Only surface colors change, so the set is a second palette test, and the palettes set comes right after it.
+   - A pick is scored as `{ [family]: 1 }`, so liking "olive and mustard" counts as fully mid-century. That over-reads a
+     colorway, which takeaway 6 warns about.
+   - Some captions promise what the render can't show: "low and quiet" (the furniture is the same in every view),
+     "bouclé" and "oatmeal wool" (flat color).
+4. *The walkthrough makes a claim the app doesn't keep.* Step 2 says "Walkways and doorways stay clear". Dragging only
+   shows a red ring on overlap; 36" walkways aren't enforced while she drags. Steps 2 and 3 are generic tooltips in a
+   card, and nothing in the room points at what they describe.
+5. *The color rule is broken in Play.*
+   - The amber "Lookalike $389" chips and the "Sample" eyebrow contradict the monochrome standing preference.
+   - "Fits your taste" sits on every visible row, so it says nothing.
+
+**Smaller.**
+- The shop keyword patterns misfire: "used" matches "I've used IKEA" (secondhand); `\barticle\b` matches "an article I
+  read"; "target" matches "budget target".
+- The dossier line "shops: thrift and secondhand, mid-range shops; Article" reads like a field dump. Better: "shops
+  secondhand + mid-range; loves Article".
+- "Splurge on the one piece touched daily (the sofa or the rug)" hedges. Pick one from her answers (the sofa when she
+  lounges, the rug when the floor is the big surface).
+- The first-pass flag is set once per room, so editing the brief and coming back never re-proposes. That's acceptable
+  for now.
+
+**Verdict:** POLISH. All three pieces are honest and well built. But the handoff is the moment the brief becomes a room,
+and right now the room doesn't show its reasons and can contradict the brief.
+
+TASTE → PLUG & PLAY HANDOFF READY TO PRESENT: NO
