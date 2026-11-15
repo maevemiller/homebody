@@ -912,3 +912,16 @@ and checkout agents were stopped mid-way. Work is committed and pushed to `homeb
 adds `docs/HANDOFF.md`, `docs/BACKLOG.md` and `docs/SESSION-HISTORY.md`).
 
 **Decision:** STOP. **Waiting on:** Maeve, to resume when usage allows. Then start from `docs/BACKLOG.md` items 1–5.
+
+---
+
+## 2026-11-14 — Resumed
+
+Maeve: "i'm looking to resume".
+
+**Decision:** CONTINUE. **Next:** `docs/BACKLOG.md` items 1–5, in parallel, with fresh agents briefed from `docs/HANDOFF.md`:
+- **Taste Builder:** items 1–3 (style views of her own room, the shopper/sourcing question, the handoff into Play);
+- **Plug & Play v2:** item 4;
+- **Checkout:** item 5.
+
+The old loop timer and digest timer expired; recreate them.

@@ -60,8 +60,10 @@ export default function DemoPage() {
         <PathGrid />
         <p className="text-sm text-ink-soft leading-relaxed">
           Step 1 builds your own room from your photos, or a short video walking the room. If they don&apos;t show
-          enough of it, it tells you exactly what to add. Step 3 is a conversation with Lily, the voice; tap Talk, or choose to type. It already knows what you kept.
+          enough of it, it tells you exactly what to add. Step 3 is a conversation with Lily, the voice; tap Talk, or choose to type. It already knows what you kept. Step 4 ends in Review and buy: every new piece with an estimate, a cheaper
+          lookalike to switch on, the total against your budget, and links to buy each one at its store (no payments yet).
         </p>
+        <Link href={`/checkout/${SAMPLE_ROOM}`} className="link link-quiet self-start text-sm min-h-11 inline-flex items-center">Open Review and buy for the sample room →</Link>
         <div className="grid sm:grid-cols-2 gap-3">
           <button className="btn btn-primary w-full" onClick={startFresh}>Start from the beginning</button>
           <button className="btn btn-quiet w-full" onClick={skipToTaste}>Skip to the conversation</button>
@@ -120,7 +122,7 @@ export default function DemoPage() {
           <li><span className="text-ink">The conversation</span> is live: Claude plays the designer, following the intake research, and draws your page as you talk. Each conversation costs a few cents. If it&apos;s slow or unavailable, a simpler scripted version takes over so you&apos;re never stuck.</li>
           <li><span className="text-ink">Listening</span> uses Chrome&apos;s built-in speech recognition, so it can be a little slow to pick up.</li>
           <li><span className="text-ink">Real photos:</span> step 1 reads your own photos with Claude, which costs a little per room (the reads are capped). The sample room is there for trying the flow for free.</li>
-          <li><span className="text-ink">Plug &amp; Play</span> is a first cut: sample products drawn as simple shapes, sample prices. <span className="text-ink">Not built yet:</span> Transaction (buying).</li>
+          <li><span className="text-ink">Plug &amp; Play</span> is a first cut: sample products drawn as simple shapes, sample prices. <span className="text-ink">Review and buy</span> links to real listings (Amazon&apos;s open product data) with estimated prices; you buy at each store.</li>
         </ul>
       </section>
     </div>
