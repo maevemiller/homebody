@@ -1,5 +1,6 @@
 import type { Answer, Known, Space } from "./questions";
 import { MATERIAL, PALETTE, type Palette, type TasteState } from "./visual";
+import { sourcingDecisions } from "./shopping";
 
 // The craft layer for the notes and the brief (Maeve, 2026-10-29: "sticky, fluffy, AI-generated" is out).
 // Every line on the page or in the brief is a design decision, or a fact that drives one, in the trade's
@@ -156,7 +157,9 @@ export function ruleDecisions(k: Known, t: TasteState, said = ""): Decision[] {
   if (a.timeline === "asap" || a.tradeoff === "speed" || date) {
     out.push({ decision: "In-stock pieces only; nothing made to order (8–16 week lead times)", because: date ? `ready ${date}` : a.timeline === "asap" ? "wants it as soon as possible" : "speed is the priority" });
   }
-  if (a.budget === "lean") out.push({ decision: "Spend on the sofa and the rug; source case goods secondhand or in stock", because: "a lean budget" });
+  const sourcing = sourcingDecisions(a, a.timeline === "asap" || a.tradeoff === "speed" || !!date);
+  if (a.budget === "lean" && !sourcing.length) out.push({ decision: "Spend on the sofa and the rug; source case goods secondhand or in stock", because: "a lean budget" });
+  out.push(...sourcing);
   return out;
 }
 

@@ -29,6 +29,7 @@ export const SECTION_OF: Record<string, SectionId> = {
   hosting: "you", hosting_style: "you", unwind: "you", routine: "you",
   look: "style", color: "style", pattern: "style", materials: "style", avoid: "style", inspiration: "style", bold_colors: "style",
   anchor: "extras", places: "extras", places_feel: "extras", meaningful_detail: "extras", timeline: "extras", budget: "extras",
+  shop: "extras", brands: "extras",
 };
 for (const q of QUESTIONS) if (q.id.startsWith("look_")) SECTION_OF[q.id] = "style";
 

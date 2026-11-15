@@ -204,7 +204,9 @@ const NOT_ROOMS = ["grandmil-wallpaper"];
 // The room grid for this person: up to five that echo what they've said (their words and the
 // style evidence so far), then contrasts from across the map, so the grid still splits taste.
 const MOOD_WORDS = ["calm", "cozy", "bright", "moody", "elegant", "playful", "grounded", "energizing"];
-export function roomGrid(t: { styles: Partial<Record<Family, number>> }, said: string): { grid: string[]; more: string[] } {
+// With her own room restyled (own), the grid is her room in every preset, led by the ones that echo
+// her, and "Show me more" brings in stock photos.
+export function roomGrid(t: { styles: Partial<Record<Family, number>> }, said: string, own = false): { grid: string[]; more: string[] } {
   const text = said.toLowerCase();
   // "a cave", "a den", "a nest" mean moody rooms as surely as "dark" does
   const dark = /\b(dark|moody|dim|deep|rich|hotel bar|candle ?lit|low light|lamps?|cosy|cozy|night|cave|den|nest|snug|burrow|womb|cocoon|hole up)\b/.test(text);
@@ -214,6 +216,10 @@ export function roomGrid(t: { styles: Partial<Record<Family, number>> }, said: s
     Object.entries(r.family).reduce((n, [f, w]) => n + (w as number) * (t.styles[f as Family] ?? 0), 0) +
     0.7 * r.mood.filter((m) => moods.includes(m)).length +
     (dark && r.value !== "light" ? 1.2 : 0) + (dark && r.mood.includes("moody") ? 0.6 : 0) + (light && r.value === "light" ? 0.5 : 0);
+  if (own) {
+    const views = STYLE_PRESETS.map((p, i) => ({ id: p.id, n: score(p) - i * 1e-3 })).sort((a, b) => b.n - a.n).map((x) => x.id);
+    return { grid: views, more: ROOM_GRID.slice(0, 6) };
+  }
   const pool = [...ROOM_GRID, ...ROOM_MORE, ...ROOMS.map((r) => r.id).filter((id) => !ROOM_GRID.includes(id) && !ROOM_MORE.includes(id))].filter((id) => !NOT_ROOMS.includes(id));
   const ranked = pool.map((id) => ({ id, n: score(ROOM.get(id)!) })).filter((x) => x.n > 0.6).sort((a, b) => b.n - a.n);
   const echo: string[] = [];

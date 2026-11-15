@@ -106,3 +106,23 @@ For the full step log see `docs/autoloop/log.md`; for critic reviews see `docs/a
   - the GitHub repo (public `maevemiller/homebody`; 8 repos made public, 4 kept private for PII).
 - **Paused at her request (usage running low):** the Taste additions, Plug & Play v2 and checkout, mid-way. Everything
   was committed and pushed (7cb5d68), and these handoff files were written. Next: `docs/BACKLOG.md` items 1–5.
+
+## 2026-10-30 (afternoon): First Cursor cloud-agent session
+- **Asked:** pick up from the handoff in a Cursor cloud agent (a Linux VM, not her Mac).
+- **Set up the VM:** `npm ci`, `npm run fonts`, `npm run assets`, and Blender 5.2.3 for Linux in `/opt/blender`
+  (run the dev server with `BLENDER_PATH=/usr/local/bin/blender`). Built the free sample room (`/?sample=1` path) to
+  test with. No API keys yet, so the live designer, the voice and photo reads can't run here.
+- **Built:** backlog item 1, style views of her own room. `components/taste/styleshots.ts` loads her room's glb once,
+  recolors surfaces by Blender material name (walls, floor, rug, curtains, upholstery, wood, painted pieces, metal) for
+  each preset, cuts away the near walls like Plug & Play, and renders 640×480 thumbnails offscreen. `/taste` starts it
+  on load; the rooms set waits up to 6 seconds for it, shows her room nine ways with what each puts in the room (never
+  the style's name), and keeps stock photos under "Show me more".
+- **Workflow change:** cloud agents work on a `cursor/…` branch and open a pull request into `homebody-build`.
+- **Also built:** backlog items 2 and 3 (the shopper question with a "Sourcing" brief line; "See it in your room" from
+  the confirmed brief), and the first slice of Plug & Play v2: the room furnishes itself from the brief
+  (`lib/play/propose.ts`), each piece with its reason in a "First pass" tab, plus a 2-step walkthrough. Picks obey the
+  brief: no bouclé, linen or velvet seating with a pet, nothing she marked never, lookalikes when over her figure, and
+  "Find secondhand" notes for thrift shoppers. Reasons are honest about pets (faux leather: "claws will mark it").
+- **Design critic** (verdict POLISH) asked for the reasons panel, brief-obeying picks, a truthful walkthrough and
+  monochrome chips in Play, all done; the style-preset spread is still open. Checked in a real browser via a
+  computer-use agent on the sample room with a cat in the brief.

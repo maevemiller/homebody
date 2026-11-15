@@ -83,6 +83,7 @@ export type KnownRule = (k: Known) => ({ skip: Answer } | { prefill: Answer }) &
 
 export type ProfileField =
   | "bucket.start" | "bucket.approach" | "bucket.tradeoff" | "bucket.timeline" | "bucket.budget"
+  | "shopping.channels" | "shopping.brands"
   | "household.size" | "space.uses" | "space.priorities"
   | "household.kids" | "household.kid_ages" | "household.pets" | "household.pets_on_furniture"
   | "work.from_home" | "work.calls"
@@ -265,6 +266,32 @@ export const QUESTIONS: readonly Question[] = [
     },
     feeds: "bucket.budget",
     why: "Every recommendation is priced. A range here beats guessing, and avoids a price that feels like paying for a quiz.",
+  },
+  {
+    id: "shop",
+    stage: "bucketing",
+    prompt: "Where do you like to find things for your home?",
+    kind: {
+      type: "multi",
+      choices: [
+        c("secondhand", "Thrift and secondhand"), c("vintage", "Vintage and antiques"), c("affordable", "Affordable, in stock"),
+        c("mid", "Mid-range shops"), c("designer", "Designer pieces"), c("makers", "Small makers, made to order"),
+      ],
+    },
+    core: true,
+    from: [],
+    feeds: "shopping.channels",
+    why: "Decides where every piece is sourced: secondhand finds, the shops they trust, or made to order, and so which brands the plan is built from (Maeve, 2026-10-30).",
+  },
+  {
+    id: "brands",
+    stage: "bucketing",
+    prompt: "Are there any shops or makers you already love?",
+    kind: { type: "text", placeholder: "Article, Facebook Marketplace, a ceramicist on Etsy…" },
+    core: false,
+    from: [],
+    feeds: "shopping.brands",
+    why: "Real products come from the places they already trust first.",
   },
 
   // 2. Functional, for everyone

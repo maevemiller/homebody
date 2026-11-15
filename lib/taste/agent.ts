@@ -297,6 +297,7 @@ const SPOKEN: Record<string, string> = {
   tradeoff: "Where do your priorities lie with this room?",
   timeline: "When would you love for it to be done? As soon as possible, in the next few months, or no rush at all?",
   budget: "What kind of budget feels right for this? Keeping it lean, somewhere in the middle, or happy to invest?",
+  shop: "When you buy for your home, where do you like to look? Secondhand, a few favorite shops, or made to order?",
   people: "How many people use this room most days? Feel free to tell me who.",
   uses: "What do you mostly use this room for? Relaxing, eating, working, anything goes.",
   priorities: "What does this room most need to get right? More storage, better light, feeling calmer?",
@@ -636,6 +637,14 @@ const SYN: Record<string, Record<string, RegExp>> = {
     mid: /\b(middle|mid|moderate|reasonable|medium)\b/,
     invest: /\b(invest|splurge|premium|generous|quality)\b/,
     unsure: /\b(not sure|no idea|don't know|unsure|depends)\b/,
+  },
+  shop: {
+    secondhand: /\b(thrift\w*|second.?hand|charity shops?|goodwill|marketplace|craigslist|ebay|kijiji|pre.?loved|used|flea markets?)\b/,
+    vintage: /\b(vintage|antiques?|estate sales?|auctions?|chairish|1stdibs)\b/,
+    affordable: /\b(ikea|target|wayfair|amazon|h ?& ?m home|walmart|cheap|affordable|in stock)\b/,
+    mid: /\b(west elm|article|cb2|crate|pottery barn|made\.com|mid.?range|habitat|john lewis|zara home|world market)\b/,
+    designer: /\b(designer|high.?end|luxury|rh|restoration hardware|design within reach|dwr|ligne roset|trade|investment pieces?)\b/,
+    makers: /\b(makers?|handmade|etsy|made to order|custom|bespoke|artisans?|craftspeople|local (shops?|makers?))\b/,
   },
   uses: {
     relax: /\b(relax\w*|chill\w*|lounging|unwind\w*|rest|sofa|couch|collapse)\b/, tv: /\b(tv|television|movies?|films?|netflix|watch\w*|a show|shows|series)\b/,

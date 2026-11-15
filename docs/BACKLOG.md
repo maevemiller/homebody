@@ -5,17 +5,20 @@ Highest priority first. Keep this current at the end of every session. Details f
 
 ## Now (in progress when paused, 2026-10-30)
 
-1. **Taste Builder: style views of her own room** for "which would you live in". She's shown her captured room restyled
-   in 6–9 directions instead of stock photos (style presets plus offscreen three.js thumbnails, with stock photos as
-   the fallback). Partly built; check `lib/taste` and `components/taste` for the presets in progress.
-2. **Taste Builder: "what kind of shopper are you" question.** Thrift, vintage, mid-market or designer; brands;
-   channels; new versus secondhand; where to splurge. Structured `shopping` preferences, plus a "Sourcing" line in the
-   brief.
-3. **The handoff from the brief into Plug & Play.** A short transition, then `/play/<id>?from=brief`.
+1. **Taste Builder: style views of her own room:** built (2026-10-30, cloud session). `components/taste/styleshots.ts`
+   renders her captured room in all 9 presets (`lib/taste/styleviews.ts`) when `/taste` opens, and the rooms set shows
+   them, with stock photos under "Show me more" and as the fallback. Left: check it in a real browser mid-interview
+   (it was only checked on a test page in headless Chrome), and get a design-critic review.
+2. **Taste Builder: shopper question:** built (`shop` and `brands` questions, `lib/taste/shopping.ts`, "Sourcing"
+   line and sourcing decisions in the brief).
+3. **Handoff from the brief into Plug & Play:** built ("See it in your room" opens `/play/<id>?from=brief`).
 4. **Plug & Play v2:**
-   - **The room starts furnished** with a proposal from the brief, validated by a design engine (`lib/design/`: rules
-     validators, Wada color matching, ripple engine; see `docs/reference/design-principles/`).
-   - **Walkthrough:** 3 steps, skippable.
+   - **The room starts furnished:** first slice built (`lib/play/propose.ts`, rule-based; each pick has a craft reason,
+     shown in the "First pass" tab). Left: the fuller design engine (`lib/design/`: Wada color matching, ripple engine;
+     see `docs/reference/design-principles/`), and marking the proposed pieces in the room itself.
+   - **Walkthrough:** built, 2 steps, skippable.
+   - **Style presets** (critic, 2026-10-30): spread them further apart (darker Japandi, warmer limewash, terracotta near
+     #B5532E, deeper navy and ruby), a rug pattern per style, cut caption words a render can't show.
    - **Real products:** from `docs/reference/sourcing/seed-products.json` (credit "Amazon.com, CC BY 4.0"; no prices,
      so label them), ranked by her sourcing preferences.
    - **Feedback on any piece:** one-tap like or dislike; a "Change this" sheet with parameter chips (budget, color,

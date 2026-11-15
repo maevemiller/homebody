@@ -37,6 +37,8 @@ const FIELD: Record<ProfileField, [group: string, label: string]> = {
   "bucket.tradeoff": ["Persona", "What to protect"],
   "bucket.timeline": ["Budget and timing", "Timeline"],
   "bucket.budget": ["Budget and timing", "Budget"],
+  "shopping.channels": ["Budget and timing", "Where they shop"],
+  "shopping.brands": ["Budget and timing", "Shops and makers they love"],
   "household.size": ["Household", "People using the room"],
   "household.kids": ["Household", "Kids"],
   "household.kid_ages": ["Household", "Kids' ages"],
