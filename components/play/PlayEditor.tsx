@@ -8,8 +8,7 @@ import type { BuildInfo, RoomStatus } from "@/lib/scan/store";
 import { readSaved } from "@/lib/taste/saved";
 import type { TasteState } from "@/lib/taste/visual";
 import {
-  GOOD_FIT, HEROES, KIND_LABEL, KIND_ONE, PRODUCT, PRODUCTS, alternatives, fitScore, hasTaste, kindOf, money, sortCatalog, twinOf,
-  type Alternative, type Own, type Product,
+  GOOD_FIT, HEROES, KIND_ONE, PRODUCT, PRODUCTS, REAL_CREDIT, hasTaste, kindOf, money, priceLabel, sortCatalog, twinOf, type Product,
 } from "@/lib/play/catalog";
 import {
   doorZones, initialLayout, pinFixed, readLayout, reconcile, settle, shapeOf, totalCost, wallsOf,
@@ -17,8 +16,18 @@ import {
 } from "@/lib/play/layout";
 import type { SceneApi, View } from "./PlayScene";
 import { Icon, type IconName } from "./icons";
-import { renderThumbs, thumbOf } from "./thumbs";
+import { renderThumbs } from "./thumbs";
 import { bestSpot } from "@/lib/play/placement";
+import { EMPTY_PREFS, neverMaterials, react, reactOwn, readBrief, readPrefs, writePrefs, type BriefRead, type Prefs } from "@/lib/play/prefs";
+import { propose, withoutUnchosen, type ProposalResult } from "@/lib/play/proposal";
+import type { RankCtx } from "@/lib/play/rank";
+import { CANDIDATES, catalogMaterial, toDesign } from "@/lib/play/design";
+import { ripple as rippleFor, type Ripple } from "@/lib/design/ripple";
+import ChangeSheet, { type RippleMode } from "./ChangeSheet";
+import SwipeDeck from "./SwipeDeck";
+import Walkthrough from "./Walkthrough";
+import AskDesigner from "./AskDesigner";
+import { ProductThumb, THUMB } from "./ProductThumb";
 
 const PlayScene = dynamic(() => import("./PlayScene"), { ssr: false });
 
@@ -29,6 +38,9 @@ interface Loaded {
   glbUrl: string;
   hdri?: string;
   taste?: TasteState;
+  // the confirmed brief and how she shops, read once from this browser
+  brief: BriefRead;
+  bins: Record<string, string>;
 }
 
 interface History {
@@ -59,8 +71,12 @@ function readJson<T>(key: string, fallback: T): T {
   }
 }
 
-/** Plug & Play: move their pieces, place what's waiting, and try sample pieces with a running cost. */
-export default function PlayEditor({ id }: { id: string }) {
+/**
+ * Plug & Play: the room arrives furnished from the brief (lib/play/proposal.ts); she reacts to any piece with a
+ * tap, asks for a change in chips or words, decides whether the room follows (lib/design/ripple.ts), teaches it
+ * her taste with a swipe deck, and moves on to review and buy.
+ */
+export default function PlayEditor({ id, fromBrief = false }: { id: string; fromBrief?: boolean }) {
   const [data, setData] = useState<Loaded | null>(null);
   const [failed, setFailed] = useState(false);
   const [hist, setHist] = useState<History | null>(null);
@@ -74,6 +90,15 @@ export default function PlayEditor({ id }: { id: string }) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [toast, setToast] = useState<Toast | null>(null);
   const [touched, setTouched] = useState(false);
+  const [prefs, setPrefs] = useState<Prefs>(EMPTY_PREFS);
+  const [deck, setDeck] = useState(false);
+  const [asking, setAsking] = useState(false);
+  const [walk, setWalk] = useState(false);
+  // the last "let the room follow": what the room was before it followed, and what changed
+  const [follow, setFollow] = useState<{ before: Layout; result: Ripple } | null>(null);
+  // dislikes in a row, for the gentle nudge
+  const [misses, setMisses] = useState(0);
+  const [proposal, setProposal] = useState<{ added: number; skipped: ProposalResult["skipped"] } | null>(null);
   const [, setThumbs] = useState(0);
   // built-in items as the room model marks them; the name rule in lib/play/layout covers older rooms
   const [builtIn, setBuiltIn] = useState<Map<string, number | undefined>>(new Map());
@@ -100,14 +125,29 @@ export default function PlayEditor({ id }: { id: string }) {
         const saved = readLayout(id);
         const taste = readSaved().taste;
         const hdri = body.build.light?.hdri;
+        const brief = readBrief();
+        const prefsNow = readPrefs();
+        setPrefs(prefsNow);
         setData({
           spec,
           glbUrl: `/api/rooms/${id}/files/build/room.glb?v=${body.build.seconds}-${body.status.refinedAt ?? ""}`,
           hdri: hdri && /^[a-z0-9_]+\.hdr$/.test(hdri) ? `/api/play/hdri/${hdri}` : undefined,
           taste: hasTaste(taste) ? taste : undefined,
+          brief,
+          bins: inputs.bins,
         });
-        const now = saved ? reconcile(saved, fresh, inputs) : fresh;
+        let now = saved ? reconcile(saved, fresh, inputs) : fresh;
+        // the room starts furnished: a proposal from the brief, once, unless she's already adding her own
+        if (!now.proposedAt && !now.pieces.some((p) => p.source === "catalog")) {
+          const r = propose({
+            spec, layout: now, items: new Map(spec.items.map((i) => [i.id, i])), bins: inputs.bins, brief, prefs: prefsNow,
+            taste: hasTaste(taste) ? taste : undefined,
+          });
+          now = r.layout;
+          setProposal({ added: r.added.length, skipped: r.skipped });
+        }
         setHist({ past: [], now, future: [] });
+        if (fromBrief && !prefsNow.walkthroughSeen) setWalk(true);
         // open on what's waiting to be placed, if anything is; after that the tab is theirs to change
         setTab(now.pieces.some((p) => !p.placed && p.source !== "catalog") ? "tray" : "catalog");
         fetch(`/api/play/look/${id}`)
@@ -119,7 +159,7 @@ export default function PlayEditor({ id }: { id: string }) {
     return () => {
       alive = false;
     };
-  }, [id]);
+  }, [id, fromBrief]);
 
   // the catalog's pictures, drawn from the same models as the room, once the room is up
   useEffect(() => {
@@ -364,8 +404,98 @@ export default function PlayEditor({ id }: { id: string }) {
     update(selected, () => ({ product: product?.id, ...place(next, shape, piece.x, piece.y, piece.rot) }));
   };
 
-  const openSwap = () => {
-    const opening = !swapping;
+  const updatePrefs = (fn: (p: Prefs) => Prefs) =>
+    setPrefs((p) => {
+      const n = fn(p);
+      writePrefs(n);
+      return n;
+    });
+  const rippleMode: RippleMode = prefs.ripple ?? "keep";
+
+  /**
+   * An alternative picked in "Change this": it goes in where the old piece stood (marked as her choice). With
+   * "Let the room follow", the ripple engine's proposals (up to three small pieces) go in too, shown in a bar
+   * she keeps or undoes; with "Just this piece", only its warnings are said.
+   */
+  const pickAlternative = (product: Product) => {
+    if (!selected || !layout || !data) return;
+    const piece = layout.pieces.find((p) => p.key === selected);
+    const before = shapes[selected];
+    if (!piece || !before) return;
+    const next: Piece = { ...piece, product: product.id, chosen: true, why: `Your pick, in place of the ${before.name.charAt(0).toLowerCase()}${before.name.slice(1)}` };
+    const shape = shapeOf(next, items);
+    const at = place(next, shape, piece.x, piece.y, piece.rot);
+    const after: Layout = { ...layout, pieces: layout.pieces.map((q) => (q.key === selected ? { ...next, ...at } : q)) };
+    const afterShapes = { ...shapes, [selected]: shape };
+    const design = toDesign(after.pieces, afterShapes, items, data.bins);
+    const it = piece.item ? items.get(piece.item) : undefined;
+    const from = before.product
+      ? { color: before.product.color, accent: before.product.accent, material: before.product.material, accentMaterial: before.product.accentMaterial }
+      : { color: before.color, material: catalogMaterial(it?.primary_material ?? "") };
+    const locked = new Set(after.pieces.filter((q) => q.chosen || q.source !== "catalog").map((q) => q.key));
+    const r = rippleFor(
+      { key: selected, from, to: { color: product.color, accent: product.accent, material: product.material, accentMaterial: product.accentMaterial } },
+      design, CANDIDATES,
+      { mode: rippleMode, locked, inRoom: new Set(after.pieces.flatMap((q) => (q.product ? [q.product] : []))) },
+    );
+    commit(after);
+    setTouched(true);
+    if (rippleMode === "ripple" && r.proposals.length) {
+      const followed: Layout = {
+        ...after,
+        pieces: after.pieces.map((q) => {
+          const prop = r.proposals.find((x) => x.key === q.key);
+          if (!prop) return q;
+          const moved: Piece = { ...q, product: prop.to, why: prop.why };
+          return { ...moved, ...place(moved, shapeOf(moved, items), q.x, q.y, q.rot) };
+        }),
+      };
+      commit(followed);
+      setFollow({ before: after, result: r });
+    } else if (r.warnings.length) {
+      flash(r.warnings[0], 5000, rippleMode === "keep" && r.warnings.some((w) => /one-off|once|twice/.test(w)) ? { label: "Let the room follow next time", short: "Room follows", run: () => { updatePrefs((p) => ({ ...p, ripple: "ripple" })); setToast(null); } } : undefined);
+    }
+  };
+
+  // one tap: a yes keeps it and steers the ranking; a no is noted, offers a change, and after a few in a row,
+  // a gentle nudge toward the swipe deck
+  const reactTo = (key: string, by: 1 | -1) => {
+    const p = layout?.pieces.find((q) => q.key === key);
+    const s = shapes[key];
+    if (!p || !s) return;
+    if (s.product) updatePrefs((x) => react(x, s.product!, by));
+    else {
+      const it = p.item ? items.get(p.item) : undefined;
+      if (it) updatePrefs((x) => reactOwn(x, { material: catalogMaterial(it.primary_material), color: it.primary_color }, by));
+    }
+    if (by > 0) {
+      setMisses(0);
+      if (p.source === "catalog" && !p.chosen) update(key, () => ({ chosen: true }));
+      flash(p.source === "catalog" ? "Kept. More like this" : "Noted: you love this one");
+      return;
+    }
+    const n = misses + 1;
+    setMisses(n);
+    if (n >= 3) {
+      flash("Not landing yet? A few quick swipes will help", 7000, { label: "Teach me your taste", short: "Teach me", run: () => { setToast(null); setMisses(0); setDeck(true); } });
+    } else if (s.product || p.source === "room") {
+      flash("Noted", 5000, { label: "See something else here", short: "Change this", run: () => { setToast(null); openSwap(true); } });
+    }
+  };
+
+  // re-furnish the unchosen part of the proposal, after the taste moved (the swipe deck)
+  const refurnish = (prefsNow: Prefs) => {
+    if (!layout || !data) return;
+    const r = propose({ spec: data.spec, layout: withoutUnchosen(layout), items, bins: data.bins, brief: data.brief, prefs: prefsNow, taste: data.taste, wall: data.wallTint, builtIn: new Set(builtIn.keys()) });
+    commit(r.layout);
+    setProposal({ added: r.added.length, skipped: r.skipped });
+    setSelected(null);
+    flash(`Re-furnished: ${r.added.length} piece${r.added.length === 1 ? "" : "s"} chosen around your answers`, 3500);
+  };
+
+  const openSwap = (force = false) => {
+    const opening = force || !swapping;
+    setAsking(false);
     setSwapping(opening);
     setShowAdded(false);
     if (!opening) {
@@ -473,6 +603,29 @@ export default function PlayEditor({ id }: { id: string }) {
 
   const catalog = useMemo(() => sortCatalog(data?.taste), [data]);
 
+  // what ranking knows: her picks, her taps, her brief and the colors already fixed in the room
+  const rankCtx: RankCtx | null = useMemo(() => {
+    if (!data || !layout) return null;
+    const kept = layout.pieces.filter((p) => p.placed && p.source === "room" && !p.product && shapes[p.key] && !shapes[p.key].fixed);
+    const anchors = kept.sort((a, b) => shapes[b.key].w * shapes[b.key].h - shapes[a.key].w * shapes[a.key].h).slice(0, 3).map((p) => shapes[p.key].color);
+    return { taste: data.taste, prefs, brief: data.brief, anchors: [...anchors, data.wallTint ?? data.spec.walls.color], never: neverMaterials(data.brief) };
+  }, [data, layout, shapes, prefs]);
+  const inRoom = useMemo(() => new Set((layout?.pieces ?? []).flatMap((p) => (p.product ? [p.product] : []))), [layout]);
+  // the piece "Change this" is about, as the sheet needs it
+  const changeCurrent = useMemo(() => {
+    const p = selected ? layout?.pieces.find((q) => q.key === selected) : undefined;
+    const sh = p ? shapes[p.key] : undefined;
+    const kind = sh ? kindOf(sh.category) : undefined;
+    if (!p || !sh || !kind) return null;
+    const pr = sh.product;
+    if (pr) return { id: pr.id, name: pr.name, category: pr.category, sub: pr.sub, price: pr.price, color: pr.color, w: pr.w, material: pr.material, product: pr };
+    const it = p.item ? items.get(p.item) : undefined;
+    return {
+      name: sh.name, category: kind, sub: sh.category === "side_table" || sh.category === "nightstand" ? "side_table" : undefined,
+      price: 0, color: sh.color, w: sh.w, material: catalogMaterial(it?.primary_material ?? ""),
+    };
+  }, [selected, layout, shapes, items]);
+
   if (failed) {
     return (
       <div className="max-w-3xl mx-auto px-6 py-16">
@@ -492,16 +645,15 @@ export default function PlayEditor({ id }: { id: string }) {
   const selKind = selShape ? kindOf(selShape.category) : undefined;
   const swapOpen = swapping && !!sel && !!selKind;
   const activeTab: Tab = tray.length ? tab ?? "catalog" : "catalog";
-  const own = (p: Piece): Own | undefined => {
-    const it = p.item ? items.get(p.item) : undefined;
-    return it ? { color: it.primary_color, material: it.primary_material, w: it.width } : undefined;
-  };
-
-  const panelBody = showAdded ? (
+  const panelBody = asking ? (
+    <AskDesigner roomId={id} piece={selShape?.name} onClose={() => setAsking(false)} onAdded={() => flash("Added to your brief. Your designer will pick it up", 3500)} />
+  ) : showAdded ? (
     <AddedPanel
+      roomId={id}
       pieces={added}
       shapes={shapes}
       total={cost.total}
+      estimated={cost.estimated + cost.unpriced > 0}
       onClose={() => setShowAdded(false)}
       onPick={(key) => {
         setSelected(key);
@@ -515,16 +667,19 @@ export default function PlayEditor({ id }: { id: string }) {
         else update(key, () => ({ product: undefined }));
       }}
     />
-  ) : swapOpen && sel && selShape && selKind ? (
-    <SwapPanel
-      piece={sel}
-      shape={selShape}
-      kind={selKind}
-      taste={data.taste}
-      own={own(sel)}
-      onPick={swapTo}
-      onClose={closeSwap}
+  ) : swapOpen && sel && changeCurrent && rankCtx ? (
+    <ChangeSheet
+      key={sel.key}
+      current={changeCurrent}
+      ctx={rankCtx}
+      exclude={inRoom}
+      ripple={rippleMode}
+      onRipple={(m) => updatePrefs((p) => ({ ...p, ripple: m }))}
+      onPick={(p) => pickAlternative(p)}
+      onBackToOwn={sel.source === "room" && sel.product ? () => swapTo(null) : undefined}
       ownName={sel.item ? items.get(sel.item)?.name : undefined}
+      onClose={closeSwap}
+      onAskDesigner={() => { setAsking(true); setSheetOpen(true); }}
     />
   ) : (
     <>
@@ -549,7 +704,7 @@ export default function PlayEditor({ id }: { id: string }) {
                       thumb={s.product ? <ProductThumb product={s.product} /> : <Thumb color={s.color} kind={kindOf(s.category) ?? "box"} />}
                       title={nb(s.name)}
                       sub={`${p.source === "brought" ? "Bringing" : p.source === "catalog" ? "New" : "Yours"} · ${cm(s.w)}\u00a0×\u00a0${cm(s.d)} cm`}
-                      price={s.product ? money(s.product.price) : undefined}
+                      price={s.product ? priceLabel(s.product, true) : undefined}
                       action="Place"
                     />
                   </li>
@@ -563,9 +718,17 @@ export default function PlayEditor({ id }: { id: string }) {
           )
         ) : (
           <>
+            <ProposalCard
+              added={layout.pieces.filter((p) => p.proposed && p.placed).length}
+              chosen={layout.pieces.filter((p) => p.proposed && p.chosen).length}
+              skipped={proposal?.skipped ?? []}
+              confirmed={data.brief.confirmed}
+              onTeach={() => setDeck(true)}
+              onAsk={() => { setAsking(true); setSheetOpen(true); }}
+              checkout={`/checkout/${id}`}
+            />
             <p className="text-xs text-ink-faint leading-relaxed mb-3">
-              <span className="eyebrow text-amber text-[10px] mr-1">Sample</span>
-              Made-up products and prices, for trying things out.{data.taste ? " Sorted by what fits your taste." : ""}
+              Add more. Real pieces first ({REAL_CREDIT}; prices are estimates), then <span className="eyebrow text-amber text-[10px]">Sample</span> pieces with made-up prices.{data.taste ? " Sorted by what fits your taste." : ""}
             </p>
             <ul className="flex flex-col gap-2">
               {catalog.map(({ product, fit }) => {
@@ -578,8 +741,9 @@ export default function PlayEditor({ id }: { id: string }) {
                       thumb={<ProductThumb product={product} />}
                       title={nb(product.name)}
                       sub={`${KIND_ONE[product.category]} · ${cm(product.w)}\u00a0×\u00a0${cm(product.d)} cm`}
-                      price={money(product.price)}
+                      price={priceLabel(product, true)}
                       badges={[
+                        product.real ? { text: `Real · ${product.real.brand}`, tone: "quiet" as const } : { text: "Sample", tone: "amber" as const },
                         twin && twin.price < product.price ? { text: `Lookalike ${money(twin.price)}`, tone: "amber" as const } : null,
                         fit !== null && fit >= GOOD_FIT ? { text: "Fits your taste", tone: "clay" as const } : null,
                       ]}
@@ -599,8 +763,11 @@ export default function PlayEditor({ id }: { id: string }) {
   const strip = (
     <div className="lg:hidden flex-1 min-h-0 flex flex-col">
       <div className="flex items-baseline justify-between px-4">
-        <p className="text-xs text-ink-soft">{tray.length ? "Tap to place, or add something new" : "Tap to add to your room"}</p>
-        <button onClick={() => setSheetOpen(true)} className="text-xs text-clay font-medium min-h-8">See all</button>
+        <p className="text-xs text-ink-soft truncate">{tray.length ? "Tap to place, or add something new" : "Tap a piece in the room to react"}</p>
+        <div className="flex items-center gap-3 shrink-0">
+          <button onClick={() => setDeck(true)} className="text-xs text-ink-soft font-medium min-h-8">Teach me</button>
+          <button onClick={() => setSheetOpen(true)} className="text-xs text-clay font-medium min-h-8">See all</button>
+        </div>
       </div>
       <ul className="flex gap-2 overflow-x-auto overscroll-contain px-4 pt-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] [scrollbar-width:none]">
         {tray.map((p) => {
@@ -619,9 +786,9 @@ export default function PlayEditor({ id }: { id: string }) {
         })}
         {catalog.map(({ product }) => (
           <li key={product.id} className="shrink-0">
-            <button onClick={() => addProduct(product)} className="w-[76px] flex flex-col items-center gap-1 text-[11px]" aria-label={`Add ${product.name}, ${money(product.price)}`}>
+            <button onClick={() => addProduct(product)} className="w-[76px] flex flex-col items-center gap-1 text-[11px]" aria-label={`Add ${product.name}, ${priceLabel(product)}`}>
               <ProductThumb product={product} size="lg" />
-              <span className="w-full truncate text-ink tabular-nums">{money(product.price)}</span>
+              <span className="w-full truncate text-ink tabular-nums">{priceLabel(product, true)}</span>
             </button>
           </li>
         ))}
@@ -649,14 +816,18 @@ export default function PlayEditor({ id }: { id: string }) {
             setSheetOpen(true);
           }}
           aria-expanded={showAdded}
-          aria-label={`New pieces, ${money(cost.total)}. Show what you've added`}
-          title="What you've added (sample prices)"
+          aria-label={`New pieces, ${cost.estimated ? "about " : ""}${money(cost.total)}${cost.estimated ? ", including estimates" : ""}. Show what you've added`}
+          title={cost.estimated ? "What you've added (real pieces are estimates until checkout)" : "What you've added"}
           className="ml-1 shrink-0 whitespace-nowrap rounded-full bg-clay text-on-clay pl-3 pr-3 h-10 flex items-center gap-1.5 tabular-nums hover:opacity-90"
         >
           <span className="text-xs opacity-85">New<span className="hidden sm:inline"> pieces</span> ·</span>
-          <span className="font-semibold">{money(cost.total)}</span>
+          <span className="font-semibold">{cost.estimated || cost.unpriced ? "≈" : ""}{money(cost.total)}</span>
           {cost.count > 0 && <span className="grid place-items-center h-5 min-w-5 px-1 rounded-full bg-bg/20 text-[11px]">{cost.count}</span>}
         </button>
+        <Link href={`/checkout/${id}`} aria-label="Next: review and buy" title="Next: review and buy" className="ml-1 shrink-0 h-10 rounded-full border border-line-strong px-3 flex items-center gap-1.5 text-sm hover:bg-surface-2">
+          <span className="hidden md:inline">Review and buy</span>
+          <Icon name="arrow" size={16} />
+        </Link>
       </header>
 
       <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
@@ -708,13 +879,49 @@ export default function PlayEditor({ id }: { id: string }) {
             </div>
           )}
 
-          {/* the toolbar for the selected piece; on a phone it steps aside while Swap is open */}
+          {follow && (
+            <div role="status" className="absolute top-[60px] inset-x-3 mx-auto max-w-md rounded-2xl bg-surface/97 backdrop-blur border shadow-[var(--shadow-2)] p-3 text-sm animate-[rise_0.25s_ease-out] z-[1]">
+              <p className="font-medium">The room followed: {follow.result.proposals.length} small change{follow.result.proposals.length === 1 ? "" : "s"}{follow.result.total_cost ? ` · ≈+${money(follow.result.total_cost)}` : ""}</p>
+              <ul className="mt-1.5 flex flex-col gap-1 text-[13px] text-ink-soft">
+                {follow.result.proposals.map((x) => <li key={x.key} className="leading-snug">{x.why}</li>)}
+              </ul>
+              <div className="mt-2.5 flex gap-2 justify-end">
+                <button onClick={() => { commit(follow.before); setFollow(null); }} className="btn btn-quiet btn-sm">Undo them</button>
+                <button onClick={() => setFollow(null)} className="btn btn-primary btn-sm">Keep</button>
+              </div>
+            </div>
+          )}
+
+          {/* the toolbar for the selected piece; on a phone it steps aside while Change is open */}
           {sel && selShape && (
             <div key={sel.key} className={`absolute inset-x-0 bottom-3 flex-col items-center gap-2 px-3 pointer-events-none animate-[rise_0.22s_ease-out] ${swapOpen ? "hidden lg:flex" : "flex"}`}>
-              <p className="pointer-events-auto max-w-full truncate rounded-full bg-surface/95 backdrop-blur px-3 py-1 text-sm shadow-sm">
-                <span className="font-medium">{selShape.name}</span>
-                <span className="text-ink-soft"> · {selShape.product ? money(selShape.product.price) : sel.source === "brought" ? "Bringing" : "Yours"}</span>
-              </p>
+              <div className="pointer-events-auto max-w-[min(100%,440px)] flex items-center gap-1 rounded-2xl bg-surface/95 backdrop-blur pl-3 pr-1 py-1 shadow-sm">
+                <div className="min-w-0 flex-1 py-0.5">
+                  <p className="text-sm truncate">
+                    <span className="font-medium">{selShape.name}</span>
+                    <span className="text-ink-soft"> · {selShape.product ? priceLabel(selShape.product) : sel.source === "brought" ? "Bringing" : "Yours"}</span>
+                  </p>
+                  {sel.why && sel.source === "catalog" && <p className="text-[11px] text-ink-soft leading-snug line-clamp-2">{sel.why}</p>}
+                  {selShape.product?.real && (
+                    <p className="text-[10px] text-ink-faint truncate">
+                      {selShape.product.real.brand} · {REAL_CREDIT} ·{" "}
+                      <a href={selShape.product.real.url} target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">View listing</a>
+                    </p>
+                  )}
+                </div>
+                {sel.source !== "brought" && (
+                  <>
+                    <button onClick={() => reactTo(sel.key, 1)} aria-label="I like this" aria-pressed={!!selShape.product && prefs.liked.includes(selShape.product.id)} title="Like"
+                      className={`h-10 w-10 shrink-0 grid place-items-center rounded-full ${selShape.product && prefs.liked.includes(selShape.product.id) ? "bg-sage-tint text-sage" : "text-ink-soft hover:text-sage hover:bg-surface-2"}`}>
+                      <Icon name="like" size={19} />
+                    </button>
+                    <button onClick={() => reactTo(sel.key, -1)} aria-label="Not for me" aria-pressed={!!selShape.product && prefs.disliked.includes(selShape.product.id)} title="Not for me"
+                      className={`h-10 w-10 shrink-0 grid place-items-center rounded-full ${selShape.product && prefs.disliked.includes(selShape.product.id) ? "bg-rust-tint text-rust" : "text-ink-soft hover:text-rust hover:bg-surface-2"}`}>
+                      <Icon name="dislike" size={19} />
+                    </button>
+                  </>
+                )}
+              </div>
               <div className="pointer-events-auto flex items-stretch gap-0.5 rounded-2xl bg-surface/95 backdrop-blur p-1 shadow-[var(--shadow-2)] border max-w-full overflow-x-auto">
                 {selShape.mount === "floor" ? (
                   <>
@@ -728,7 +935,7 @@ export default function PlayEditor({ id }: { id: string }) {
                     <ToolButton icon="lower" label="Lower" onClick={() => nudge("down", false)} />
                   </>
                 )}
-                <ToolButton icon="swap" label="Swap" active={swapOpen} disabled={!selKind} onClick={openSwap} />
+                <ToolButton icon="change" label="Change" active={swapOpen} disabled={!selKind || selShape.fixed} onClick={() => openSwap()} />
                 <ToolButton icon={sel.source === "catalog" ? "trash" : "tray"} label={sel.source === "catalog" ? "Remove" : "Put away"} onClick={() => putAway(sel.key)} />
                 <ToolButton icon="close" label="Done" onClick={() => onSelect(null)} />
               </div>
@@ -745,12 +952,24 @@ export default function PlayEditor({ id }: { id: string }) {
           </button>
           {!sheetOpen && strip}
           <div className={`flex-1 min-h-0 flex-col ${sheetOpen ? "flex" : "hidden lg:flex"}`}>{panelBody}</div>
-          <div className="hidden lg:flex shrink-0 border-t px-4 py-3 items-baseline justify-between text-sm">
-            <button className="text-ink-soft hover:text-ink" onClick={() => setShowAdded((s) => !s)}>New pieces{cost.count ? ` (${cost.count})` : ""} · yours stay free</button>
-            <span className="font-semibold tabular-nums">{money(cost.total)}</span>
+          <div className="hidden lg:flex shrink-0 border-t px-4 py-3 items-center justify-between gap-3 text-sm">
+            <button className="text-ink-soft hover:text-ink text-left" onClick={() => setShowAdded((s) => !s)}>
+              New pieces{cost.count ? ` (${cost.count})` : ""} · <span className="font-semibold text-ink tabular-nums">{cost.estimated || cost.unpriced ? "≈" : ""}{money(cost.total)}</span>
+              {cost.estimated > 0 && <span className="block text-[11px] text-ink-faint">includes estimates</span>}
+            </button>
+            <Link href={`/checkout/${id}`} className="btn btn-primary btn-sm flex items-center gap-1.5">Next: review and buy <Icon name="arrow" size={15} /></Link>
           </div>
         </aside>
       </div>
+      {deck && (
+        <SwipeDeck
+          seen={new Set(prefs.swiped)}
+          onSwipe={(p, liked) => updatePrefs((x) => ({ ...react(x, p, liked ? 1 : -1), swiped: [...new Set([...x.swiped, p.id])] }))}
+          onDone={() => { setDeck(false); refurnish(readPrefs()); }}
+          onClose={() => setDeck(false)}
+        />
+      )}
+      {walk && <Walkthrough onDone={() => { setWalk(false); updatePrefs((p) => ({ ...p, walkthroughSeen: true })); }} />}
     </div>
   );
 }
@@ -808,24 +1027,6 @@ function Card({ onPointerDown, onPlace, thumb, title, sub, price, badges = [], a
   );
 }
 
-const THUMB = { md: "h-14 w-14", lg: "h-[68px] w-[68px]" } as const;
-
-/** A product as a small render of its own model; the drawn glyph stands in until the renders are ready. */
-function ProductThumb({ product, size = "md" }: { product: Product; size?: keyof typeof THUMB }) {
-  const src = thumbOf(product.id);
-  return (
-    <span className={`${THUMB[size]} shrink-0 rounded-lg bg-surface-2 overflow-hidden grid place-items-center`}>
-      {src ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt="" className="h-full w-full object-contain animate-[fade_0.35s_ease-out]" draggable={false} />
-      ) : (
-        // until its render is ready: a soft wash of its own color, never a glyph that pops
-        <span aria-hidden className="h-3/5 w-3/5 rounded-full blur-md opacity-60" style={{ background: product.color }} />
-      )}
-    </span>
-  );
-}
-
 function Thumb({ color, kind, size = "md" }: { color: string; kind: string; size?: keyof typeof THUMB }) {
   return (
     <span className={`${THUMB[size]} shrink-0 rounded-lg bg-surface-2 grid place-items-center`}>
@@ -873,64 +1074,12 @@ function PanelHead({ eyebrow, title, onClose }: { eyebrow: string; title: string
   );
 }
 
-const REASON: Record<Alternative["reason"], (delta: number | null) => Badge> = {
-  less: (d) => ({ text: d !== null ? `Same look, ${money(-d)} less` : "Same look for less", tone: "amber" }),
-  more: () => ({ text: "Same look, studio-made", tone: "quiet" }),
-  closest: () => ({ text: "Closest to yours", tone: "clay" }),
-  other: () => null,
-};
-
-function SwapPanel({ piece, shape, kind, taste, own, onPick, onClose, ownName }: {
-  piece: Piece; shape: Shape; kind: NonNullable<ReturnType<typeof kindOf>>; taste?: TasteState; own?: Own;
-  onPick: (p: Product | null) => void; onClose: () => void; ownName?: string;
-}) {
-  const current = piece.product ? PRODUCT.get(piece.product) : undefined;
-  const alts = alternatives(kind, current, taste, current ? undefined : own);
-  const swappedOwn = piece.source === "room" && !!current;
-  return (
-    <div className="flex-1 min-h-0 flex flex-col">
-      <PanelHead eyebrow="Swap" title={shape.name} onClose={onClose} />
-      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-3 lg:px-4 pb-3 flex flex-col gap-2">
-        <p className="text-xs text-ink-soft">
-          Now: {current ? money(current.price) : piece.source === "room" ? "yours, $0" : "yours"}. Tap one to try it in the room.
-        </p>
-        {alts.length === 0 && <p className="text-sm text-ink-soft">No sample {KIND_LABEL[kind].toLowerCase()} to swap in yet.</p>}
-        {alts.map(({ product, reason }) => {
-          const delta = current ? product.price - current.price : null;
-          // for one of theirs, a lookalike's saving is against the closest match it copies
-          const closest = alts.find((a) => a.reason === "closest")?.product;
-          const saving = delta ?? (reason === "less" && closest ? product.price - closest.price : null);
-          return (
-            <button key={product.id} onClick={() => onPick(product)} className="text-left flex items-center gap-3 rounded-2xl bg-surface-2 p-2 hover:bg-line transition-colors">
-              <ProductThumb product={product} />
-              <span className="min-w-0 flex-1">
-                <span className="block text-sm leading-snug">{nb(product.name)}</span>
-                <Badges list={[REASON[reason](saving), taste && fitScore(product, taste) >= GOOD_FIT ? { text: "Fits your taste", tone: "clay" } : null]} />
-              </span>
-              <span className="text-right">
-                <span className="block text-sm font-medium tabular-nums">{money(product.price)}</span>
-                {delta !== null && delta !== 0 && <span className={`block text-[11px] tabular-nums ${delta < 0 ? "text-sage" : "text-ink-faint"}`}>{delta < 0 ? "−" : "+"}{money(Math.abs(delta))}</span>}
-              </span>
-            </button>
-          );
-        })}
-        {swappedOwn && (
-          <button onClick={() => onPick(null)} className="mt-1 btn btn-quiet w-full text-sm">
-            Back to your {ownName ? ownName.charAt(0).toLowerCase() + ownName.slice(1) : "own piece"}
-          </button>
-        )}
-        <p className="text-[11px] text-ink-faint mt-1">Sample products and prices, for trying things out.</p>
-      </div>
-    </div>
-  );
-}
-
-function AddedPanel({ pieces, shapes, total, onClose, onPick, onRemove }: {
-  pieces: Piece[]; shapes: Record<string, Shape>; total: number; onClose: () => void; onPick: (key: string) => void; onRemove: (key: string) => void;
+function AddedPanel({ roomId, pieces, shapes, total, estimated, onClose, onPick, onRemove }: {
+  roomId: string; pieces: Piece[]; shapes: Record<string, Shape>; total: number; estimated: boolean; onClose: () => void; onPick: (key: string) => void; onRemove: (key: string) => void;
 }) {
   return (
     <div className="flex-1 min-h-0 flex flex-col">
-      <PanelHead eyebrow="What you've added" title={`${money(total)} in new pieces`} onClose={onClose} />
+      <PanelHead eyebrow="What you've added" title={`${estimated ? "≈" : ""}${money(total)} in new pieces`} onClose={onClose} />
       <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-3 lg:px-4 pb-3 flex flex-col gap-2">
         {pieces.length === 0 && (
           <p className="text-sm text-ink-soft leading-relaxed">Nothing new yet. Add a piece from the catalog, or Swap one of yours, and it shows up here with its price.</p>
@@ -946,7 +1095,7 @@ function AddedPanel({ pieces, shapes, total, onClose, onPick, onRemove }: {
                   <span className="block text-sm leading-snug">{nb(product.name)}</span>
                   <span className="block text-xs text-ink-faint">{p.source === "room" ? "In place of one of yours" : !p.placed ? "Waiting for a spot" : KIND_ONE[product.category]}</span>
                 </span>
-                <span className="text-sm font-medium tabular-nums">{money(product.price)}</span>
+                <span className="text-sm font-medium tabular-nums">{priceLabel(product, true)}</span>
               </button>
               <button onClick={() => onRemove(p.key)} aria-label={p.source === "room" ? `Back to your own piece instead of ${product.name}` : `Remove ${product.name}`} className="h-10 w-10 grid place-items-center rounded-full text-ink-soft hover:text-rust">
                 <Icon name={p.source === "room" ? "undo" : "trash"} size={18} />
@@ -954,8 +1103,30 @@ function AddedPanel({ pieces, shapes, total, onClose, onPick, onRemove }: {
             </div>
           );
         })}
-        <p className="text-[11px] text-ink-faint mt-1">Your own pieces stay free. Sample prices, for trying things out; buying comes later.</p>
+        <p className="text-[11px] text-ink-faint mt-1">Your own pieces stay free. Real pieces show estimates ({REAL_CREDIT}); sample pieces have made-up prices.</p>
+        <Link href={`/checkout/${roomId}`} className="btn btn-primary w-full mt-1 flex items-center justify-center gap-1.5">Next: review and buy <Icon name="arrow" size={16} /></Link>
       </div>
+    </div>
+  );
+}
+
+/** The proposal at a glance, with the two ways to steer it: swipe, or talk to the designer. */
+function ProposalCard({ added, chosen, skipped, confirmed, onTeach, onAsk, checkout }: {
+  added: number; chosen: number; skipped: ProposalResult["skipped"]; confirmed: boolean; onTeach: () => void; onAsk: () => void; checkout: string;
+}) {
+  return (
+    <div className="rounded-2xl border p-3 mb-4">
+      <p className="eyebrow text-ink-faint">{confirmed ? "From your brief" : "A first proposal"}</p>
+      <p className="mt-1 text-sm leading-snug">
+        {added ? `${added} new piece${added === 1 ? "" : "s"} around what you're keeping${chosen ? `, ${chosen} of them yours now` : ""}. Tap any piece for why it's there.` : "Nothing new proposed: the room already has what it needs."}
+        {!confirmed && " Finish your brief for a proposal that knows you."}
+      </p>
+      {skipped.length > 0 && <p className="mt-1 text-[11px] text-ink-faint">Left out: {skipped.map((x) => `${x.role.replace(/_/g, " ")} (${x.why})`).join("; ")}</p>}
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        <button onClick={onTeach} className="btn btn-line btn-sm flex items-center justify-center gap-1.5"><Icon name="cards" size={15} /> Teach me your taste</button>
+        <button onClick={onAsk} className="btn btn-line btn-sm flex items-center justify-center gap-1.5"><Icon name="chat" size={15} /> Ask your designer</button>
+      </div>
+      <Link href={checkout} className="mt-2 lg:hidden btn btn-primary btn-sm w-full flex items-center justify-center gap-1.5">Next: review and buy <Icon name="arrow" size={15} /></Link>
     </div>
   );
 }

@@ -16,7 +16,7 @@ import { seenBlend, blendName, heroFor, MATERIAL, PALETTE, paletteFor, ROOM, roo
 // Corrections go back to the designer through the composer; the statement and mood words can
 // also be edited in place.
 
-export default function ReadBack({ concept, taste, entries, confirmed, room, offline, onEdit, onConfirm }: {
+export default function ReadBack({ concept, taste, entries, confirmed, room, offline, onEdit, onConfirm, onShopping, hasRoom = true }: {
   concept: Concept;
   taste: TasteState;
   entries: Entry[];
@@ -27,6 +27,10 @@ export default function ReadBack({ concept, taste, entries, confirmed, room, off
   offline: boolean;
   onEdit: (c: Concept) => void;
   onConfirm: () => void;
+  // reopens the shopping sheet, so the Sourcing row is changed by tapping, not by explaining
+  onShopping?: () => void;
+  // a captured room to furnish next (else the next step is capturing one)
+  hasRoom?: boolean;
 }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(concept.statement);
@@ -56,11 +60,14 @@ export default function ReadBack({ concept, taste, entries, confirmed, room, off
   const structured = concept.program !== undefined;
   const merge = (...groups: string[][]) => groups.flat().map(clean).filter(Boolean).filter((x, i, all) => !all.slice(0, i).some((y) => similar(x, y)));
   const style = b.length ? [`Style: ${blendName(b)}`] : [];
+  // brands she named are the Sourcing row's; a designer line that repeats them ("No IKEA; Article is fine") steps aside
+  const brands = taste.shopping ? [...taste.shopping.brands_like, ...taste.shopping.brands_avoid] : [];
+  const notBrands = (xs: string[]) => xs.filter((x) => !brands.some((br) => new RegExp(`\\b${br.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(x)));
   const sections: [string, string[]][] = structured
     ? [
         ["Program", merge(concept.program ?? [])],
         // her practical lines only where the designer's constraints don't already carry them ("Mum visits at Christmas")
-        ["Constraints", merge(keep.map((e) => `Keeping: ${clean(e.text).replace(/ — the anchor$/, " (anchor)")}`), concept.constraints ?? [], practical.map((e) => e.text).filter((t) => ![...(concept.constraints ?? []), ...(concept.program ?? [])].some((c) => related(t, c))))],
+        ["Constraints", merge(keep.map((e) => `Keeping: ${clean(e.text).replace(/ — the anchor$/, " (anchor)")}`), notBrands(concept.constraints ?? []), practical.map((e) => e.text).filter((t) => ![...(concept.constraints ?? []), ...(concept.program ?? [])].some((c) => related(t, c))))],
         // the page's style line only when the designer didn't already name the lead style
         // one palette line: the page's 60-30-10 from her pick; the designer's own palette lines step aside
         ["Direction", merge(concept.direction?.some((x) => /^style\b/i.test(x) || (b[0] && x.toLowerCase().includes(b[0].label.toLowerCase()))) ? [] : style, (concept.direction ?? []).filter((x) => !(pal && PALETTE_LINE.test(x)) && !(taste.materials.liked.length && /^materials?\b/i.test(x))), pickedDirection(taste))],
@@ -158,6 +165,7 @@ export default function ReadBack({ concept, taste, entries, confirmed, room, off
               <h3 className="flex items-baseline gap-2 font-sans sm:flex-col sm:gap-1">
                 <span className="text-2xs num font-semibold text-clay">{String(i + 1).padStart(2, "0")}</span>
                 <span className="eyebrow text-ink">{label}</span>
+                {label === "Sourcing" && onShopping && !confirmed && <button className="link link-quiet text-xs sm:mt-1" onClick={onShopping}>Change</button>}
               </h3>
               <ul className="flex min-w-0 flex-col divide-y divide-line/70">
                 {lines.map((x) => <BriefLine key={x} kind={label} text={x} struck={struck.has(`${label}::${x}`)} />)}
@@ -175,6 +183,10 @@ export default function ReadBack({ concept, taste, entries, confirmed, room, off
       )}
 
       <footer className="border-t px-5 py-5 sm:px-9">
+        {/* the shopping sheet was skipped past (a section finished early): one tap to add it */}
+        {!confirmed && !taste.shopping && onShopping && (
+          <button className="link link-quiet mb-4 min-h-11 text-sm" onClick={onShopping}>Add where you like to shop, so I source from the right places</button>
+        )}
         {!confirmed ? (
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <button className="btn btn-primary sm:px-8" onClick={onConfirm}>Yes, this is it</button>
@@ -185,7 +197,7 @@ export default function ReadBack({ concept, taste, entries, confirmed, room, off
             <span className="grid h-5 w-5 place-items-center rounded-full bg-clay text-on-clay" aria-hidden>
               <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 5 8.6l4.5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </span>
-            Brief confirmed. Next: ideas for your {room}.
+            Brief confirmed. {hasRoom ? <>Next, your {room} furnished from it.</> : <>Next, capture your {room} so I can furnish it.</>}
           </p>
         )}
       </footer>

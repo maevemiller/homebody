@@ -177,17 +177,17 @@ export async function renderStyleViews(url: string, presets: StylePreset[], onSh
     renderer.setPixelRatio(1);
     renderer.setSize(W, H, false);
     renderer.toneMapping = THREE.AgXToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 0.72;
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
 
     const scene = new THREE.Scene();
     // what shows through the windows: a pale, overcast sky
     scene.background = new THREE.Color("#e8ecee");
     const pmrem = new THREE.PMREMGenerator(renderer);
     scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-    scene.environmentIntensity = 0.8;
-    scene.add(new THREE.HemisphereLight(0xfff6ea, 0x8a7f70, 0.55));
+    scene.environmentIntensity = 0.6;
+    scene.add(new THREE.HemisphereLight(0xfff6ea, 0x8a7f70, 0.35));
 
     const gltf = await new GLTFLoader().loadAsync(url);
     if (!alive()) return;

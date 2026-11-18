@@ -13,7 +13,8 @@ export const thumbOf = (id: string) => cache.get(id);
 
 /** Render any missing thumbnails; resolves with how many are ready. Never throws: no WebGL just means no thumbnails. */
 export async function renderThumbs(products: Product[]): Promise<number> {
-  const todo = products.filter((p) => !cache.has(p.id));
+  // real pieces show their own listing photo; only the samples need a render
+  const todo = products.filter((p) => !cache.has(p.id) && !p.real);
   if (!todo.length) return cache.size;
   let renderer: THREE.WebGLRenderer;
   try {

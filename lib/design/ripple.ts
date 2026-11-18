@@ -88,7 +88,17 @@ export interface Ripple {
 const DISRUPTION: Record<string, number> = { art: 1, lamp: 2, side_table: 3, coffee_table: 4, storage: 5, shelf: 5, chair: 6, rug: 7, desk: 8, sofa: 10 };
 const disruption = (role: string) => DISRUPTION[role] ?? 6;
 
-const carries = (c: { color: string; accent?: string }, hue: string) => [c.color, c.accent].some((h) => h && hueFamily(h) === hue);
+// neighbouring hue families read as one accent (rust, orange and ochre echo each other; teal and blue)
+const RING = ["red", "orange", "ochre", "yellow", "green", "teal", "blue", "violet"];
+const nearHue = (a: string, b: string) => {
+  const i = RING.indexOf(a), j = RING.indexOf(b);
+  const d = Math.abs(i - j);
+  return Math.min(d, RING.length - d) <= 1;
+};
+const carries = (c: { color: string; accent?: string }, hue: string) => [c.color, c.accent].some((h) => {
+  const f = h ? hueFamily(h) : null;
+  return !!f && nearHue(f, hue);
+});
 const hasMat = (c: { material: string; accentMaterial?: string }, m: string) => c.material === m || c.accentMaterial === m;
 
 /**
@@ -140,7 +150,7 @@ export function ripple(
     const carriers = after.filter((p) => carries(p, hue));
     if (carriers.length >= 3) continue;
     const need = 3 - carriers.length;
-    out.warnings.push(`${cap1(hue)} appears ${carriers.length === 1 ? "once" : `${carriers.length} times`}; it'll read as a one-off. ${opts.mode === "keep" ? "Let the room follow to echo it." : ""}`.trim());
+    out.warnings.push(`${cap1(hue)} appears ${carriers.length === 1 ? "once; it'll read as a one-off" : "only twice; a third echo makes it look meant"}.${opts.mode === "keep" ? " Let the room follow to echo it." : ""}`);
     let got = 0;
     for (const t of followers) {
       if (got >= need) break;

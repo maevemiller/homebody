@@ -41,6 +41,17 @@ export function rank(p: Product, ctx: RankCtx): number {
   return taste + prefScore(p, ctx.prefs) + shoppingScore(p, ctx.brief.shopping) + colorScore(p, ctx.anchors);
 }
 
+/** The Wada Sanzō combination that pairs this piece's color with one already in the room, said plainly. */
+export function wadaPair(p: Product, anchors: string[]): string | null {
+  for (const [i, a] of anchors.slice(0, 3).entries()) {
+    for (const m of wadaMatches(a, { limit: 8 })) {
+      const hit = m.companions.find((c) => distance(c.hex, p.color) < 10);
+      if (hit) return `Wada Sanzō pairs ${hit.name.toLowerCase()} with ${m.matched.name.toLowerCase()}, close to ${i === anchors.length - 1 ? "your walls" : "what you're keeping"} (combination ${m.combination})`;
+    }
+  }
+  return null;
+}
+
 /** What made it rank well, in a few words for its reason line. */
 export function rankReason(p: Product, ctx: RankCtx): string | null {
   const t = ctx.taste;
@@ -49,7 +60,8 @@ export function rankReason(p: Product, ctx: RankCtx): string | null {
   if ((ctx.prefs.material[p.material] ?? 0) > 0.5) return `${p.material.replace(/_/g, " ")}, which you've liked`;
   const brands = ctx.brief.shopping?.brands ?? [];
   if (p.real && brands.some((b) => p.real!.brand.toLowerCase().includes(b.toLowerCase()))) return `${p.real.brand}, a brand you named`;
-  if (ctx.anchors.length && !isNeutral(p.color) && colorScore(p, ctx.anchors) > 0.9) return "its color sits in a Wada Sanzō combination with your room";
+  const wada = wadaPair(p, ctx.anchors);
+  if (wada) return wada;
   if (t && p.palettes.some((id) => t.palettes.liked.includes(id))) return "in a palette you picked";
   return null;
 }

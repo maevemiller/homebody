@@ -5,13 +5,15 @@ Highest priority first. Keep this current at the end of every session. Details f
 
 ## Now (in progress when paused, 2026-10-30)
 
-1. **Taste Builder: style views of her own room** for "which would you live in". She's shown her captured room restyled
-   in 6–9 directions instead of stock photos (style presets plus offscreen three.js thumbnails, with stock photos as
-   the fallback). Partly built; check `lib/taste` and `components/taste` for the presets in progress.
-2. **Taste Builder: "what kind of shopper are you" question.** Thrift, vintage, mid-market or designer; brands;
-   channels; new versus secondhand; where to splurge. Structured `shopping` preferences, plus a "Sourcing" line in the
-   brief.
-3. **The handoff from the brief into Plug & Play.** A short transition, then `/play/<id>?from=brief`.
+1. ~~**Taste Builder: style views of her own room**~~ Done 2026-11-18. Her captured room restyled in 9 directions
+   (`lib/taste/styleviews.ts`, `styleviews-render.ts`, `components/taste/useStyleViews.ts`); stock photos as the fallback.
+   Follow-ups: "I'm not sure" pairs still use stock photos; Scandinavian and Warm minimal read close at thumbnail size.
+2. ~~**Taste Builder: "what kind of shopper are you" question**~~ Done 2026-11-18. `components/taste/ShopperSheet.tsx`,
+   stored as `taste.shopping` (tiers, channels, secondhand, splurge, brands like/avoid, channel `weights` and ranked
+   `sources` per `docs/reference/sourcing/README.md` §7) in localStorage `homebody-taste`; a Sourcing row in the brief.
+   **For Plug & Play / checkout:** read `JSON.parse(localStorage["homebody-taste"]).taste.shopping` to rank products.
+3. ~~**The handoff from the brief into Plug & Play**~~ Done 2026-11-18. The confirm line says what's next; "Furnish my
+   room" links to `/play/<roomId>?from=brief` (or to capture when there's no room). Play owns the walkthrough.
 4. **Plug & Play v2:**
    - **The room starts furnished** with a proposal from the brief, validated by a design engine (`lib/design/`: rules
      validators, Wada color matching, ripple engine; see `docs/reference/design-principles/`).

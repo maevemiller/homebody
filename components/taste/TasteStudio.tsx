@@ -430,7 +430,7 @@ export default function TasteStudio() {
             <button key={x} onClick={() => send(x)} className="chip animate-rise">{x}</button>
           ))}
           {!busy && parked && !c.showing && (
-            <button onClick={() => { const s = state(latest.current); commit({ ...s, convo: { ...s.convo, showing: parked } }); setParked(null); }} aria-pressed="true" className="chip">Show me the pictures</button>
+            <button onClick={() => { const s = state(latest.current); commit({ ...s, convo: { ...s.convo, showing: parked } }); setParked(null); }} aria-pressed="true" className="chip">{parked === "shopping" ? "Back to how you shop" : "Show me the pictures"}</button>
           )}
         </div>
 
@@ -544,9 +544,9 @@ function unconfirmed(base: Omit<Known, "answers">, s: State): { lines: string[];
 function Handoff({ roomId, room }: { roomId: string | null; room: string }) {
   return (
     <div className="mt-3 flex flex-col gap-2.5 animate-rise lg:mt-8">
-      <p className="text-sm leading-snug text-ink-soft">
+      <p className="hidden text-sm leading-snug text-ink-soft sm:block">
         {roomId
-          ? <>Next: your {room}, furnished from this brief. Every piece is placed and priced, and you can change any of them. Nothing is bought until you say so.</>
+          ? <>Every piece placed and priced from your brief. Nothing is bought until you say so.</>
           : <>To furnish it, I need your {room} first: a few photos and a measurement.</>}
       </p>
       <Link href={roomId ? `/play/${roomId}?from=brief` : "/"} className="btn btn-primary w-full">
