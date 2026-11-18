@@ -180,6 +180,14 @@ export function bestSpot(piece: Piece, shape: Shape, ctx: Ctx): { x: number; y: 
         }
         // a chair keeps company with the main seat
         if (kind === "chair" && seat) score += Math.max(0, Math.hypot(me.x - seat.x, me.y - seat.y) - 2) * 0.8;
+        // ...from the side: never in the sofa's own lane to the focal point, where the coffee table goes
+        if (kind === "chair" && seat && seatShape && kindOf(seatShape.category) === "sofa") {
+          const sf = front(seat.rot);
+          const ahead = (me.x - seat.x) * sf.x + (me.y - seat.y) * sf.y;
+          const side = Math.abs((me.x - seat.x) * -sf.y + (me.y - seat.y) * sf.x);
+          // the lane is the coffee table's: a third of the sofa (at most 80 cm) either side of its middle
+          if (ahead > 0 && side < Math.min(seatShape.w / 3, 0.8) + me.w / 2) return null;
+        }
         if (backToWall) score -= 0.8;
         if (kind === "sofa" && shape.h > 0.9 && blocksWindow(me)) score += 2;
         break;

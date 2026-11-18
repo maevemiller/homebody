@@ -188,16 +188,12 @@ export function propose({ spec, layout, items, bins, brief, prefs, taste, wall, 
   };
   const moved: string[] = [];
 
-  // 1. their "Keep, move it" pieces first: they're already paid for
-  for (const p of pieces.filter((q) => !q.placed && q.source === "room")) {
-    const sh = shapesOf(pieces);
-    const shape = sh[p.key];
-    if (!shape || shape.fixed || shape.mount === "wall") continue;
-    const at = bestSpot(p, shape, { spec, footprint: spec.footprint, pieces, shapes: sh, zones });
-    if (!at) continue;
-    pieces = pieces.map((q) => (q.key === p.key ? { ...q, ...at, wall: undefined, elev: 0, placed: true, why: "Yours, moved to where it works best" } : q));
-    moved.push(p.key);
-  }
+  // 1. their "Keep, move it" pieces: already paid for, so they fill their own slot; they're placed in the same
+  // designer order as the gaps below (the sofa before the chair that keeps it company)
+  const moving = pieces.filter((q) => {
+    const sh = shapeFor(q);
+    return !q.placed && q.source === "room" && !sh.fixed && sh.mount === "floor";
+  });
 
   // 2. what's missing
   const sh0 = shapesOf(pieces);
@@ -213,7 +209,24 @@ export function propose({ spec, layout, items, bins, brief, prefs, taste, wall, 
   const ORDER = ["sofa", "desk", "chair", "rug", "coffee_table", "side_table", "lamp", "storage", "shelf", "art"];
   todo.sort((a, b) => ORDER.indexOf(a.role) - ORDER.indexOf(b.role));
 
-  for (const slot of todo) {
+  type Step = { slot: Slot } | { own: Piece; role: string };
+  const steps: Step[] = [...todo.map((slot) => ({ slot })), ...moving.map((own) => ({ own, role: roleOfShape(shapeFor(own)) }))];
+  const at = (x: Step) => {
+    const i = ORDER.indexOf("slot" in x ? x.slot.role : x.role);
+    return i < 0 ? ORDER.length : i;
+  };
+  steps.sort((a, b) => at(a) - at(b));
+
+  for (const step of steps) {
+    if ("own" in step) {
+      const sh = shapesOf(pieces);
+      const spot = bestSpot(step.own, sh[step.own.key], { spec, footprint: spec.footprint, pieces, shapes: sh, zones });
+      if (!spot) continue;
+      pieces = pieces.map((q) => (q.key === step.own.key ? { ...q, ...spot, wall: undefined, elev: 0, placed: true, why: "Yours, moved to where it works best" } : q));
+      moved.push(step.own.key);
+      continue;
+    }
+    const slot = step.slot;
     const design = toDesign(pieces, shapesOf(pieces), items, bins);
     const pool = PRODUCTS.filter((p) => roleOfProduct(p) === slot.role && !inRoom.has(p.id) && fits(p, slot.role, spec, design))
       .map((p) => ({ p, score: rank(p, ctx) }))
@@ -245,7 +258,9 @@ export function propose({ spec, layout, items, bins, brief, prefs, taste, wall, 
       // a new soft failure that names this piece: try the next one, but keep this as a fallback
       const mine = failures(after).filter((f) => !softBefore.has(f.rule) && f.keys?.includes(piece.key) && [3, 4, 5, 6, 10, 12, 14].includes(f.rule));
       if (mine.length) {
-        fallback ??= { pieces: next, key: piece.key, product: p, why };
+        // a coffee table out of reach isn't worth proposing at all
+        // (a rug that misses a very long sofa's legs is still the best rug there is, so rule 5 may fall back)
+        if (!mine.some((f) => f.rule === 4)) fallback ??= { pieces: next, key: piece.key, product: p, why };
         continue;
       }
       pieces = next;

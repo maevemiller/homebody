@@ -86,6 +86,10 @@ export interface Shopping {
   secondhand?: "new" | "mixed" | "secondhand";
   splurge: string[];
   save: string[];
+  // the sources her answers point to, in order (lib/taste/shopping.ts: "Amazon", "West Elm", "Etsy"…)
+  sources: string[];
+  secondhandOk: boolean;
+  leadTimeMaxWeeks?: number;
 }
 
 export interface BriefRead {
@@ -114,11 +118,18 @@ function readShopping(raw: unknown): Shopping | null {
   const sh = String(r.secondhand ?? r.newOrSecondhand ?? r.new_vs_secondhand ?? "").toLowerCase();
   const weights = (r.weights ?? {}) as Record<string, number>;
   const channels = list(r.channels ?? r.channel ?? r.where).map((x) => x.toLowerCase());
+  const sources = list(r.sources);
+  // "Amazon, delivered fast" as a channel weight, or Amazon among the sources it points to (earlier is stronger)
+  const amazonAt = sources.findIndex((x) => /amazon/i.test(x));
+  const amazonFromSources = amazonAt < 0 ? 0 : Math.max(0.3, 1 - amazonAt * 0.15);
   return {
+    sources,
+    secondhandOk: r.secondhand_ok === undefined ? !/^new/.test(String(r.secondhand ?? "")) : !!r.secondhand_ok,
+    leadTimeMaxWeeks: typeof r.lead_time_max_weeks === "number" ? r.lead_time_max_weeks : undefined,
     tiers: list(r.tiers ?? r.tier ?? r.style ?? r.shopper).map((x) => x.toLowerCase()),
     brands: list(r.brands_like ?? r.brands ?? r.brand),
     avoid: list(r.brands_avoid ?? r.avoid),
-    amazon: Number(weights.fast ?? (channels.includes("fast") ? 1 : 0)) || 0,
+    amazon: Math.max(Number(weights.fast ?? (channels.includes("fast") ? 1 : 0)) || 0, amazonFromSources),
     channels,
     secondhand: /second|vintage|thrift|used/.test(sh) && !/mix|both|some|either/.test(sh) ? "secondhand" : /mix|both|some|either/.test(sh) ? "mixed" : sh ? "new" : undefined,
     splurge: list(r.splurge ?? r.splurgeOn ?? r.splurge_on).map((x) => x.toLowerCase()),
@@ -176,6 +187,8 @@ export function shoppingScore(p: Product, s: Shopping | null): number {
   if (/mid|everyday|value|budget|afford|mix/.test(tiers)) score += p.real ? 1.2 : /basics/i.test(p.maker) ? 0.6 : -0.3;
   if (/designer|investment|high|luxury|studio/.test(tiers)) score += /studio/i.test(p.maker) ? 1 : p.real ? 0.2 : -0.2;
   if (/thrift|vintage|second|antique/.test(tiers) || s.secondhand === "secondhand") score += p.real ? -0.4 : 0;
+  // a source list that leaves Amazon out entirely: the seed is all Amazon, so it ranks a little lower (not out)
+  if (s.sources.length && !s.amazon && p.real) score -= 0.5;
   // where she splurges, quality over price; where she saves, the cheaper twin
   // "Sofa", "Rug", "Lighting", "Art", "A statement chair", "Storage" (lib/taste/shopping.ts SPLURGE)
   const kind = p.category === "lamp" ? "light" : p.category === "shelf" ? "storage" : p.category;

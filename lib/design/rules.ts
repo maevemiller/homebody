@@ -326,10 +326,17 @@ export function rule7(room: DRoom, ps: DPiece[]): Finding {
 
 // ---- 8. Accent repetition: each accent hue in ≥ 3 places, ≥ 2 heights ----
 
+/** Wood, leather, jute, rattan and metals carry their own color: a material, not a painted accent. */
+export const isNaturalMaterial = (m?: string) => !!m && /oak|walnut|reclaimed|wood|teak|pine|leather|jute|rattan|wicker|brass|steel|chrome|metal|limestone|stone|terrazzo|plant|foliage/.test(m);
+
+/** The colors a piece shows as color (its accent hues), leaving out what its natural materials give it. */
+export const paintedColors = (p: { color: string; accent?: string; material: string; accentMaterial?: string }) =>
+  [isNaturalMaterial(p.material) ? null : p.color, p.accent && !isNaturalMaterial(p.accentMaterial) ? p.accent : null].filter(Boolean) as string[];
+
 export function accentCarriers(ps: DPiece[]) {
   const by = new Map<string, DPiece[]>();
   for (const p of ps) {
-    for (const hex of [p.color, p.accent].filter(Boolean) as string[]) {
+    for (const hex of paintedColors(p)) {
       const h = hueFamily(hex);
       if (!h) continue;
       const list = by.get(h) ?? [];

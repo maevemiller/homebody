@@ -1,5 +1,5 @@
 import { distance, harmonize, hueFamily, isNeutral } from "./color";
-import { areaOf, type DPiece } from "./rules";
+import { areaOf, paintedColors, type DPiece } from "./rules";
 
 // The ripple engine (docs/reference/design-principles/coherence.md): the room as roles that pieces fill, and,
 // when one piece changes, the smallest set of follow-on changes that keeps it coherent. Code only: it finds
@@ -30,7 +30,7 @@ export function designState(ps: DPiece[]): DesignState {
     const role = roleOf(p, ps);
     if (role === "dominant") dominant.push(p.color);
     else if (role === "secondary") secondary.push(p.color);
-    for (const hex of [p.color, p.accent].filter(Boolean) as string[]) {
+    for (const hex of paintedColors(p)) {
       const hue = hueFamily(hex);
       if (!hue) continue;
       const a = accents.get(hue) ?? { hue, hex, carriers: [] };
@@ -95,7 +95,7 @@ const nearHue = (a: string, b: string) => {
   const d = Math.abs(i - j);
   return Math.min(d, RING.length - d) <= 1;
 };
-const carries = (c: { color: string; accent?: string }, hue: string) => [c.color, c.accent].some((h) => {
+const carries = (c: { color: string; accent?: string; material: string; accentMaterial?: string }, hue: string) => paintedColors(c).some((h) => {
   const f = h ? hueFamily(h) : null;
   return !!f && nearHue(f, hue);
 });
@@ -145,7 +145,7 @@ export function ripple(
   const after = room.map((p) => (p.key === change.key && to ? { ...p, ...to } : p)).filter((p) => !(p.key === change.key && !to));
 
   // A. a new color: repeat it to three carriers, and resolve the old accent
-  const newHues = to ? [to.color, to.accent].filter(Boolean).map((h) => hueFamily(h!)).filter(Boolean) as string[] : [];
+  const newHues = to ? paintedColors(to).map((h) => hueFamily(h)).filter(Boolean) as string[] : [];
   for (const hue of [...new Set(newHues)]) {
     const carriers = after.filter((p) => carries(p, hue));
     if (carriers.length >= 3) continue;
@@ -159,7 +159,7 @@ export function ripple(
     }
   }
   if (from && to) {
-    const oldHues = [from.color, from.accent].filter(Boolean).map((h) => hueFamily(h!)).filter(Boolean) as string[];
+    const oldHues = paintedColors(from).map((h) => hueFamily(h)).filter(Boolean) as string[];
     for (const hue of oldHues.filter((h) => !newHues.includes(h))) {
       const left = after.filter((p) => carries(p, hue));
       if (!left.length) continue;
@@ -193,7 +193,7 @@ export function ripple(
 
   // F. a removal that took an accent's carrier
   if (from && !to) {
-    for (const hue of [from.color, from.accent].filter(Boolean).map((h) => hueFamily(h!)).filter(Boolean) as string[]) {
+    for (const hue of paintedColors(from).map((h) => hueFamily(h)).filter(Boolean) as string[]) {
       const left = after.filter((p) => carries(p, hue));
       if (left.length && left.length < 3) {
         out.warnings.push(`${cap1(hue)} is down to ${left.length} carrier${left.length === 1 ? "" : "s"}`);

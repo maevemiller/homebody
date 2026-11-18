@@ -106,3 +106,23 @@ For the full step log see `docs/autoloop/log.md`; for critic reviews see `docs/a
   - the GitHub repo (public `maevemiller/homebody`; 8 repos made public, 4 kept private for PII).
 - **Paused at her request (usage running low):** the Taste additions, Plug & Play v2 and checkout, mid-way. Everything
   was committed and pushed (7cb5d68), and these handoff files were written. Next: `docs/BACKLOG.md` items 1–5.
+
+## 2026-11-14 to 11-18: Resumed, backlog items 1–5 built
+- **Resume:** Maeve resumed ("just continue as you would before"). Fresh agents, briefed from `docs/HANDOFF.md`, took
+  backlog items 1–5. A network drop and a session restart interrupted them; each time the work was backed up and
+  the agents resumed.
+- **Built:**
+  - **Checkout** (`/checkout/<id>`, `/checkout/all`): new pieces, estimated prices, lookalikes, budget, retailer links,
+    print.
+  - **Taste Builder:**
+    - style views of her own room (9 presets, rendered offscreen);
+    - a "How you shop" sheet stored in `taste.shopping`;
+    - a Sourcing row in the brief;
+    - a "Furnish my living room" handoff into Play.
+  - **Plug & Play v2:**
+    - the room starts furnished from the brief, checked by `lib/design` rules;
+    - real ABO products ranked by her shopping answers;
+    - a "Change this" sheet with chips plus text or voice, and a Sonnet interpret route with a daily cap;
+    - the ripple toggle, the swipe deck, Ask your designer, and links to checkout.
+- **Next:** re-review all pieces with the design critic (backlog item 6). On the Taste Builder side, read Play's
+  `section`, `topic` and `back` params and `homebody-brief-additions`.

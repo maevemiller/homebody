@@ -10,11 +10,11 @@ import { useSpeech } from "./useSpeech";
 // that's added to the brief (homebody-brief-additions; the interview reads it next time).
 
 const TOPICS = [
-  { id: "style", section: "style", label: "Style and the look" },
+  { id: "style", section: "style", label: "Style" },
   { id: "color", section: "style", label: "Color" },
-  { id: "materials", section: "style", label: "Materials and texture" },
-  { id: "living", section: "you", label: "How you live in the room" },
-  { id: "shopping", section: "extras", label: "Budget and where you shop" },
+  { id: "materials", section: "style", label: "Materials" },
+  { id: "living", section: "you", label: "How you live" },
+  { id: "shopping", section: "extras", label: "Budget, shopping" },
   { id: "story", section: "extras", label: "Something personal" },
 ] as const;
 

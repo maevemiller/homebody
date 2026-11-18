@@ -957,7 +957,7 @@ export default function PlayEditor({ id, fromBrief = false }: { id: string; from
               New pieces{cost.count ? ` (${cost.count})` : ""} · <span className="font-semibold text-ink tabular-nums">{cost.estimated || cost.unpriced ? "≈" : ""}{money(cost.total)}</span>
               {cost.estimated > 0 && <span className="block text-[11px] text-ink-faint">includes estimates</span>}
             </button>
-            <Link href={`/checkout/${id}`} className="btn btn-primary btn-sm flex items-center gap-1.5">Next: review and buy <Icon name="arrow" size={15} /></Link>
+            <Link href={`/checkout/${id}`} className="btn btn-primary btn-sm shrink-0 whitespace-nowrap flex items-center gap-1.5">Review and buy <Icon name="arrow" size={15} /></Link>
           </div>
         </aside>
       </div>
@@ -1123,8 +1123,8 @@ function ProposalCard({ added, chosen, skipped, confirmed, onTeach, onAsk, check
       </p>
       {skipped.length > 0 && <p className="mt-1 text-[11px] text-ink-faint">Left out: {skipped.map((x) => `${x.role.replace(/_/g, " ")} (${x.why})`).join("; ")}</p>}
       <div className="mt-3 grid grid-cols-2 gap-2">
-        <button onClick={onTeach} className="btn btn-line btn-sm flex items-center justify-center gap-1.5"><Icon name="cards" size={15} /> Teach me your taste</button>
-        <button onClick={onAsk} className="btn btn-line btn-sm flex items-center justify-center gap-1.5"><Icon name="chat" size={15} /> Ask your designer</button>
+        <button onClick={onTeach} className="btn btn-line btn-sm whitespace-nowrap text-[13px] px-2 flex items-center justify-center gap-1.5"><Icon name="cards" size={15} /> Teach your taste</button>
+        <button onClick={onAsk} className="btn btn-line btn-sm whitespace-nowrap text-[13px] px-2 flex items-center justify-center gap-1.5"><Icon name="chat" size={15} /> Ask the designer</button>
       </div>
       <Link href={checkout} className="mt-2 lg:hidden btn btn-primary btn-sm w-full flex items-center justify-center gap-1.5">Next: review and buy <Icon name="arrow" size={15} /></Link>
     </div>

@@ -14,7 +14,9 @@ Highest priority first. Keep this current at the end of every session. Details f
    **For Plug & Play / checkout:** read `JSON.parse(localStorage["homebody-taste"]).taste.shopping` to rank products.
 3. ~~**The handoff from the brief into Plug & Play**~~ Done 2026-11-18. The confirm line says what's next; "Furnish my
    room" links to `/play/<roomId>?from=brief` (or to capture when there's no room). Play owns the walkthrough.
-4. **Plug & Play v2:**
+4. ~~**Plug & Play v2:**~~ Done 2026-11-18 (see the Plug & Play row in `docs/HANDOFF.md`). Follow-ups: `/taste` should
+   read `?section=&topic=&from=play&back=` and `homebody-brief-additions`; propose dining groups and bedroom furniture;
+   shorten real product names; get real prices (Creators API) to replace the labelled estimates; critic review.
    - **The room starts furnished** with a proposal from the brief, validated by a design engine (`lib/design/`: rules
      validators, Wada color matching, ripple engine; see `docs/reference/design-principles/`).
    - **Walkthrough:** 3 steps, skippable.
