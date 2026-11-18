@@ -3,7 +3,7 @@ import { QUESTIONS, walk, type Answer, type Known } from "./questions";
 import { choiceSaid, noteDetail, recordAll } from "./agent";
 import { deFluff, facing, stated, kept, lightLine, LIGHT_BY_FACING, LOSS, measured, moodsOK, sizeLine, spaceLines, wrongLight } from "./craft";
 import { askedLength, missing, newPace, target, OLD_SECTION, PROTECTS, LENGTH_IDS, SECTION_KEYS, type Length, type Pace, type Protect, type SectionKey } from "./pace";
-import { EMPTY_TASTE, FAMILIES, FAMILY_IDS, LOOK_OF, MATERIAL, PALETTE, PATTERN, ROOM, scoreWords, SET_IDS, treeAnswers, type Family, type SetId, type TasteState } from "./visual";
+import { EMPTY_TASTE, FAMILIES, FAMILY_IDS, LOOK_OF, MATERIAL, PALETTE, PATTERN, ROOM, scoreWords, SHOW_IDS, treeAnswers, type Family, type ShowId, type TasteState } from "./visual";
 
 // The Taste Builder conversation as the designer's intake interview: three sections people
 // can see, an open conversation inside each, and a live dossier the designer draws as they
@@ -122,7 +122,7 @@ export type Turn = Omit<WireTurn, "dossier" | "styles" | "not_styles" | "show" |
   dossier: DossierEntry[];
   styles: { family: Family; weight: number; because: string }[];
   not_styles: Family[];
-  show: "none" | SetId;
+  show: "none" | ShowId;
   section: SectionKey | "readback";
   priorities: { words: string; protect: Protect[] } | null;
   resize: "none" | Length;
@@ -138,7 +138,7 @@ export function normalizeTurn(raw: WireTurn, current: SectionId): Turn {
     dossier: raw.dossier.filter((e) => isIn(ZONES, e.zone)).map((e) => ({ ...e, zone: e.zone as Zone, icon: isIn(ICONS, e.icon) ? e.icon : "none" })),
     styles: raw.styles.filter((x): x is { family: Family; weight: number; because: string } => isIn(FAMILY_IDS, x.family)),
     not_styles: raw.not_styles.filter((f): f is Family => isIn(FAMILY_IDS, f)),
-    show: isIn(SET_IDS, raw.show) ? raw.show : "none",
+    show: isIn(SHOW_IDS, raw.show) ? raw.show : "none",
     section: raw.section === "readback" || isIn(SECTION_KEYS, raw.section) ? (raw.section as SectionKey | "readback") : here,
     priorities: raw.priorities && { words: raw.priorities.words, protect: raw.priorities.protect.filter((x): x is Protect => isIn(PROTECTS, x)) },
     resize: isIn(LENGTH_IDS, raw.resize) ? raw.resize : "none",
@@ -198,7 +198,7 @@ export interface Convo {
   inferred: { family: string; weight: number; because: string }[];
   concept?: Concept;
   // a set the agent asked to show, waiting on screen
-  showing?: (typeof SET_IDS)[number];
+  showing?: ShowId;
   suggestions?: string[];
   confirmed?: boolean;
   // plain facts (drawn from answers and picks) a correction crossed out, as "key::text", so a

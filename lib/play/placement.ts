@@ -72,7 +72,15 @@ function wallGap(walls: Wall[], x: number, y: number) {
 export function bestSpot(piece: Piece, shape: Shape, ctx: Ctx): { x: number; y: number; rot: number } | null {
   const { spec, footprint, pieces, shapes, zones } = ctx;
   const walls = wallsOf(footprint);
-  const kind = kindOf(shape.category) ?? "other";
+  const kind0 = kindOf(shape.category) ?? "other";
+  // a finer role from the product's type: side tables sit beside a seat, consoles and storage against a wall,
+  // a dining table or desk on its own; coffee tables and ottomans in front of the seat
+  const sub = shape.product?.sub;
+  const kind = sub === "side_table" || sub === "nightstand" ? "side"
+    : sub === "console" || sub === "sideboard" || sub === "dresser" || sub === "desk" ? "storage"
+    : sub === "dining_table" ? "other"
+    : sub === "dining_chair" ? "other"
+    : kind0;
   const others = blockers(pieces, shapes, zones, piece.key);
   const focal = focalPoint(spec, walls, pieces.filter((p) => p.key !== piece.key), shapes);
   const seat = kind === "sofa" ? undefined : mainSeat(pieces.filter((p) => p.key !== piece.key), shapes);
@@ -122,7 +130,7 @@ export function bestSpot(piece: Piece, shape: Shape, ctx: Ctx): { x: number; y: 
 
     // walkways: a gap under 30" to another piece is a pinch point, under 36" a tight one.
     // Tables and lamps belong right beside seating, so they're exempt from it there.
-    const pairs = kind === "table" || kind === "lamp";
+    const pairs = kind === "table" || kind === "lamp" || kind === "side";
     for (const o of furniture) {
       if (pairs && seat && Math.hypot(o.x - seat.x, o.y - seat.y) < 0.01) continue;
       if (overlaps(inflate(me, 0.04), o)) {
@@ -188,6 +196,7 @@ export function bestSpot(piece: Piece, shape: Shape, ctx: Ctx): { x: number; y: 
         }
         break;
       }
+      case "side":
       case "lamp": {
         // beside an end of the seat, ideally in a corner
         if (seat && seatShape) {
@@ -195,7 +204,23 @@ export function bestSpot(piece: Piece, shape: Shape, ctx: Ctx): { x: number; y: 
           const ends = [1, -1].map((k) => ({ x: seat.x + ax * k * (seatShape.w / 2 + 0.3), y: seat.y + ay * k * (seatShape.w / 2 + 0.3) }));
           score += Math.min(...ends.map((e) => Math.hypot(me.x - e.x, me.y - e.y))) * 3;
         }
-        if (wallGap(walls, me.x, me.y) > 0.6) score += 0.5;
+        if (kind === "lamp" && wallGap(walls, me.x, me.y) > 0.6) score += 0.5;
+        // a side table stands level with the seat's front half, not behind it
+        if (kind === "side" && seat) {
+          const sf = front(seat.rot);
+          if ((me.x - seat.x) * sf.x + (me.y - seat.y) * sf.y < -0.15) score += 1;
+        }
+        break;
+      }
+      case "storage": {
+        // consoles, sideboards, dressers and desks back onto a wall; low ones may sit under a window
+        if (!backToWall) return null;
+        if (shape.h > 1.0 && blocksWindow(me)) return null;
+        // 36" clear in front (rule 6)
+        const zone: Rect = { x: me.x + f.x * (me.d / 2 + 0.45), y: me.y + f.y * (me.d / 2 + 0.45), rot: me.rot, w: me.w * 0.8, d: 0.8 };
+        if (furniture.some((o) => overlaps(zone, o))) score += 3;
+        // off the focal wall, so it doesn't compete with the TV or fireplace
+        if (focal && Math.hypot(me.x - focal.x, me.y - focal.y) < 1.2) score += 1.5;
         break;
       }
       case "shelf": {

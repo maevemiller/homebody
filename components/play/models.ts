@@ -201,9 +201,97 @@ function art(g: THREE.Group, p: Product) {
   g.add(pic);
 }
 
+// ---- real products' own shapes (sized to the listing's dimensions) ----
+
+function ottoman(g: THREE.Group, p: Product) {
+  const body = mat(p.color, p.material);
+  const leg = 0.08;
+  legs(g, mat(p.accent, p.accentMaterial), p.w, p.d, leg, 0.1, 0.015);
+  if (Math.abs(p.w - p.d) < 0.06) {
+    const c = cyl(g, body, p.w / 2, p.w / 2, p.h - leg, 0, leg, 0, 40);
+    c.scale.z = p.d / p.w;
+  } else box(g, body, p.w, p.h - leg, p.d, 0, leg, 0, 0.06);
+}
+
+function diningChair(g: THREE.Group, p: Product) {
+  const frame = mat(p.color, p.material);
+  const seat = mat(p.accent, p.accentMaterial);
+  const sh = 0.45;
+  legs(g, frame, p.w * 0.9, p.d * 0.9, sh - 0.03, 0.04, 0.014);
+  box(g, seat, p.w * 0.92, 0.04, p.d * 0.9, 0, sh - 0.04, -0.01, 0.015);
+  // a curved back rail on two posts
+  for (const sx of [-1, 1]) box(g, frame, 0.025, p.h - sh, 0.025, sx * (p.w * 0.42), sh, p.d * 0.4, 0.008);
+  box(g, frame, p.w * 0.88, 0.07, 0.03, 0, p.h - 0.09, p.d * 0.4, 0.012);
+}
+
+function cabinet(g: THREE.Group, p: Product) {
+  const body = mat(p.color, p.material);
+  const metal = mat(p.accent, p.accentMaterial);
+  const leg = p.h > 0.7 ? 0.12 : 0.06;
+  legs(g, body, p.w, p.d, leg, 0.06, 0.016);
+  box(g, body, p.w, p.h - leg, p.d, 0, leg, 0, 0.01);
+  // drawer or door seams and pulls on the front (-z)
+  const rows = p.sub === "dresser" ? 3 : 1;
+  const cols = p.sub === "dresser" ? 2 : Math.max(2, Math.round(p.w / 0.45));
+  const fh = (p.h - leg - 0.04) / rows, fw = (p.w - 0.04) / cols;
+  const seam = new THREE.MeshStandardMaterial({ color: new THREE.Color(p.color).multiplyScalar(0.55), roughness: 0.8 });
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < cols; c++) {
+      const x = -p.w / 2 + 0.02 + fw * (c + 0.5), y = leg + 0.02 + fh * r;
+      const face = box(g, body, fw - 0.012, fh - 0.012, 0.012, x, y + 0.006, -p.d / 2 - 0.004, 0.003);
+      face.material = body;
+      box(g, seam, fw - 0.004, 0.004, 0.006, x, y, -p.d / 2 - 0.001, 0.001);
+      box(g, metal, 0.1, 0.014, 0.02, x, y + fh * 0.7, -p.d / 2 - 0.016, 0.005);
+    }
+}
+
+function roundTable(g: THREE.Group, p: Product) {
+  const top = mat(p.color, p.material);
+  cyl(g, top, p.w / 2, p.w / 2, 0.035, 0, p.h - 0.035, 0, 48);
+  // a pedestal of splayed legs
+  for (let i = 0; i < 4; i++) {
+    const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
+    const legM = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.016, p.h - 0.035, 12), top);
+    legM.position.set(Math.cos(a) * p.w * 0.18, (p.h - 0.035) / 2, Math.sin(a) * p.w * 0.18);
+    legM.rotation.set(Math.sin(a) * 0.22, 0, -Math.cos(a) * 0.22);
+    g.add(legM);
+  }
+}
+
+function columnLamp(g: THREE.Group, p: Product) {
+  const metal = mat(p.color, p.material);
+  const shadeH = Math.min(0.36, p.h * 0.24);
+  cyl(g, metal, p.w * 0.38, p.w * 0.42, 0.03, 0, 0, 0, 32);
+  cyl(g, metal, 0.012, 0.012, p.h - shadeH, 0, 0.03, 0, 10);
+  const shade = new THREE.Mesh(
+    new THREE.CylinderGeometry(p.w / 2 * 0.85, p.w / 2, shadeH, 40, 1, true),
+    new THREE.MeshStandardMaterial({ color: "#f3ede2", emissive: "#fff1d6", emissiveIntensity: 0.55, roughness: 0.95, side: THREE.DoubleSide }),
+  );
+  shade.position.y = p.h - shadeH / 2;
+  g.add(shade);
+}
+
+function mirror(g: THREE.Group, p: Product) {
+  const frame = mat(p.color, p.material);
+  const r = Math.min(p.w, p.h) / 2;
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(r - 0.015, 0.015, 12, 64), frame);
+  ring.position.y = p.h / 2;
+  g.add(ring);
+  const glass = new THREE.Mesh(new THREE.CircleGeometry(r - 0.02, 64), new THREE.MeshPhysicalMaterial({ color: "#dfe6e8", metalness: 1, roughness: 0.06 }));
+  glass.position.set(0, p.h / 2, -0.005);
+  glass.rotation.y = Math.PI;
+  g.add(glass);
+}
+
 export function buildProduct(p: Product): THREE.Group {
   const g = new THREE.Group();
-  if (p.category === "sofa") seating(g, p, p.w > 2.15 ? 3 : 2);
+  if (p.sub === "ottoman") ottoman(g, p);
+  else if (p.sub === "dining_chair") diningChair(g, p);
+  else if (p.sub === "sideboard" || p.sub === "dresser" || p.sub === "nightstand") cabinet(g, p);
+  else if (p.sub === "dining_table" && p.variant === "round") roundTable(g, p);
+  else if (p.sub === "floor_lamp") columnLamp(g, p);
+  else if (p.sub === "mirror") mirror(g, p);
+  else if (p.category === "sofa") seating(g, p, p.w > 2.15 ? 3 : 2);
   else if (p.category === "chair") seating(g, p, 1);
   else if (p.category === "rug") rug(g, p);
   else if (p.category === "lamp") lamp(g, p);

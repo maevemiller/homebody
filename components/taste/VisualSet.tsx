@@ -3,11 +3,16 @@
 import Image from "next/image";
 import { useState } from "react";
 import Explore, { type ExploreResult } from "./Explore";
+import { useStyleVersion } from "./useStyleViews";
 import { MaterialFace, PaletteStrip, PatternFace } from "./Swatches";
 import {
   MATERIAL, MATERIALS, PALETTE, PALETTES, PATTERN, PATTERNS, ROOM, roomGrid, roomSrc,
   scoreChips, scorePicks, SETS, type SetId, type TasteState,
 } from "@/lib/taste/visual";
+import { isStyleView, STYLE_PRESET, STYLE_PRESETS, STYLE_SHOTS, styleViewsOn } from "@/lib/taste/styleviews";
+
+// Directions the restyled views don't cover, shown as photos of other homes under "Show me more"
+const BEYOND = ["deco-curve", "farm-beams", "grandmil-drapes", "indian-living", "eclectic-gallery", "minimal-view"];
 
 // One visual choice, the way designers show rather than ask: first "which could you live
 // with" (multi-select), each pick followed by "what is it about this one?" chips, then
@@ -31,9 +36,13 @@ export default function VisualSet({ set, taste, said = "", onDone, onClose, onFi
   const [focus, setFocus] = useState<string | null>(null);
   const [more, setMore] = useState(false);
   const [rooms] = useState(() => roomGrid(taste, said));
+  // her own room, restyled, while it renders and once it has; the stock photos otherwise
+  useStyleVersion();
+  const own = set === "rooms" && styleViewsOn();
 
   const items: string[] =
-    set === "rooms" ? [...rooms.grid, ...(more ? rooms.more : [])]
+    own ? [...STYLE_PRESETS.map((p) => p.id), ...(more ? BEYOND : [])]
+    : set === "rooms" ? [...rooms.grid, ...(more ? rooms.more : [])]
     : set === "palettes" ? PALETTES.filter((p) => more || !p.more).map((p) => p.id)
     : set === "materials" ? MATERIALS.map((m) => m.id)
     : PATTERNS.map((p) => p.id);
@@ -86,6 +95,7 @@ export default function VisualSet({ set, taste, said = "", onDone, onClose, onFi
         <p className="eyebrow text-clay">Your taste · {info.title}</p>
         <h2 key={step} className="text-title animate-rise">{step === "like" ? info.like : info.never}</h2>
         {step === "never" && <p className="-mt-2 text-sm text-ink-soft">Hard nos are as useful to me as loves.</p>}
+        {own && step === "like" && <p className="-mt-2 text-sm text-ink-soft">Your room, nine ways: the same layout, with different walls, floors, fabrics and finishes.</p>}
 
         <ul className={`grid gap-2.5 sm:gap-3 ${set === "palettes" ? "grid-cols-1 sm:grid-cols-2" : set === "rooms" ? "grid-cols-2 sm:grid-cols-3" : "grid-cols-3 sm:grid-cols-4"}`}>
           {shown.map((id, i) => {
@@ -161,6 +171,24 @@ export default function VisualSet({ set, taste, said = "", onDone, onClose, onFi
 }
 
 function Card({ set, id }: { set: SetId; id: string }) {
+  if (set === "rooms" && isStyleView(id)) {
+    const p = STYLE_PRESET.get(id)!;
+    const shot = STYLE_SHOTS.get(id);
+    return (
+      <span className="block bg-surface">
+        {shot ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={shot} alt="" className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] animate-[fade_.4s_ease]" />
+        ) : (
+          <span className="grid aspect-[4/3] w-full place-items-center bg-surface-2 text-xs text-ink-faint animate-pulse">Restyling your room…</span>
+        )}
+        <span className="block px-2.5 pb-2.5 pt-2">
+          <span className="block text-[13px] font-medium leading-tight text-ink">{p.name}</span>
+          <span className="mt-0.5 block text-xs leading-snug text-ink-faint">{p.puts}</span>
+        </span>
+      </span>
+    );
+  }
   if (set === "rooms")
     return <Image src={roomSrc(id)} alt="" width={640} height={480} sizes="(min-width: 640px) 30vw, 48vw" className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />;
   if (set === "palettes") {
@@ -192,7 +220,7 @@ function Card({ set, id }: { set: SetId; id: string }) {
   );
 }
 
-function Sheet({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+export function Sheet({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
   return (
     <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-end justify-center bg-[rgb(10_14_12/0.38)] backdrop-blur-[2px] sm:items-center sm:p-6 animate-[fade_.2s_ease]" onClick={onClose}>
       <div className="max-h-[94dvh] w-full max-w-3xl overflow-y-auto rounded-t-[28px] border-t bg-bg px-5 pt-4 shadow-[0_-20px_60px_-30px_rgb(0_0_0/0.5)] sm:rounded-[28px] sm:border sm:px-9 sm:pt-8 animate-rise" onClick={(e) => e.stopPropagation()}>

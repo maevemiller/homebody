@@ -1,6 +1,7 @@
 import { choiceSaid } from "./agent";
 import { QUESTIONS, walk, type Answer, type Known } from "./questions";
 import { similar, type Convo, type Icon, type Zone } from "./session";
+import { shoppingFact } from "./shopping";
 import { MATERIAL, PALETTE, PATTERN, ROOM, type TasteState } from "./visual";
 
 // The plain facts on the dossier, drawn from what's recorded rather than by the model:
@@ -98,6 +99,9 @@ export function facts(base: Omit<Known, "answers">, answers: Record<string, Answ
   if (budget && budget !== "unsure") out.push({ key: "budget", zone: "practical", text: `budget: ${label("budget", String(budget)).toLowerCase()}`, sure: sure("budget") });
   const tl = answers.timeline;
   if (tl) out.push({ key: "timeline", zone: "practical", text: `by: ${label("timeline", String(tl)).toLowerCase()}`, icon: "sun", sure: sure("timeline") });
+  // how she shops, from the sheet she tapped through (the brief turns it into its Sourcing row)
+  const shop = taste.shopping && shoppingFact(taste.shopping);
+  if (shop) out.push({ key: "shopping", zone: "practical", text: shop.text, because: shop.because, icon: "pin", sure: true });
   return out;
 }
 

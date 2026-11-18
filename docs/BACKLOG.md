@@ -24,7 +24,7 @@ Highest priority first. Keep this current at the end of every session. Details f
    - **Swipe deck:** "Teach me your taste".
    - **"Ask your designer" / "Add to my brief":** links back into the interview.
    - **"Next: review and buy"** goes to `/checkout/<id>`.
-5. **Transaction, `/checkout/[id]`:**
+5. ~~**Transaction, `/checkout/[id]`:**~~ (done, first cut)
    - new pieces with images, links and prices (or labelled estimates), plus cheaper-lookalike toggles;
    - totals against the budget;
    - room by room;
@@ -32,7 +32,9 @@ Highest priority first. Keep this current at the end of every session. Details f
    - an affiliate disclosure placeholder;
    - a printable plan.
 
-   Started; check what exists.
+   **Done, first cut (2026-11-14):** `/checkout/<id>` and `/checkout/all`; see the Transaction row in `docs/HANDOFF.md`.
+   Still to do: a design-critic review; real prices (Creators API or affiliate feeds); a real FTC disclosure in place
+   of the TODO; listing Plug & Play v2's real products directly once they're in layouts.
 
 ## Next
 

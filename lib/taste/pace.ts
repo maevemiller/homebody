@@ -1,5 +1,5 @@
 import type { Answer } from "./questions";
-import type { SetId } from "./visual";
+import type { ShowId } from "./visual";
 
 // How long the Taste Builder conversation runs, and when each section has enough (Maeve, 2026-10-29;
 // docs/taste-builder.md "Length and minimums"). Three sections, each with a small design minimum: what a
@@ -57,7 +57,7 @@ export function target(p: Pace, sec: SectionKey): number {
 
 export interface Facts {
   answers: Record<string, Answer>;
-  shown: SetId[];
+  shown: ShowId[];
   // practical lines the designer drew in her words ("before Thanksgiving", "$3–4k"); a budget counts
   // only as a figure or a range, not "budget-minded"
   practical: string[];
@@ -75,6 +75,7 @@ export function missing(p: Pace, sec: SectionKey, f: Facts): string[] {
     if (!f.shown.includes("rooms")) out.push("the rooms set");
     if (!f.shown.includes("palettes")) out.push("the palettes set");
   } else {
+    if (!f.shown.includes("shopping")) out.push("how they like to shop (the shopping sheet)");
     if (f.answers.budget === undefined && !f.practical.some((t) => /[$£€]|\d|thousand|hundred|grand\b/i.test(t))) out.push("a budget range");
     const hurry = p.priorities?.protect.includes("speed") || f.answers.tradeoff === "speed";
     if (f.answers.timeline === undefined && !hurry && !f.practical.some((t) => DATE.test(t))) out.push("a date that matters");

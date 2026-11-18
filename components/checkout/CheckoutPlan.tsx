@@ -163,7 +163,7 @@ export default function CheckoutPlan({ id }: { id: string }) {
 
       {single?.hero && <Hero src={single.hero} name={single.name} />}
 
-      <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-14 print:block">
+      <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-14 print:block">
         <div className="flex flex-col gap-14 min-w-0">
           {plans.length === 0 && <Empty />}
           {plans.map((p) => (
@@ -171,7 +171,7 @@ export default function CheckoutPlan({ id }: { id: string }) {
           ))}
         </div>
 
-        <aside className="flex flex-col gap-8 lg:sticky lg:top-20 lg:self-start print:mt-10">
+        <aside className="min-w-0 flex flex-col gap-8 lg:sticky lg:top-20 lg:self-start print:mt-10">
           <Totals sum={sum} budget={budget} fromBrief={brief.budget !== undefined} label={brief.budgetLabel} onBudget={saveBudget} />
           <CartLinks plans={plans} swaps={swaps} />
         </aside>
@@ -323,7 +323,7 @@ function Switch({ id, on, onToggle }: { id: string; on: boolean; onToggle: () =>
     >
       <span
         aria-hidden
-        className={`absolute top-1 left-1 h-6 w-6 rounded-full bg-surface shadow transition-transform duration-200 ${on ? "translate-x-5 bg-[var(--on-clay)]" : ""}`}
+        className={`absolute top-1 left-1 h-6 w-6 rounded-full shadow transition-transform duration-200 ${on ? "translate-x-5 bg-[var(--on-clay)]" : "bg-white"}`}
       />
     </button>
   );
@@ -348,8 +348,9 @@ function BuyRow({ listing, product }: { listing?: Listing; product: Product }) {
         <p className="text-ink-faint text-xs">Closest real listing</p>
         <p className="truncate">{listing.name}</p>
         <p className="text-ink-soft">
-          {listing.brand} · {listing.retailer} · <span className="num">{dimsText(listing.dims, product.category)}</span> · Price on {listing.retailer}
+          {listing.brand} · {listing.retailer} · <span className="num">{dimsText(listing.dims, product.category)}</span>
         </p>
+        <p className="text-ink-faint text-xs">Price on {listing.retailer}</p>
       </div>
       <a href={listing.url} target="_blank" rel="noopener noreferrer" className="btn btn-line btn-sm shrink-0 print-url" aria-label={`View ${listing.name} on ${listing.retailer}`}>
         View <span aria-hidden>↗</span>
@@ -523,7 +524,7 @@ function CartLinks({ plans, swaps }: { plans: RoomPlan[]; swaps: Record<string, 
             {g.listings.map((l) => (
               <li key={l.id}>
                 <a href={l.url} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between gap-3 min-h-11 py-2 print-url">
-                  <span className="truncate">{l.name}</span>
+                  <span className="truncate min-w-0">{l.name}</span>
                   <span aria-hidden className="text-ink-faint group-hover:text-ink">↗</span>
                 </a>
               </li>
@@ -539,7 +540,7 @@ function CartLinks({ plans, swaps }: { plans: RoomPlan[]; swaps: Record<string, 
             {searches.map((p) => (
               <li key={p.id}>
                 <a href={searchUrl(p)} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between gap-3 min-h-11 py-2 print-url">
-                  <span className="truncate">Search: {p.name}</span>
+                  <span className="truncate min-w-0">Search: {p.name}</span>
                   <span aria-hidden className="text-ink-faint group-hover:text-ink">↗</span>
                 </a>
               </li>

@@ -1,4 +1,5 @@
 import library from "./images.json";
+import { describeShopping, type Shopping } from "./shopping";
 import { isStyleView, STYLE_PRESETS, STYLE_SHOTS } from "./styleviews";
 
 // The Taste Builder's visual vocabulary (docs/reference/interior-design/): the
@@ -166,6 +167,9 @@ export const patternSrc = (p: string) => `/taste/patterns/${p}.jpg`;
 
 export const SET_IDS = ["rooms", "palettes", "materials", "patterns"] as const;
 export type SetId = (typeof SET_IDS)[number];
+// what the designer can put on screen: the four visual sets, and the "what kind of shopper are you" sheet
+export const SHOW_IDS = [...SET_IDS, "shopping"] as const;
+export type ShowId = (typeof SHOW_IDS)[number];
 
 export interface SetInfo {
   id: SetId;
@@ -246,7 +250,9 @@ export interface TasteState {
   // "what is it about this one?": the item and the chips tapped
   chips: { set: SetId; item: string; chips: string[] }[];
   // the sets done (or skipped), so the agent doesn't show one twice
-  shown: SetId[];
+  shown: ShowId[];
+  // "what kind of shopper are you" (lib/taste/shopping.ts); absent until asked, empty fields if skipped
+  shopping?: Shopping;
   // pairs answered in an "I'm not sure" exploration
   pairs: { a: string; b: string; pick: "a" | "b" | "both" | "neither" }[];
   value?: Partial<Record<Value, number>>;
@@ -533,5 +539,6 @@ export function describeTaste(t: TasteState): string {
   if (t.pairs.length) parts.push(`Answered ${t.pairs.length} this-or-that pairs`);
   if (t.undecided?.length) parts.push(`Still undecided (record nothing for these): ${t.undecided.join(", ")}`);
   if (t.excluded?.length) parts.push(`Styles they said aren't them (keep out): ${t.excluded.map((f) => FAMILIES[f]).join(", ")}`);
+  if (t.shopping) parts.push(describeShopping(t.shopping));
   return parts.join("\n");
 }

@@ -6,6 +6,7 @@ import type { Entry } from "./Dossier";
 import { MaterialFace, PaletteStrip } from "./Swatches";
 import { deFluff, moodsOK, pickedDirection } from "@/lib/taste/craft";
 import { related, similar, type Concept } from "@/lib/taste/session";
+import { sourcingLines } from "@/lib/taste/shopping";
 import { seenBlend, blendName, heroFor, MATERIAL, PALETTE, paletteFor, ROOM, roomSrc, type TasteState } from "@/lib/taste/visual";
 
 // "Here's what I heard" (dossier.md §2, §3.3): the sketch tidies into a designer's brief (Maeve,
@@ -45,7 +46,8 @@ export default function ReadBack({ concept, taste, entries, confirmed, room, off
   const story = live("story").filter((e) => (designer(e) || offline) && short(e)).slice(-2);
   // spoken nevers first, then the pictures they ruled out; all of them, on one line
   const never = [...live("never").filter(designer), ...live("never").filter((e) => !designer(e))];
-  const practical = live("practical");
+  // how she shops has its own row (Sourcing), so it isn't repeated under Constraints
+  const practical = live("practical").filter((e) => e.id !== "f-shopping");
   // what she's keeping, anchor first; a wish ("a round table") is for the statement, not this row
   const keepLines = live("keep").filter((e) => designer(e) || /anchor/.test(e.text) || offline);
   const keep = [...keepLines].sort((a, b) => Number(/anchor/.test(b.text)) - Number(/anchor/.test(a.text))).slice(0, 3);
@@ -62,6 +64,7 @@ export default function ReadBack({ concept, taste, entries, confirmed, room, off
         // the page's style line only when the designer didn't already name the lead style
         // one palette line: the page's 60-30-10 from her pick; the designer's own palette lines step aside
         ["Direction", merge(concept.direction?.some((x) => /^style\b/i.test(x) || (b[0] && x.toLowerCase().includes(b[0].label.toLowerCase()))) ? [] : style, (concept.direction ?? []).filter((x) => !(pal && PALETTE_LINE.test(x)) && !(taste.materials.liked.length && /^materials?\b/i.test(x))), pickedDirection(taste))],
+        ["Sourcing", taste.shopping ? sourcingLines(taste.shopping) : []],
         ["Key decisions", (concept.decisions ?? []).map((d) => `${clean(d.decision)}${WHY}${clean(d.because).replace(/^because\s+/i, "")}`)],
         ["Nevers", merge(concept.nevers ?? [], never.map((e) => e.text))],
         ["Open questions", merge(concept.open_questions ?? [])],

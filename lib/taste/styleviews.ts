@@ -7,19 +7,23 @@ import type { Family, RoomImage } from "./visual";
 // as rooms (lib/taste/visual.ts), so a pick scores exactly like a stock photo of that family did.
 
 export interface StylePreset extends RoomImage {
-  // what it puts in the room, the card's label
+  // the card's name and what the direction puts in the room, under it
+  name: string;
+  puts: string;
   label: string;
   colors: { wall: string; floor: string; fabric: string; leather: string; wood: string; metal: string; rug: string; curtain: string; painted: string };
   // a stock photo of the same family, for the read-back when the render isn't in this browser
   fallback: string;
 }
 
+const PROPER = new Set(["Scandinavian", "Japandi", "Mediterranean"]);
 const preset = (
   family: Family, name: string, puts: string, colors: StylePreset["colors"], fallback: string,
   extra: Pick<RoomImage, "palette" | "value" | "temperature" | "line" | "age" | "woods" | "metals" | "textiles" | "mood">,
 ): StylePreset => ({
   id: `style-${family}`, family: { [family]: 1 } as Partial<Record<Family, number>>,
-  alt: `Your room, ${name}: ${puts}`, label: `${name}: ${puts}`, density: "edited", pattern: "none", colors, fallback, ...extra,
+  // the first clause names it on its own ("the industrial version of your room"), as a never on her page
+  alt: `The ${PROPER.has(name) ? name : name.toLowerCase()} version of your room, ${puts}`, name, puts, label: `${name}: ${puts}`, density: "edited", pattern: "none", colors, fallback, ...extra,
 });
 
 export const STYLE_PRESETS: StylePreset[] = [
@@ -54,5 +58,39 @@ export const STYLE_PRESETS: StylePreset[] = [
 
 export const isStyleView = (id: string) => id.startsWith("style-");
 
-// Rendered thumbnails, in this browser only (data URLs), keyed by preset id
+export const STYLE_PRESET = new Map(STYLE_PRESETS.map((p) => [p.id, p]));
+
+// ---- The rendered views, in this browser only -------------------------------------------
+// components/taste/useStyleViews.ts renders them (lib/taste/styleviews-render.ts) and keeps them in
+// localStorage per room build, so a reload or the read-back shows the same pictures without re-rendering.
+// "loading": her room is being restyled (the set shows her room; waiting cards fill in as they land);
+// "ready": every view is in; "none": no captured room, no WebGL, or the render failed (stock photos).
+
+export type StyleStatus = "none" | "loading" | "ready";
 export const STYLE_SHOTS = new Map<string, string>();
+let status: StyleStatus = "none";
+let version = 0;
+const listeners = new Set<() => void>();
+const bump = () => {
+  version++;
+  for (const l of listeners) l();
+};
+export const styleStatus = () => status;
+export const styleVersion = () => version;
+export function subscribeStyles(l: () => void) {
+  listeners.add(l);
+  return () => void listeners.delete(l);
+}
+export function setStyleStatus(s: StyleStatus) {
+  if (s === status) return;
+  status = s;
+  // a failed render leaves nothing half-drawn behind
+  if (s === "none") STYLE_SHOTS.clear();
+  bump();
+}
+export function setStyleShot(id: string, url: string) {
+  STYLE_SHOTS.set(id, url);
+  bump();
+}
+// The rooms set shows her own room while it's restyling or done
+export const styleViewsOn = () => status !== "none";

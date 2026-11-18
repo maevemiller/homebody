@@ -658,6 +658,8 @@
     word-break: break-all;
   }
   [data-print-plan] a.btn {
+    display: block;
+    text-align: right;
     min-height: 0;
     padding: 0;
     border: 0;

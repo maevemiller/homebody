@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import Dossier, { type Entry } from "./Dossier";
 import ReadBack from "./ReadBack";
+import ShopperSheet from "./ShopperSheet";
+import { useStyleViews } from "./useStyleViews";
 import VisualSet from "./VisualSet";
 import { useMic } from "./useMic";
 import { TEST_PERSONAS } from "@/lib/taste/agent";
@@ -15,7 +17,8 @@ import type { Known } from "@/lib/taste/questions";
 import { loadKnown, readSaved, STORE_KEY, type Saved } from "@/lib/taste/saved";
 import { askedLength, FINISH, KEEP_GOING, LENGTH_IDS, LENGTHS, newPace, nextSection, remaining, type Length, type Pace, type SectionKey } from "@/lib/taste/pace";
 import { applyTaste, applyTurn, migrateConvo, newConvo, norm, normalizeTurn, ORDER, unescape, SECTIONS, TurnSchema, type Concept, type State, type Turn } from "@/lib/taste/session";
-import { describeTaste, EMPTY_TASTE, blend, FAMILIES, MATERIAL, PALETTE, PATTERN, type SetId, type TasteState } from "@/lib/taste/visual";
+import type { Shopping } from "@/lib/taste/shopping";
+import { describeTaste, EMPTY_TASTE, blend, FAMILIES, MATERIAL, PALETTE, PATTERN, type ShowId, type TasteState } from "@/lib/taste/visual";
 import { speak } from "@/lib/taste/voice";
 
 // Taste Builder as a designer's intake interview (Maeve, 2026-10-27): three sections people
@@ -49,7 +52,15 @@ export default function TasteStudio() {
   // the tree question the offline interpreter last asked, so it knows what an answer is for
   const [cur, setCur] = useState<string | null>(null);
   // a set they closed without finishing, kept a tap away
-  const [parked, setParked] = useState<SetId | null>(null);
+  const [parked, setParked] = useState<ShowId | null>(null);
+  // the room Space Capture left in this browser: the brief hands off into Plug & Play for it
+  const [roomId] = useState<string | null>(() => {
+    try {
+      return JSON.parse(localStorage.getItem("homebody-capture") ?? "{}").roomId ?? null;
+    } catch {
+      return null;
+    }
+  });
   const [dev] = useState(() => process.env.NODE_ENV !== "production" && new URLSearchParams(window.location.search).get("dev") === "1");
   const [usage, setUsage] = useState<{ input: number; output: number; cached: number; offline?: boolean }[]>([]);
   const [persona, setPersona] = useState({ id: TEST_PERSONAS[0].id, turn: 0 });
@@ -57,6 +68,8 @@ export default function TasteStudio() {
   // default they didn't touch (the critic, 2026-10-29: a visibly chosen Standard was being overridden)
   const [pick, setPick] = useState<Length>(() => saved.convo.pace?.length ?? "standard");
   const mic = useMic();
+  // her room, restyled for the rooms set, rendered in the background (stock photos without a room or WebGL)
+  useStyleViews();
   const latest = useRef(saved);
   const modeRef = useRef(mode);
   const hush = useRef<() => void>(() => {});
@@ -258,7 +271,22 @@ export default function TasteStudio() {
     else if (m === "talk") say(s.convo.transcript.filter((l) => l.who === "agent").at(-1)?.text ?? "");
   };
 
-  const pickedSet = (set: SetId, t: TasteState, summary: string) => {
+  // the shopping sheet: stored as structured preferences; in the read-back (reopened from the Sourcing
+  // row) the row redraws from it without another turn
+  const pickedShopping = (shopping: Shopping, summary: string) => {
+    setParked(null);
+    const cur = state(latest.current);
+    const t: TasteState = { ...cur.taste, shopping, shown: [...new Set([...cur.taste.shown, "shopping" as const])] };
+    const s = applyTaste(base, cur, t);
+    commit({ ...s, convo: { ...s.convo, showing: undefined } });
+    if (!cur.convo.concept) send(summary, true);
+  };
+  const reopenShopping = () => {
+    const s = state(latest.current);
+    commit({ ...s, convo: { ...s.convo, showing: "shopping" } });
+  };
+
+  const pickedSet = (set: ShowId, t: TasteState, summary: string) => {
     setParked(null);
     const s = applyTaste(base, state(latest.current), t);
     commit({ ...s, convo: { ...s.convo, showing: undefined } });
@@ -268,7 +296,9 @@ export default function TasteStudio() {
 
   const confirm = (said = "Yes, this is it") => {
     const s = state(latest.current);
-    const line = `Thank you. That's the brief. I'll start on ideas for your ${room}, and you can add more anytime.`;
+    const line = roomId
+      ? `Thank you. That's the brief. Next I'll furnish your ${room} from it, and you can change any piece you like.`
+      : `Thank you. That's the brief. Capture your ${room} next, and I'll furnish it from this.`;
     commit({ ...s, convo: { ...s.convo, confirmed: true, section: "done", transcript: [...s.convo.transcript, { who: "you", text: said }, { who: "agent", text: line }] } }, { cur: "done" });
     say(line);
   };
@@ -340,7 +370,10 @@ export default function TasteStudio() {
             )}
           </div>
           {c.confirmed ? (
-            <button className="btn btn-primary w-full" onClick={() => begin("type")}>See your brief</button>
+            <div className="flex flex-col gap-3">
+              <Link href={roomId ? `/play/${roomId}?from=brief` : "/"} className="btn btn-primary w-full">{roomId ? `Furnish my ${room}` : `Capture my ${room}`}</Link>
+              <button className="link link-quiet self-center min-h-11 px-3 text-[15px]" onClick={() => begin("type")}>See your brief</button>
+            </div>
           ) : (
           <div className="flex flex-col gap-3">
             <button className="btn btn-primary w-full" onClick={() => begin("talk")}>
@@ -402,9 +435,7 @@ export default function TasteStudio() {
         </div>
 
         {c.confirmed ? (
-          <div className="mt-3 flex gap-3">
-            <Link href="/rooms" className="btn btn-primary flex-1">See your rooms</Link>
-          </div>
+          <Handoff roomId={roomId} room={room} />
         ) : (
           <Composer
             mode={mode === "talk" && !mic.broken ? "talk" : "type"}
@@ -441,14 +472,21 @@ export default function TasteStudio() {
         </div>
         <div className="mx-auto max-w-[780px] px-3 pb-8 pt-1 sm:px-6 lg:px-10 lg:pb-16 lg:pt-12">
           {readback ? (
-            <ReadBack concept={c.concept!} taste={saved.taste} entries={entries} confirmed={!!c.confirmed} room={room} offline={!!c.offline} onEdit={editConcept} onConfirm={() => confirm()} />
+            <ReadBack concept={c.concept!} taste={saved.taste} entries={entries} confirmed={!!c.confirmed} room={room} offline={!!c.offline} onEdit={editConcept} onConfirm={() => confirm()} onShopping={reopenShopping} hasRoom={!!roomId} />
           ) : (
             <Dossier room={room} moods={c.moods} entries={entries} taste={saved.taste} section={c.section} />
           )}
         </div>
       </main>
 
-      {showing && (
+      {showing === "shopping" && (
+        <ShopperSheet
+          prev={saved.taste.shopping}
+          onDone={pickedShopping}
+          onClose={() => { if (!c.concept) setParked("shopping"); const s = state(latest.current); commit({ ...s, convo: { ...s.convo, showing: undefined } }); }}
+        />
+      )}
+      {showing && showing !== "shopping" && (
         <VisualSet
           said={c.transcript.filter((l) => l.who === "you" && !l.event).map((l) => l.text).join(" ")}
           key={showing}
@@ -500,6 +538,24 @@ function unconfirmed(base: Omit<Known, "answers">, s: State): { lines: string[];
     }
   }
   return { lines, patterns };
+}
+
+// After the brief is confirmed: one line on what happens next, and the way into Plug & Play
+function Handoff({ roomId, room }: { roomId: string | null; room: string }) {
+  return (
+    <div className="mt-3 flex flex-col gap-2.5 animate-rise lg:mt-8">
+      <p className="text-sm leading-snug text-ink-soft">
+        {roomId
+          ? <>Next: your {room}, furnished from this brief. Every piece is placed and priced, and you can change any of them. Nothing is bought until you say so.</>
+          : <>To furnish it, I need your {room} first: a few photos and a measurement.</>}
+      </p>
+      <Link href={roomId ? `/play/${roomId}?from=brief` : "/"} className="btn btn-primary w-full">
+        {roomId ? `Furnish my ${room}` : `Capture my ${room}`}
+        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+      </Link>
+      <Link href="/rooms" className="link link-quiet self-center min-h-11 px-3 text-sm">See your rooms</Link>
+    </div>
+  );
 }
 
 function Sections({ idx }: { idx: number }) {

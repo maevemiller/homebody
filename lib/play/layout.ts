@@ -23,11 +23,18 @@ export interface Piece {
   wall?: number;
   // false while it waits in the "To find a spot for" tray
   placed: boolean;
+  // put in by the design proposal (lib/play/proposal.ts), with the reason it's there (rule 15)
+  proposed?: boolean;
+  why?: string;
+  // she picked it herself (a Change, an Add): the proposal and the ripple engine leave it alone
+  chosen?: boolean;
 }
 
 export interface Layout {
   v: 1;
   pieces: Piece[];
+  // when the room was last furnished from the brief
+  proposedAt?: string;
 }
 
 export interface Shape {
@@ -404,7 +411,7 @@ export function reconcile(saved: Layout, fresh: Layout, inputs: Inputs): Layout 
       ? { ...p, x: it.x, y: it.y, rot: it.rotation, elev: it.elevation, wall: wallOf(it, walls), placed: true }
       : p;
   });
-  return { v: 1, pieces: [...pinned, ...fresh.pieces.filter((p) => !have.has(p.key))] };
+  return { v: 1, proposedAt: saved.proposedAt, pieces: [...pinned, ...fresh.pieces.filter((p) => !have.has(p.key))] };
 }
 
 /**
@@ -443,15 +450,22 @@ export function writeLayout(id: string, layout: Layout) {
 
 export const kindOfPiece = (s: Shape) => kindOf(s.category);
 
-/** Running cost: sample products in the room; their own pieces and what they bring cost nothing. */
+/**
+ * Running cost of the new pieces; their own pieces and what they bring cost nothing. Real pieces have no price in
+ * the licensed data, so their estimates are summed apart (`estimated`) and the total is shown as an estimate.
+ */
 export function totalCost(layout: Layout) {
-  let total = 0, count = 0;
+  let total = 0, count = 0, estimated = 0, unpriced = 0;
   for (const p of layout.pieces) {
     const pr = p.product ? PRODUCT.get(p.product) : undefined;
     if (pr) {
       total += pr.price;
       count++;
+      if (pr.real) {
+        if (pr.real.estimate) estimated++;
+        else unpriced++;
+      }
     }
   }
-  return { total, count };
+  return { total, count, estimated, unpriced };
 }

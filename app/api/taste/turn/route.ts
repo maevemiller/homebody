@@ -5,7 +5,7 @@ import path from "node:path";
 import { DESIGNER_PROMPT } from "@/lib/taste/designer-prompt";
 import { missing, newPace, OLD_SECTION, paceBrief, type Pace } from "@/lib/taste/pace";
 import { BriefSchema, briefWithIds, EditSchema, MAX_TURNS, roomBrief, SECTIONS, treeBrief, TurnWireSchema, type Concept, type DossierItem, type Line, type WireTurn } from "@/lib/taste/session";
-import type { SetId } from "@/lib/taste/visual";
+import type { ShowId } from "@/lib/taste/visual";
 import type { Answer, Known } from "@/lib/taste/questions";
 
 // One turn of the Taste Builder conversation with the live designer (Claude Sonnet 5.5, for
@@ -87,7 +87,7 @@ export async function POST(req: Request) {
     `# Visual picks\n${body.taste || "none yet"}`,
     `# Unconfirmed: never put these in the concept statement or the read-back rows (she didn't say or confirm them)\n${(body.unconfirmed ?? []).map((x) => `- ${x}`).join("\n") || "none"}`,
     `# Their page so far\n${page || "empty"}${body.moods?.length ? `\nMood words: ${body.moods.join(", ")}` : ""}`,
-    `# Where we are\nSection: ${section} (${sectionLabel}). Turn ${used + 1} of ${MAX_TURNS}.\nSets not shown yet: ${["rooms", "palettes", "materials", "patterns"].filter((x) => !(body.shown ?? []).includes(x)).join(", ") || "none"}\n${paceBrief(pace, section, { answers: k.answers, shown: (body.shown ?? []) as SetId[], practical }, !!body.finished)}`,
+    `# Where we are\nSection: ${section} (${sectionLabel}). Turn ${used + 1} of ${MAX_TURNS}.\nSets not shown yet: ${["rooms", "palettes", "materials", "patterns", "shopping"].filter((x) => !(body.shown ?? []).includes(x)).join(", ") || "none"}\n${paceBrief(pace, section, { answers: k.answers, shown: (body.shown ?? []) as ShowId[], practical }, !!body.finished)}`,
     `# The conversation\n${convo || "(nothing yet: open the conversation)"}`,
     "Write your next turn.",
   ].join("\n\n");
@@ -134,7 +134,7 @@ export async function POST(req: Request) {
         const turn: WireTurn = TurnWireSchema.parse(JSON.parse(textOf(msg)));
         const usage = { input: msg.usage.input_tokens, output: msg.usage.output_tokens, cached: msg.usage.cache_read_input_tokens ?? 0 };
         // at Quick, Extras is the minimum only: once it's covered, an anchor or story follow-up becomes the read-back
-        const extrasDone = !missing(pace, "extras", { answers: k.answers, shown: (body.shown ?? []) as SetId[], practical }).length;
+        const extrasDone = !missing(pace, "extras", { answers: k.answers, shown: (body.shown ?? []) as ShowId[], practical }).length;
         if (pace.length === "quick" && turn.section === "extras" && extrasDone && /\b(one piece|work around|build around|everything else|anchor|your story|a little of your story)\b/i.test(turn.say) && turn.say.includes("?")) {
           turn.say = "That's all I need to go on. Here's what I heard. Tell me what I got wrong.";
           turn.section = "readback";

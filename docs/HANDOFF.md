@@ -28,7 +28,7 @@ It has four pieces, with code names:
    - Swap with cheaper twins;
    - a cost pill;
    - a tray.
-4. **Transaction** (`/checkout/[id]`): in progress. Review and buy room by room, with retailer links; no payments yet.
+4. **Transaction** (`/checkout/[id]`, `/checkout/all`, `components/checkout/*`, `lib/checkout/*`). Review and buy room by room, with retailer links; no payments yet.
 
 Other pages:
 - `/demo`: a guided tour for Maeve.
@@ -103,7 +103,7 @@ npx next dev -p 3100
 | Space Capture | Critic YES before the latest fixes. Since then: real-room-only builds, photo coverage checks asking for more photos, sort gating, "Change something" on the review, video upload. Not re-reviewed. |
 | Taste Builder | Live designer works; corrections are line edits. In progress (agent paused mid-way): style views of her own room instead of stock photos (presets plus offscreen three.js), a "what kind of shopper are you" sourcing question, and a handoff into Play. Last critic verdict NO before the latest fixes. |
 | Plug & Play | First cut works. v2 not started (agent paused at the start): auto-furnished proposal from the brief, per-piece feedback with parameter chips plus text or voice, ripple toggle, swipe deck, real products, walkthrough, link to checkout. |
-| Transaction | `/checkout/[id]` was started by an agent, which was paused; check what exists before continuing. |
+| Transaction | First cut built (2026-11-14): `/checkout/<id>` and `/checkout/all` (`components/checkout/CheckoutPlan.tsx`, `lib/checkout/plan.ts`). Reads the Plug & Play layout (`homebody-layout-<id>`, reconciled the way Play opens it). Shows: the dollhouse render and the brief's idea line; new pieces by category, each with a drawn swatch, sample price as a labelled "est.", a "Cheaper lookalike" switch (catalog twins, savings shown, kept in `homebody-checkout-<id>`) and the closest real ABO listing (photo, brand, Amazon, inches, "Price on Amazon", link; art gets a labelled search link); "Your pieces stay" collapsed at $0; totals with a budget meter (a $ figure parsed from the brief, else a field saved to `homebody-checkout-budget`); room chips plus All rooms; "Open cart links" grouped by retailer, a no-payments note and a TODO affiliate disclosure; a print stylesheet (in `app/globals.css`). Verified headless at 390 and 1440, light and dark. Not critic-reviewed. Open: real prices need the Creators API; the sample-to-real match is by kind, material, color and width, so a lookalike and its original can map to the same listing. |
 | Real capture | Three CC BY test rooms rebuilt, with matched-view scores. Needs Maeve's own photos. |
 | Social | Day 4 (10-29) and Day 5 (10-30) digests drafted; awaiting her sign-off. The Day 4 draft is visible in the public repo; Day 5 is held out. |
 

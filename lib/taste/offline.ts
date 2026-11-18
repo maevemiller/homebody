@@ -3,7 +3,7 @@ import { acknowledge, asked, interpret, noteDetail, recordAll, spokenLine } from
 import { KEEP_GOING, missing, negated, newPace, target, type Facts, type Length, type Pace, type Protect, type SectionKey } from "./pace";
 import { related, type State, type Turn } from "./session";
 import { openQuestions, ruleDecisions, sizeLine, spaceLines } from "./craft";
-import { blend, blendName, type SetId } from "./visual";
+import { blend, blendName, type ShowId } from "./visual";
 
 // The free fallback when the live designer can't be reached (no key, an error, or the
 // turn cap): the Phase 0 keyword interpreter from agent.ts, walking a fixed plan through
@@ -15,7 +15,7 @@ import { blend, blendName, type SetId } from "./visual";
 const BY_ID = new Map(QUESTIONS.map((q) => [q.id, q]));
 
 // min: names the item in pace.ts's missing() this step covers
-type Step = ({ q: string } | { set: SetId } | { about: true }) & { min?: string };
+type Step = ({ q: string } | { set: ShowId } | { about: true }) & { min?: string };
 const PLAN: Record<SectionKey, Step[]> = {
   // start and approach (the persona halves) are read, never asked; function is inferred from "about"
   you: [
@@ -24,7 +24,7 @@ const PLAN: Record<SectionKey, Step[]> = {
   ],
   style: [{ set: "rooms", min: "the rooms set" }, { set: "palettes", min: "the palettes set" }, { set: "materials" }, { set: "patterns" }, { q: "avoid" }],
   // how personal first, then the practical close
-  extras: [{ q: "meaningful_detail" }, { q: "places" }, { q: "places_feel" }, { q: "anchor" }, { q: "budget", min: "a budget range" }, { q: "timeline", min: "a date that matters" }],
+  extras: [{ q: "meaningful_detail" }, { q: "places" }, { q: "places_feel" }, { q: "anchor" }, { set: "shopping", min: "how they like to shop" }, { q: "budget", min: "a budget range" }, { q: "timeline", min: "a date that matters" }],
 };
 const ORDER: SectionKey[] = ["you", "style", "extras"];
 const ABOUT = "Tell me a little about yourself, and how you see yourself using the space.";
@@ -32,7 +32,8 @@ const SECTION_LINE: Record<string, string> = {
   style: "That's a good picture of you. Now, the look of the space.",
   extras: "That's a clear read on your style. Last part, the extras.",
 };
-const SET_LINE: Record<SetId, string> = {
+const SET_LINE: Record<ShowId, string> = {
+  shopping: "Now the practical bits. Where do you like to find things for your home?",
   rooms: "Have a look at these rooms. Tap any you could see yourself living in.",
   palettes: "Now color. Which of these palettes feels most like you?",
   materials: "Which materials would you love to have around?",
@@ -323,7 +324,7 @@ export function template(k: Known, s: State): NonNullable<Turn["concept"]> {
   // one sentence: who, what it has to do, and who else is on the sofa
   const statement = `A ${room} where ${you} ${verbs.length ? list(verbs.slice(0, 3)) : "can settle in"}${pet ? `, with ${pet}${a.pets_on_furniture === "yes" ? " on the sofa" : ""}` : ""}.`;
   const pace = s.convo.pace ?? newPace();
-  const still = missing(pace, "extras", factsOf(s, a)).map((m) => (m.startsWith("a budget") ? "Budget range" : "A date it needs to be ready for"));
+  const still = missing(pace, "extras", factsOf(s, a)).map((m) => (m.startsWith("a budget") ? "Budget range" : m.startsWith("how they like to shop") ? "Where you like to shop" : "A date it needs to be ready for"));
   return {
     title: `Your ${room}`, statement, moods: [], program, constraints, direction,
     decisions: [...ruleDecisions(k, s.taste, said), ...(nod ? [{ decision: "One small nod (a framed print, a cushion or an object on a shelf), not a theme", because: nod }] : [])],
